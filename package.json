@@ -4,7 +4,9 @@
     "main": "src/main.js",
     "scripts": {
         "dev": "webpack-dev-server --config webpack/config.dev.js --open",
-        "build": "webpack --config webpack/config.prod.js"
+        "build": "webpack --config webpack/config.prod.js",
+        "upload": "node uploadBin.cjs",
+        "watch": "nodemon --watch 'src/**/*' --exec \"npm run build && npm run upload || exit 1 \""
     },
     "repository": {
         "type": "git",
@@ -34,7 +36,16 @@
         "webpack-dev-server": "^5.0.2",
         "webpack-merge": "^5.10.0"
     },
+    "watch": {
+        "test": {
+            "extensions": "ts,html,scss",
+            "quiet": false
+        }
+    },
     "dependencies": {
+        "basic-ftp": "^5.0.5",
+        "nodemon": "^3.1.0",
+        "npm-watch": "^0.11.0",
         "phaser": "^3.80.1"
     }
 }
