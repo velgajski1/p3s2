@@ -14,6 +14,8 @@ export class UIScene extends Phaser.Scene {
         };
         this.add.text(10, 10, 'UI Scene Text Example', textStyle);
 
+
+
         // Setup interactions or additional UI components
     }
 }

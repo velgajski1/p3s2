@@ -64,7 +64,7 @@ async function main() {
     });
 
     // Upload the local folder to the remote folder
-    await uploadFolder(ftpClient, 'D:/Projects/'+ basename + '/dist/', '/domains/gamestest.net/public_html/'+basename);
+    await uploadFolder(ftpClient, 'D:/Projects/'+ basename + '/dist/', '/domains/gamestest.net/public_html/p3s1');
   } catch (err) {
     console.error('Error:', err);
   } finally {
