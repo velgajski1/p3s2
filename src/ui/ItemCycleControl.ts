@@ -5,34 +5,57 @@ interface ControlOptions {
     // Define other properties as needed
 }
 
+interface TextOptions {
+    fontSize?: string;
+    color?: string;
+    fontFamily?: string;
+    fontStyle?: string;
+}
+
+interface ControlOptions {
+    parentContainer?: Phaser.GameObjects.Container;
+    titleTextOptions?: TextOptions;
+    itemTextOptions?: TextOptions;
+}
+
 export class ItemCycleControl extends Phaser.GameObjects.Container {
     private items: (string | number)[];
     private currentItemIndex: number = 0;
     private onChange: (item: string | number) => void;
     private titleText: Phaser.GameObjects.Text;
-    private itemText: Phaser.GameObjects.Text;
+
 
     constructor(scene: Phaser.Scene, x: number, y: number, title: string, items: (string | number)[], onChange: (item: string | number) => void, options? :ControlOptions) {
         super(scene, x, y);
         this.items = items;
         this.onChange = onChange;
 
+        const titleTextOptions = {
+            fontSize: '24px',
+            color: '#000',
+            fontFamily: 'Arial',
+            fontStyle: '',
+            ...options?.titleTextOptions // Override defaults with provided options
+        };
+
+
         // Title Text
-        this.titleText = scene.add.text(0, -30, title, { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+        this.titleText = scene.add.text(0, 0, title, titleTextOptions).setOrigin(0);
+        this.titleText.y -= this.titleText.height / 2
 
         // Item Text, showing the current item
-        this.itemText = scene.add.text(0, 10, this.items[this.currentItemIndex].toString(), { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+        // this.itemText = scene.add.text(0, 10, this.items[this.currentItemIndex].toString(), { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
 
         // Left Button
-        const btnLeft = scene.add.image(-50, 10, 'prompt_btn_left').setInteractive();
+        const btnLeft = scene.add.image(-100, 0, 'prompt_btn_left').setInteractive();
         btnLeft.on('pointerdown', () => this.cycleItem(-1));
 
         // Right Button
-        const btnRight = scene.add.image(50, 10, 'prompt_btn_right').setInteractive();
+        const btnRight = scene.add.image(-40, 0, 'prompt_btn_right').setInteractive();
         btnRight.on('pointerdown', () => this.cycleItem(1));
 
         // Add all components to the container
-        this.add([this.titleText, this.itemText, btnLeft, btnRight]);
+        this.add([this.titleText, btnLeft, btnRight]);
 
         // Initial call to onChange with the first item
         this.onChange(this.items[this.currentItemIndex]);
@@ -54,9 +77,6 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
         } else if (this.currentItemIndex < 0) {
             this.currentItemIndex = this.items.length - 1; // Wrap to last
         }
-
-        // Update the item text to show the current item
-        this.itemText.setText(this.items[this.currentItemIndex].toString());
 
         // Trigger the onChange callback with the new current item
         this.onChange(this.items[this.currentItemIndex]);

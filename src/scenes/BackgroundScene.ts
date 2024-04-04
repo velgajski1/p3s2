@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BACKGROUND_COLORS} from '../misc/Consts';
+import { BACKGROUND_COLORS} from '../config/Consts';
 
 export class BackgroundScene extends Phaser.Scene {
 

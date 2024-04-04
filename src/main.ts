@@ -8,6 +8,7 @@ import { Preloader } from './scenes/Preloader';
 import { Game, Types } from "phaser";
 import { UIScene } from './scenes/UIScene';
 import { Settings } from './scenes/Settings';
+import { Statistics } from './scenes/Statistics';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -28,6 +29,7 @@ const config: Types.Core.GameConfig = {
         Preloader,
         MainMenu,
         Settings, 
+        Statistics,
         GameplayScene,
         UIScene,
         GameOver

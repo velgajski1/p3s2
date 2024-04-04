@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import Button from '../utils/ButtonWithColorBackground';
+import Button from '../ui/ButtonWithColorBackground';
 
 export class MainMenu extends Phaser.Scene {
     private menuContainer!: Phaser.GameObjects.Container;
@@ -14,14 +14,14 @@ export class MainMenu extends Phaser.Scene {
     }
 
     create(): void {
-        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.5 } });
+        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.05 } });
         this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
 
         // Create a container centered in the game
         this.menuContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
 
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-200, -250, 400, 500, 4);
+        this.whiteBg.fillRoundedRect(-200, -250, 400, 500, 12);
         // Add the modal background to the container
         this.menuContainer.add(this.whiteBg);
         

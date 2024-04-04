@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Language } from '../utils/Language';
 
 export class Boot extends Scene
 {
@@ -13,10 +14,13 @@ export class Boot extends Scene
         //  The smaller the file size of the assets, the better, as the Boot Scene itself has no preloader.
 
         // this.load.image('background', 'assets/bg.png');
+        this.load.xml('language', 'language.xml');
     }
 
     create ()
     {
         this.scene.start('Preloader');
+        Language.initLanguage(this.game)
+        console.log(Language.getTranslation("GameOver"));
     }
 }
