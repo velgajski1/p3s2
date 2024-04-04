@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import Button from '../ui/ButtonWithColorBackground';
+import {translate} from '../utils/Language'
+import { LanguageConfig } from '../config/Language';
 
 export class MainMenu extends Phaser.Scene {
     private menuContainer!: Phaser.GameObjects.Container;
@@ -25,7 +27,7 @@ export class MainMenu extends Phaser.Scene {
         // Add the modal background to the container
         this.menuContainer.add(this.whiteBg);
         
-        this.titleTxt = this.add.text(0, -200, "Menu", {
+        this.titleTxt = this.add.text(0, -200, translate(LanguageConfig.Menu), {
             fontFamily: 'Open Sans', fontSize: '32px', color: '#000000', align: 'left'
         }).setOrigin(0.5);
         this.titleTxt.setFontStyle("bold");
@@ -39,12 +41,12 @@ export class MainMenu extends Phaser.Scene {
 
         // Menu text options
         const menuItems = [
-            'Restart Game',
-            'New Game: Turn 1',
-            'New Game: Turn 3',
-            'How to Play Solitaire',
-            'Statistics',
-            'All Games'
+            translate(LanguageConfig.RestartGame),
+            translate(LanguageConfig.NewGameTurn1),
+            translate(LanguageConfig.NewGameTurn3),
+            translate(LanguageConfig.HowToPlaySolitaire),
+            translate(LanguageConfig.Statistics),
+            translate(LanguageConfig.HowToPlaySolitaire)
         ];
 
         const menuActions = [
@@ -69,7 +71,7 @@ export class MainMenu extends Phaser.Scene {
             this.menuContainer.add(menuItem);
         });
 
-        this.cancelButton = new Button(this, 0, 180, 'Cancel', () => {
+        this.cancelButton = new Button(this, 0, 180, translate(LanguageConfig.Cancel), () => {
             // console.log('Button clicked');
             this.scene.remove('MainMenu');
         }, {

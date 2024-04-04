@@ -26,4 +26,16 @@ export class Language {
     static getTranslation(key: string): string {
         return Language.translations[key] || key;
     }
+
+    getTranslation(key: string): string {
+        return Language.translations[key] || key;
+    }
+
 }
+
+// Inside Language.ts
+export function translate(key: string): string {
+    return Language.getTranslation(key);
+}
+
+

@@ -90,7 +90,7 @@ export class Statistics extends Phaser.Scene {
     }
 
     private createButtons(): void {
-        this.closeButton = new Button(this, -100, 200, 'Close', () => {
+        this.closeButton = new Button(this, -100, 200, Language.getTranslation(LanguageConfig.Close), () => {
             this.scene.stop('Statistics');
         }, {
             color: 0x4C6A92,
@@ -102,7 +102,7 @@ export class Statistics extends Phaser.Scene {
             parentContainer: this.menuContainer
         });
 
-        this.resetButton = new Button(this, 100, 200, 'Reset Stats', () => {
+        this.resetButton = new Button(this, 100, 200, Language.getTranslation(LanguageConfig.ResetStats), () => {
             // Add logic to reset stats here
             console.log('Reset Stats');
         }, {
