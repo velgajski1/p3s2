@@ -25,59 +25,10 @@
         <Statistics>Statistics</Statistics>
         <ResetStats>Reset Stats</ResetStats>
         <Close>Close</Close>
-    </language>
-    <language id="DE">
-        <Menu>Menü</Menu>
-        <RestartGame>Spiel neustarten</RestartGame>
-        <NewGameTurn1>Neues Spiel: 1 Karte</NewGameTurn1>
-        <NewGameTurn3>Neues Spiel: 3 Karten</NewGameTurn3>
-        <HowToPlaySolitaire>Wie man Solitär spielt</HowToPlaySolitaire>
-        <Statistics>Statistiken</Statistics>
-        <AllGames>Alle Spiele</AllGames>
-        <Cancel>Abbrechen</Cancel>
-        <GamesPlayed>Gespielte Spiele</GamesPlayed>
-        <GamesWon>Gewonnene Spiele</GamesWon>
-        <WinPercentage>Gewinnquote</WinPercentage>
-        <CurrentWinStreak>Aktuelle Siegesserie</CurrentWinStreak>
-        <LongestWinStreak>Längste Siegesserie</LongestWinStreak>
-        <TopScore>Höchstpunktzahl</TopScore>
-        <BestTime>Bestzeit</BestTime>
-        <GameSettings>Spieloptionen</GameSettings>
-        <VisualSettings>Visuelle Einstellungen</VisualSettings>
-        <SoundOnOff>Sound Ein/Aus</SoundOnOff>
-        <AutoFinish>Autom. Abschluss</AutoFinish>
-        <RightHanded>Rechtshändig</RightHanded>
-        <Background>Hintergrund</Background>
-        <SaveExit>Speichern und Beenden</SaveExit>
-        <Statistics>Statistiken</Statistics>
-        <ResetStats>Statistiken zurücksetzen</ResetStats>
-        <Close>Schließen</Close>
-    </language>
-    <language id="ES">
-        <Menu>Menú</Menu>
-        <RestartGame>Reiniciar Juego</RestartGame>
-        <NewGameTurn1>Nuevo Juego: 1 Carta</NewGameTurn1>
-        <NewGameTurn3>Nuevo Juego: 3 Cartas</NewGameTurn3>
-        <HowToPlaySolitaire>Cómo Jugar al Solitario</HowToPlaySolitaire>
-        <Statistics>Estadísticas</Statistics>
-        <AllGames>Todos los Juegos</AllGames>
-        <Cancel>Cancelar</Cancel>
-        <GamesPlayed>Juegos Jugados</GamesPlayed>
-        <GamesWon>Juegos Ganados</GamesWon>
-        <WinPercentage>Porcentaje de Victorias</WinPercentage>
-        <CurrentWinStreak>Racha Actual de Victorias</CurrentWinStreak>
-        <LongestWinStreak>Racha Más Larga de Victorias</LongestWinStreak>
-        <TopScore>Puntuación Máxima</TopScore>
-        <BestTime>Mejor Tiempo</BestTime>
-        <GameSettings>Configuración del Juego</GameSettings>
-        <VisualSettings>Configuración Visual</VisualSettings>
-        <SoundOnOff>Sonido Activado/Desactivado</SoundOnOff>
-        <AutoFinish>Finalización Automática</AutoFinish>
-        <RightHanded>Diestro</RightHanded>
-        <Background>Fondo</Background>
-        <SaveExit>Guardar y Salir</SaveExit>
-        <Statistics>Estadísticas</Statistics>
-        <ResetStats>Restablecer Estadísticas</ResetStats>
-        <Close>Cerrar</Close>
+        <YouWon>You Won :)</YouWon>
+        <Score>Score: </Score>
+        <TimePlayed>Time Played: </TimePlayed>
+        <TimeBonus>Time Bonus: </TimeBonus>
+        <TotalScore>Total Score: </TotalScore>
     </language>
 </languages>

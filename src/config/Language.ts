@@ -23,4 +23,9 @@ export const LanguageConfig = {
     SaveExit: "SaveExit",
     ResetStats: "ResetStats",
     Close: "Close",
+    YouWon: "YouWon",
+    Score: "Score",
+    TimePlayed: "TimePlayed",
+    TimeBonus: "TimeBonus",
+    TotalScore: "TotalScore",
 };
