@@ -34,11 +34,13 @@ export class GameplayScene extends Phaser.Scene {
         // Listen for resize events to dynamically adjust the container
         this.scale.on('resize', this.resize, this);
         this.resize(this.scale.gameSize as unknown as Phaser.Structs.Size);
+
+        this.scene.launch("UIScene");
     }
 
     private resize(gameSize: Phaser.Structs.Size): void {
         const { width, height } = gameSize;
-        this.gameplayContainer.setPosition(width / 2, height / 2);
+        this.gameplayContainer.setPosition(width / 2, height / 2+20);
         let scale = Math.min(width / 1600, height / 900);
         this.gameplayContainer.setScale(scale);
     }
