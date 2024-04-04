@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
+import { GameManager } from '../managers/GameManager';
 
 export class GameplayScene extends Phaser.Scene {
     private gameplayContainer!: Phaser.GameObjects.Container;
+    gameManager: GameManager;
 
     constructor() {
         super('GameplayScene');
@@ -9,6 +11,13 @@ export class GameplayScene extends Phaser.Scene {
 
     create(): void {
         this.gameplayContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
+
+        // Initialize the GameManager with this scene and the UIScene
+        this.gameManager = new GameManager(this);
+        this.registry.set('gameManager', this.gameManager);
+
+        // Start the game
+        this.gameManager.startGame();
 
         // Define the layout
         const rows = 2;

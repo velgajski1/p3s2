@@ -28,4 +28,6 @@ export const LanguageConfig = {
     TimePlayed: "TimePlayed",
     TimeBonus: "TimeBonus",
     TotalScore: "TotalScore",
+    Time: "Time",
+    Moves: "Moves",
 };

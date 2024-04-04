@@ -30,5 +30,7 @@
         <TimePlayed>Time Played: </TimePlayed>
         <TimeBonus>Time Bonus: </TimeBonus>
         <TotalScore>Total Score: </TotalScore>
+        <Time>Time: </Time>
+        <Moves>Moves: </Moves>
     </language>
 </languages>
