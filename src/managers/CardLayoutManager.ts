@@ -1,5 +1,5 @@
 // CardLayoutManager.ts
-import { CARD_SCALE, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_OVERLAP } from "../config/Consts";
+import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 class CardLayoutManager {
@@ -10,6 +10,7 @@ class CardLayoutManager {
             card.y = STOCK_COORDS.y;
             card.scale = CARD_SCALE
             card.setDepth(index); // Ensure stacking order for the stock
+            card.setFaceUp(false);
         });
     }
 
@@ -51,6 +52,25 @@ class CardLayoutManager {
             });
         });
     }
+
+
+        // Add visual indicators for the foundation piles
+        addFoundationIndicators(scene: Phaser.Scene, cont : Phaser.GameObjects.Container) {
+            for (let i = 0; i < 4; i++) {
+                const x = FOUNDATION_COORDS_INIT.x + i * FOUNDATION_COORDS_DELTA.x;
+                const y = FOUNDATION_COORDS_INIT.y;
+    
+                // Create a sprite for the foundation indicator
+                const foundationIndicator = scene.add.sprite(x, y, 'cards', 'cards/holder_foundation_cards.png');
+                foundationIndicator.setDepth(9000); // Ensure the indicator is below cards
+                cont.add(foundationIndicator);
+                // Optionally, customize the indicator with scale or tint
+                foundationIndicator.setScale(CARD_SCALE);
+                // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
+            }
+        }
+
+    
 }
 
 export default CardLayoutManager;

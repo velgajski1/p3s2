@@ -107,6 +107,7 @@ export class GameManager {
     // Lay out the cards in the initial game arrangement
     private layoutInitialCards() {
         // Use the pile manager to distribute cards and the layout manager to arrange them
+        this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
         this.pileManager.distributeCardsToPiles(this.deck);
         this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
         this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());

@@ -59,7 +59,7 @@ export class GameplayScene extends Phaser.Scene {
     private resize(gameSize: Phaser.Structs.Size): void {
         
         const { width, height } = gameSize;
-        this.gameplayContainer.setPosition(width / 2, height / 2+20);
+        this.gameplayContainer.setPosition(width / 2, height / 2+60);
         let scale = Math.min(width / 1600, height / 900);
         this.gameplayContainer.setScale(scale);
 

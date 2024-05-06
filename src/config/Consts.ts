@@ -29,6 +29,8 @@ export const WASTE_DELTA_FROM_STOCK = 160;
 export const WASTE_OVERLAP = 15;
 export const TABLEU_COORDS_INIT = { x : -450, y : -100 }
 export const TABLEU_COORDS_DELTA = {x:160, y:30}
+export const FOUNDATION_COORDS_INIT = {x:30, y:-300}
+export const FOUNDATION_COORDS_DELTA = {x:160, y:0}
 
 
 
