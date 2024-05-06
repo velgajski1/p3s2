@@ -18,7 +18,7 @@ export class GameplayScene extends Phaser.Scene {
         
 
         // Initialize the GameManager with this scene and the UIScene
-        this.gameManager = new GameManager(this, this.gameplayContainer);
+        this.gameManager = GameManager.getInstance(this, this.gameplayContainer);
         this.registry.set('gameManager', this.gameManager);
 
         // Start the game
@@ -34,7 +34,7 @@ export class GameplayScene extends Phaser.Scene {
         const cardScale = 0.75; // Adjust this scale factor to make cards smaller
         const startX = -(cols - 1) * (cardWidth * cardScale + cardSpacingHorizontal) / 2; // Adjusted for scale
         const startY = -(rows - 1) * (cardHeight * cardScale + cardSpacingVertical) / 2; // Adjusted for scale
-        console.log(startX, startY);
+
 
         // // Loop to create a grid of cards
         // for (let row = 0; row < rows; row++) {

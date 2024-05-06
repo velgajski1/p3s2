@@ -48,14 +48,14 @@ class CardNameManager {
     public loadCardData(frames: any[]): void {
         frames.forEach((frame) => {
             const match = frame.filename.match(/cards\/(\w+)_(\w+)\.png/);
-            console.log(match);
+
             if (match) {
                 const [_, suitStr, rankStr] = match;
             // Get Suit index from the enum
             const suitKey = suitStr[0].toUpperCase() + suitStr.slice(1);
-            // console.log(suitKey)
+
             let suitIndex: number | undefined = undefined;
-            // console.log(suitStr, rankStr);
+
             if (suitKey in Suit) {
                 suitIndex = Suit[suitKey as keyof typeof Suit] as number;
             }
@@ -75,10 +75,7 @@ class CardNameManager {
                 rankIndex = Rank[rankKey as keyof typeof Rank] as number;
             }
             
-            console.log(rankKey); // Example output to verify the key
-            console.log(rankIndex); // Outputs the correctly adjusted index
 
-            console.log(suitIndex, rankIndex);
             if (suitIndex !== undefined && rankIndex !== undefined) {
                 this.cardNames[suitIndex][rankIndex] = `${suitStr}_${rankStr}`;
             }

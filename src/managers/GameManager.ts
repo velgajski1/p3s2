@@ -5,25 +5,27 @@ import CardLayoutManager from './CardLayoutManager';
 import { Rank, Suit } from './CardNameManager';
 
 export class GameManager {
+    private static instance: GameManager | null = null;
     private score: number = 0;
     private startTime: number;
     private elapsedTime: number = 0;
     private gameScene: Phaser.Scene;
     private moves: number = 0;
 
-    private pileManager: PileManager;
+    public pileManager: PileManager;
     private layoutManager: CardLayoutManager;
     private deck: Card[] = [];
 
     private gameplayContainer: Phaser.GameObjects.Container;
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
+        GameManager.instance = this;
         this.gameScene = gameScene;
         this.startTime = Date.now();
         this.gameplayContainer = gameplayContainer;
 
         // Initialize the managers responsible for handling piles and layout
-        this.pileManager = new PileManager();
+        this.pileManager = new PileManager(this.gameplayContainer);
         this.layoutManager = new CardLayoutManager();
 
         // Set up a timer event to update the elapsed time in the game loop
@@ -33,6 +35,35 @@ export class GameManager {
             callbackScope: this,
             loop: true
         });
+
+        this.gameScene.time.addEvent({
+            delay: 10,
+            callback: this.updateTimerQuick,
+            callbackScope: this,
+            loop: true
+        });
+
+    }
+
+    public static getInstance(scene: Phaser.Scene, container : Phaser.GameObjects.Container): GameManager {
+        if (this.instance === null) {
+            this.instance = new GameManager(scene, container);
+        }
+        return this.instance;
+    }
+
+    setupStockInteraction(stockCardSprite: Phaser.GameObjects.Sprite) {
+        // Make the stock card interactive
+        stockCardSprite.setInteractive();
+        stockCardSprite.on('pointerdown', () => {
+            this.pileManager.moveTopCardStockToWaste(); // Move the card from stock to waste
+            this.updateWasteLayout(); // Update the visual layout of the waste pile
+        });
+    }
+
+    // Update the layout of the waste pile to reflect the latest top card
+    updateWasteLayout() {
+        this.layoutManager.layoutWastePile( this.pileManager.getWastePile() ); // Adjust x, y to desired coordinates
     }
 
     startGame(): void {
@@ -57,7 +88,12 @@ export class GameManager {
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
 
-        console.log(this.gameplayContainer)
+
+    }   
+    
+    updateTimerQuick(): void {
+
+        this.gameplayContainer.sort('depth');
 
     }
 
@@ -108,11 +144,12 @@ export class GameManager {
     private layoutInitialCards() {
         // Use the pile manager to distribute cards and the layout manager to arrange them
         this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
+        this.layoutManager.addWasteIndicator(this.gameScene,this.gameplayContainer)
         this.pileManager.distributeCardsToPiles(this.deck);
         this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
         this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());
         this.layoutManager.layoutStockPile(this.pileManager.getStockPile())
         this.layoutManager.layoutWastePile(this.pileManager.getWastePile())
-        this.gameplayContainer.sort('depth');
+        
     }
 }

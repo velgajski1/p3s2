@@ -24,12 +24,12 @@ export enum PileType {
 }
 
 export const CARD_SCALE = 0.75;
-export const STOCK_COORDS = { x : -450, y : -300 };
+export const STOCK_COORDS = { x : -488, y : -300 };
 export const WASTE_DELTA_FROM_STOCK = 160;
 export const WASTE_OVERLAP = 15;
-export const TABLEU_COORDS_INIT = { x : -450, y : -100 }
+export const TABLEU_COORDS_INIT = { x : STOCK_COORDS.x, y : -100 }
 export const TABLEU_COORDS_DELTA = {x:160, y:30}
-export const FOUNDATION_COORDS_INIT = {x:30, y:-300}
+export const FOUNDATION_COORDS_INIT = {x:STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK*3, y:-300}
 export const FOUNDATION_COORDS_DELTA = {x:160, y:0}
 
 

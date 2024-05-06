@@ -1,6 +1,7 @@
-import { PileType } from "../config/Consts";
+import { PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import CardLayoutManager from './CardLayoutManager';
+import { GameManager } from "./GameManager";
 
 
 export default class PileManager {
@@ -8,11 +9,13 @@ export default class PileManager {
     private foundationPiles: Array<Array<Card>>;
     private stockPile: Array<Card>;
     private wastePile: Array<Card>;
-    tableauBasePositions: { x: number; y: number; }[];
-    cardLayoutManager: any;
 
-    constructor() {
+    cardLayoutManager: any;
+    gameplayContainer: Phaser.GameObjects.Container;
+
+    constructor(gameplayContainer : Phaser.GameObjects.Container) {
         // Initialize empty tableau piles (7 in total)
+        this.gameplayContainer = gameplayContainer;
         this.tableauPiles = Array.from({ length: 7 }, () => []);
 
         // Initialize empty foundation piles (4 in total, one per suit)
@@ -23,15 +26,40 @@ export default class PileManager {
         this.wastePile = [];
 
 
-        // Example base positions
-        this.tableauBasePositions = [
-            { x: 100, y: 200 },
-            { x: 200, y: 200 },
-            { x: 300, y: 200 },
-            // Additional base positions for other tableau piles
-        ];
-
         this.cardLayoutManager = new CardLayoutManager();
+    }
+    
+    // Move the top card from the stock pile to the waste pile
+    moveTopCardStockToWaste() {
+        const card = this.stockPile.pop(); // Take the top card from the stock pile
+        console.log(card?.depth, card?.getName())
+        if (card) {
+            card.setInteractive(false); // Temporarily disable interaction
+            // Create a tween to move the card visually to the waste pile
+
+            card.scene.tweens.add({
+                targets: card,
+                x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,
+                y: STOCK_COORDS.y,
+                duration: 500, // Adjust the duration as needed
+                ease: 'Cubic.easeInOut',
+                onComplete: () => {
+                    card.setFaceUp(true); // Flip the card to show its face
+                    card.setInteractive(true); // Re-enable interaction if needed
+                    this.wastePile.push(card); // Add the card to the waste pile
+                    card.setPileType(PileType.Waste);
+                    card.pileIndex = this.wastePile.length - 1;
+                    card.setDepth (card.pileIndex);
+                    this.gameplayContainer.sort("depth");
+                }
+            });
+
+            card.setDepth (100000);
+            this.gameplayContainer.sort("depth");
+        }
+    }
+    getTopStockCard(): Card | undefined {
+        return this.stockPile[this.stockPile.length - 1];
     }
 
    // Distribute the deck into piles based on Klondike Solitaire rules
@@ -43,16 +71,17 @@ export default class PileManager {
                 if (card) {
                     card.setFaceUp(j === i); // Only the top card in each pile is face-up
                     this.tableauPiles[i].push(card);
+                    card.setPileType(PileType.Tableau)
                 }
             }
         }
 
         // The remaining cards go to the stock pile
         this.stockPile = deck; // The rest of the deck becomes the stock
+        this.stockPile.forEach(x => x.setPileType(PileType.Stock));
     }
 
     // Tableau Management
-
     addCardToTableau(card: Card, pileIndex: number) {
         card.setPile(PileType.Tableau, pileIndex);
         this.tableauPiles[pileIndex].push(card);
@@ -78,12 +107,7 @@ export default class PileManager {
         }
     }
 
-    layoutTableau() {
-        this.tableauPiles.forEach((pile, index) => {
-            const basePosition = this.tableauBasePositions[index];
-            this.cardLayoutManager.layoutTableauPile(pile, basePosition.x, basePosition.y);
-        });
-    }
+
 
     // Foundation Management
 

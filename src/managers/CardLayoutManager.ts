@@ -70,6 +70,26 @@ class CardLayoutManager {
             }
         }
 
+
+    // Add a visual indicator for the waste pile
+    addWasteIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
+        // Create a sprite for the waste pile indicator
+        const wasteIndicator = scene.add.sprite(STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK, STOCK_COORDS.y, 'cards', 'cards/holder_foundation_cards.png');
+        wasteIndicator.setDepth(9000); // Ensure the indicator is below cards
+        wasteIndicator.setScale(CARD_SCALE);
+        cont.add(wasteIndicator);
+    }    
+    // Add a visual indicator for the stock pile
+    addStockIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
+        // Create a sprite for the waste pile indicator
+        const wasteIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'cards', 'cards/holder_stock_cards.png');
+        wasteIndicator.setDepth(9000); // Ensure the indicator is below cards
+        wasteIndicator.setScale(CARD_SCALE);
+        cont.add(wasteIndicator);
+    }
+
+        
+
     
 }
 

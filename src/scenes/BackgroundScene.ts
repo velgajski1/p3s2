@@ -32,7 +32,7 @@ export class BackgroundScene extends Phaser.Scene {
 
     // Method to change the background color, optionally to a specific color
     public changeBackgroundColor(colorIndex?: number): void {
-        console.log(colorIndex)
+
         // If a specific color index is provided, use it; otherwise, use the current index
         if (colorIndex !== undefined && colorIndex >= 0 && colorIndex < this.backgroundColors.length) {
             this.currentColorIndex = colorIndex;

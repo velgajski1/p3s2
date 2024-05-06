@@ -109,7 +109,7 @@ export class UIScene extends Phaser.Scene {
     updateTextPos(){
         this.timeText.x = this.scoreText.x + this.scoreText.width
         this.movesText.x = this.timeText.x + this.timeText.width
-        console.log(this.timeText.x, this.scoreText.x, this.scoreText.width)
+
     }
 
     public setTime(time: number) : void {
