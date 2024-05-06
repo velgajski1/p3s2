@@ -1,0 +1,52 @@
+class ToggleSwitch extends Phaser.GameObjects.Container {
+    icon1: Phaser.GameObjects.Image;
+    icon2: Phaser.GameObjects.Image;
+
+    constructor(scene: Phaser.Scene, x: number , y: number , icon1OffTexture: any, icon1OnTexture: any, icon2OffTexture: any, icon2OnTexture: any) {
+        super(scene, x, y);
+
+        // Create icons using the provided texture names
+        this.icon1 = this.createIcon(icon1OffTexture, icon1OnTexture);
+        this.icon2 = this.createIcon(icon2OffTexture, icon2OnTexture, 100); // Assuming some horizontal spacing for example
+
+        // Add icons to the container
+        this.add([this.icon1, this.icon2]);
+
+        // Add the whole container to the scene
+        scene.add.existing(this);
+
+        // Initialize with the first icon turned "on"
+        this.toggleIcon(this.icon1, true);
+    }
+
+    createIcon(offTexture: string | Phaser.Textures.Texture, onTexture: any, xOffset = 0) {
+        // Create both "on" and "off" states for an icon
+        let icon = this.scene.add.image(xOffset, 0, offTexture).setInteractive();
+        (icon as any).onTexture = onTexture;
+        (icon as any).offTexture = offTexture;
+        (icon as any).state = false; // Start as "off"
+
+        icon.on('pointerdown', () => {
+            this.toggleIcon(icon, true);
+        });
+
+        return icon;
+    }
+
+    private toggleIcon(icon: Phaser.GameObjects.Image, state: boolean): void {
+        const newStateTexture: string = state ? (icon as any).onTexture : (icon as any).offTexture;
+        icon.setTexture(newStateTexture);
+        (icon as any).state = state;
+
+        // When one icon is turned on, the other is turned off
+        if (icon === this.icon1) {
+            this.icon2.setTexture((this.icon2 as any).offTexture);
+            (this.icon2 as any).state = !state;
+        } else {
+            this.icon1.setTexture((this.icon1 as any).offTexture);
+            (this.icon1 as any).state = !state;
+        }
+    }
+}
+
+export default ToggleSwitch;

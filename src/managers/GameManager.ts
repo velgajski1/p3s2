@@ -1,60 +1,117 @@
+import Phaser from 'phaser';
+import Card from '../elements/Card'; // Adjust import path as necessary
+import PileManager from './PileManager';
+import CardLayoutManager from './CardLayoutManager';
+import { Rank, Suit } from './CardNameManager';
+
 export class GameManager {
-
-
     private score: number = 0;
     private startTime: number;
     private elapsedTime: number = 0;
     private gameScene: Phaser.Scene;
     private moves: number = 0;
 
+    private pileManager: PileManager;
+    private layoutManager: CardLayoutManager;
+    private deck: Card[] = [];
 
-    constructor(gameScene: Phaser.Scene) {
+    private gameplayContainer: Phaser.GameObjects.Container;
+
+    constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         this.gameScene = gameScene;
         this.startTime = Date.now();
+        this.gameplayContainer = gameplayContainer;
 
-        // Set up an event to update the timer in the game loop
+        // Initialize the managers responsible for handling piles and layout
+        this.pileManager = new PileManager();
+        this.layoutManager = new CardLayoutManager();
+
+        // Set up a timer event to update the elapsed time in the game loop
         this.gameScene.time.addEvent({
             delay: 1000,
             callback: this.updateTimer,
             callbackScope: this,
             loop: true
         });
-
-   
     }
 
     startGame(): void {
         this.score = 0;
+        this.moves = 0;
         this.startTime = Date.now();
-        // Reset other game states if needed
+        this.elapsedTime = 0;
+
+        // Reset other game states and initialize the deck
+        this.createAndShuffleDeck();
+        this.layoutInitialCards();
     }
 
     incrementScore(amount: number): void {
         this.score += amount;
-
     }
 
-    incrementMoves() : void {
+    incrementMoves(): void {
         this.moves++;
     }
 
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+
+        console.log(this.gameplayContainer)
+
     }
 
-    getElapsedTime(): number
-    {
-       return this.elapsedTime;
+    getElapsedTime(): number {
+        return this.elapsedTime;
     }
-    getCurrentScore()
-    {
+
+    getCurrentScore(): number {
         return this.score;
     }
 
-    getMoves()
-    {
+    getMoves(): number {
         return this.moves;
     }
 
-    // Additional game logic methods...
+    // Create and shuffle the deck
+    // Update the createAndShuffleDeck method to use the Suit and Rank enums
+    private createAndShuffleDeck() {
+        const suits = [Suit.Clubs, Suit.Diamonds, Suit.Hearts, Suit.Spades];
+        const ranks = [
+            Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Six, Rank.Seven,
+            Rank.Eight, Rank.Nine, Rank.Ten, Rank.Jack, Rank.Queen, Rank.King, Rank.Ace
+        ];
+
+        // Create cards for each suit and rank combination
+        for (const suit of suits) {
+            for (const rank of ranks) {
+                const card = new Card(this.gameScene, 0, 0, suit, rank, true ); // Adjust parameters as needed
+                this.gameplayContainer.add(card)
+                this.deck.push(card);
+            }
+        }
+
+        // Shuffle the deck
+        this.deck = this.shuffleDeck(this.deck);
+    }
+
+    // Shuffle the deck (using the Fisher-Yates algorithm)
+    private shuffleDeck(deck: Card[]): Card[] {
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        return deck;
+    }
+
+    // Lay out the cards in the initial game arrangement
+    private layoutInitialCards() {
+        // Use the pile manager to distribute cards and the layout manager to arrange them
+        this.pileManager.distributeCardsToPiles(this.deck);
+        this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
+        this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());
+        this.layoutManager.layoutStockPile(this.pileManager.getStockPile())
+        this.layoutManager.layoutWastePile(this.pileManager.getWastePile())
+        this.gameplayContainer.sort('depth');
+    }
 }

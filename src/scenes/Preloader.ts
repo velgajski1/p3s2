@@ -1,7 +1,9 @@
 import { Scene } from 'phaser';
+import { CardNameManager } from '../managers/CardNameManager';
 
 export class Preloader extends Scene
 {
+    cardManager: CardNameManager;
     constructor ()
     {
         super('Preloader');
@@ -47,6 +49,10 @@ export class Preloader extends Scene
         this.load.image('settings', 'settings.png');
         this.load.image('undo', 'undo.png');
         this.load.image('undo_na', 'undo_na.png');
+
+        this.load.json('cardData', 'assets.json');
+
+        this.load.multiatlas('cards', 'assets.json', 'assets');
     }
 
     create ()
@@ -55,6 +61,13 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        const cardData = this.cache.json.get('cardData');
+        console.log(cardData);
+        const frames = cardData.textures[0].frames;
+        
+
+        this.cardManager = CardNameManager.Instance;
+        this.cardManager.loadCardData(frames)
        
         this.scene.start('BackgroundScene');
         this.scene.launch('GameplayScene');
