@@ -2,6 +2,7 @@
 import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
+import PileManager from "./PileManager";
 class CardLayoutManager {
     // Layout method for stock pile, usually a single stack
     layoutStockPile(cards: Card[]) {
@@ -75,17 +76,23 @@ class CardLayoutManager {
     addWasteIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
         const wasteIndicator = scene.add.sprite(STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK, STOCK_COORDS.y, 'cards', 'cards/holder_foundation_cards.png');
-        wasteIndicator.setDepth(9000); // Ensure the indicator is below cards
+        wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
         wasteIndicator.setScale(CARD_SCALE);
         cont.add(wasteIndicator);
     }    
     // Add a visual indicator for the stock pile
-    addStockIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
+    addStockIndicator(pileManager: PileManager, scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        const wasteIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'cards', 'cards/holder_stock_cards.png');
-        wasteIndicator.setDepth(9000); // Ensure the indicator is below cards
-        wasteIndicator.setScale(CARD_SCALE);
-        cont.add(wasteIndicator);
+        const stockIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'cards', 'cards/holder_stock_cards.png');
+        stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
+        stockIndicator.setScale(CARD_SCALE);
+        cont.add(stockIndicator);
+
+        // Make the indicator interactive and listen for clicks
+        stockIndicator.setInteractive();
+        stockIndicator.on('pointerdown', () => {
+            pileManager.moveAllCardsFromWasteToStock(); // Move all cards from waste back to stock
+        });
     }
 
         

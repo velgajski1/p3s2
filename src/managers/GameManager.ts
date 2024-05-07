@@ -145,6 +145,7 @@ export class GameManager {
         // Use the pile manager to distribute cards and the layout manager to arrange them
         this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
         this.layoutManager.addWasteIndicator(this.gameScene,this.gameplayContainer)
+        this.layoutManager.addStockIndicator(this.pileManager, this.gameScene,this.gameplayContainer)
         this.pileManager.distributeCardsToPiles(this.deck);
         this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
         this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());

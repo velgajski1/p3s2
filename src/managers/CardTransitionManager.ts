@@ -1,25 +1,60 @@
-import { PileType } from '../config/Consts';
+import { PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 
 class CardTransitionManager {
+
     private scene: Phaser.Scene;
 
-    constructor(scene: Phaser.Scene) {
-        this.scene = scene;
-    }
+    constructor( ) { }
 
-    // Transition a card smoothly from one position to another
-    moveCardWithTransition(card: Card, targetX: number, targetY: number, duration: number = 500, onComplete?: () => void) {
-        this.scene.tweens.add({
-            targets: card,
-            x: targetX,
-            y: targetY,
-            duration,
-            ease: 'Cubic.easeInOut',
-            onComplete: () => {
-                if (onComplete) onComplete();
+    moveAllCardsFromWasteToStock(stockPile: Card[], wastePile: Card[], gameplayContainer: Phaser.GameObjects.Container)
+    {
+        // Reverse the waste pile and add to the stock
+        while (wastePile.length > 0) {
+            const card = wastePile.pop();
+            if (card) {
+                card.setFaceUp(false); // Ensure the card is face-down
+                card.setPileType(PileType.Stock);
+                stockPile.push(card); // Add back to the stock pile
+                card.pileIndex = stockPile.length-1;
+                card.setDepth (card.pileIndex);
+                gameplayContainer.sort("depth");
+                card.setX(STOCK_COORDS.x)
+                card.setY(STOCK_COORDS.y)
             }
-        });
+        }
+    }
+  
+
+    moveTopCardStockToWaste(stockPile: any[], wastePile: any[], gameplayContainer: Phaser.GameObjects.Container) 
+    {
+        
+        const card = stockPile.pop(); // Take the top card from the stock pile
+        console.log(card?.depth, card?.getName())
+        if (card) {
+            card.setInteractive(false); // Temporarily disable interaction
+            // Create a tween to move the card visually to the waste pile
+
+            card.scene.tweens.add({
+                targets: card,
+                x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,
+                y: STOCK_COORDS.y,
+                duration: 500, // Adjust the duration as needed
+                ease: 'Cubic.easeInOut',
+                onComplete: () => {
+                    card.setFaceUp(true); // Flip the card to show its face
+                    card.setInteractive(true); // Re-enable interaction if needed
+                    wastePile.push(card); // Add the card to the waste pile
+                    card.setPileType(PileType.Waste);
+                    card.pileIndex = wastePile.length - 1;
+                    card.setDepth (card.pileIndex);
+                    gameplayContainer.sort("depth");
+                }
+            });
+
+            card.setDepth (100000);
+            gameplayContainer.sort("depth");
+        }
     }
 
     // Flip the card with animation (from back to front or vice versa)
@@ -43,17 +78,7 @@ class CardTransitionManager {
         });
     }
 
-    // Transition a card to a pile based on the target pile type
-    moveCardToPile(card: Card, targetX: number, targetY: number, targetPileType: PileType, targetPileIndex: number, duration: number = 500, onComplete?: () => void) {
-        // Example: Validate movement based on pile type, if needed
 
-        // Animate the card to the target position
-        this.moveCardWithTransition(card, targetX, targetY, duration, () => {
-            // Update the card's internal state (e.g., pile type)
-            card.setPile(targetPileType, targetPileIndex);
-            if (onComplete) onComplete();
-        });
-    }
 }
 
 export default CardTransitionManager;

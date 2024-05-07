@@ -1,6 +1,7 @@
 import { PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import CardLayoutManager from './CardLayoutManager';
+import CardTransitionManager from "./CardTransitionManager";
 import { GameManager } from "./GameManager";
 
 
@@ -12,6 +13,7 @@ export default class PileManager {
 
     cardLayoutManager: any;
     gameplayContainer: Phaser.GameObjects.Container;
+    cardTransitionManager : CardTransitionManager;
 
     constructor(gameplayContainer : Phaser.GameObjects.Container) {
         // Initialize empty tableau piles (7 in total)
@@ -27,36 +29,19 @@ export default class PileManager {
 
 
         this.cardLayoutManager = new CardLayoutManager();
+        this.cardTransitionManager = new CardTransitionManager();
+    }
+
+    moveAllCardsFromWasteToStock() {
+        this.cardTransitionManager.moveAllCardsFromWasteToStock(this.stockPile, this.wastePile, this.gameplayContainer);
+
+
     }
     
     // Move the top card from the stock pile to the waste pile
     moveTopCardStockToWaste() {
-        const card = this.stockPile.pop(); // Take the top card from the stock pile
-        console.log(card?.depth, card?.getName())
-        if (card) {
-            card.setInteractive(false); // Temporarily disable interaction
-            // Create a tween to move the card visually to the waste pile
+        this.cardTransitionManager.moveTopCardStockToWaste(this.stockPile, this.wastePile, this.gameplayContainer);
 
-            card.scene.tweens.add({
-                targets: card,
-                x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,
-                y: STOCK_COORDS.y,
-                duration: 500, // Adjust the duration as needed
-                ease: 'Cubic.easeInOut',
-                onComplete: () => {
-                    card.setFaceUp(true); // Flip the card to show its face
-                    card.setInteractive(true); // Re-enable interaction if needed
-                    this.wastePile.push(card); // Add the card to the waste pile
-                    card.setPileType(PileType.Waste);
-                    card.pileIndex = this.wastePile.length - 1;
-                    card.setDepth (card.pileIndex);
-                    this.gameplayContainer.sort("depth");
-                }
-            });
-
-            card.setDepth (100000);
-            this.gameplayContainer.sort("depth");
-        }
     }
     getTopStockCard(): Card | undefined {
         return this.stockPile[this.stockPile.length - 1];
