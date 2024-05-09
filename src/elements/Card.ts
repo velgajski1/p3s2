@@ -9,7 +9,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     private faceTexture: string; // Path to the face texture
     private backTexture: string; // Path to the back texture
-    private isFaceUp: boolean; // Card's state
+    public isFaceUp: boolean; // Card's state
     pileType: PileType;
     pileIndex: any;
     suit: Suit;

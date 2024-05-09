@@ -3,6 +3,7 @@ import Card from '../elements/Card'; // Adjust import path as necessary
 import PileManager from './PileManager';
 import CardLayoutManager from './CardLayoutManager';
 import { Rank, Suit } from './CardNameManager';
+import ControlManager from './ControlManager';
 
 export class GameManager {
     private static instance: GameManager | null = null;
@@ -17,6 +18,7 @@ export class GameManager {
     private deck: Card[] = [];
 
     private gameplayContainer: Phaser.GameObjects.Container;
+    controlManager: ControlManager;
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         GameManager.instance = this;
@@ -27,6 +29,7 @@ export class GameManager {
         // Initialize the managers responsible for handling piles and layout
         this.pileManager = new PileManager(this.gameplayContainer);
         this.layoutManager = new CardLayoutManager();
+        this.controlManager = new ControlManager(this.pileManager);
 
         // Set up a timer event to update the elapsed time in the game loop
         this.gameScene.time.addEvent({
@@ -52,19 +55,7 @@ export class GameManager {
         return this.instance;
     }
 
-    setupStockInteraction(stockCardSprite: Phaser.GameObjects.Sprite) {
-        // Make the stock card interactive
-        stockCardSprite.setInteractive();
-        stockCardSprite.on('pointerdown', () => {
-            this.pileManager.moveTopCardStockToWaste(); // Move the card from stock to waste
-            this.updateWasteLayout(); // Update the visual layout of the waste pile
-        });
-    }
 
-    // Update the layout of the waste pile to reflect the latest top card
-    updateWasteLayout() {
-        this.layoutManager.layoutWastePile( this.pileManager.getWastePile() ); // Adjust x, y to desired coordinates
-    }
 
     startGame(): void {
         this.score = 0;
@@ -75,6 +66,7 @@ export class GameManager {
         // Reset other game states and initialize the deck
         this.createAndShuffleDeck();
         this.layoutInitialCards();
+        this.controlManager.setupControls()
     }
 
     incrementScore(amount: number): void {
@@ -87,14 +79,14 @@ export class GameManager {
 
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+        // this.pileManager.listTableauCardsWithDepthAndName()
 
 
     }   
     
     updateTimerQuick(): void {
-
         this.gameplayContainer.sort('depth');
-
+        for (var i = 0; i < 7; i++) this.pileManager.moveTopCardTableauToFoundation(i)
     }
 
     getElapsedTime(): number {

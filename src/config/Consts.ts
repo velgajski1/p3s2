@@ -20,7 +20,8 @@ export enum PileType {
     Tableau = 'Tableau',
     Foundation = 'Foundation',
     Stock = 'Stock',
-    Waste = 'Waste'
+    Waste = 'Waste',
+    Transition = 'Transition'
 }
 
 export const CARD_SCALE = 0.75;

@@ -34,7 +34,7 @@ class CardLayoutManager {
                 card.y = TABLEU_COORDS_INIT.y + cardIndex * TABLEU_COORDS_DELTA.y; // Vertical overlapping offset
                 card.setDepth(pileIndex*100 + cardIndex); // Ensure correct stacking order
                 card.scale = CARD_SCALE;
-                console.log(card.depth, Suit[card.suit], Rank[card.rank])
+                
 
             });
             
