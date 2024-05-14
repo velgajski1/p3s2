@@ -3,8 +3,13 @@ import Phaser from 'phaser';
 import { PileType } from '../config/Consts';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { GameManager } from '../managers/GameManager';
+import ControlManager from '../managers/ControlManager';
 
 export default class Card extends Phaser.GameObjects.Sprite {
+    addInteractive()
+    {
+        this.controlManager.setupCardClickControl(this);
+    }
 
 
     private faceTexture: string; // Path to the face texture
@@ -14,6 +19,8 @@ export default class Card extends Phaser.GameObjects.Sprite {
     pileIndex: any;
     suit: Suit;
     rank: Rank;
+    controlManager: ControlManager;
+    inTransition: boolean = false;
 
 
 
@@ -38,10 +45,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
         // Add this card to the scene
         scene.add.existing(this);
 
-
-        // Add interactivity
-        this.setInteractive();
-        this.on('pointerdown', this.handleClick, this); // Handle click events
     }
 
     setPileType(pileType: PileType)
@@ -49,17 +52,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
         this.pileType = pileType;
     }
 
-    // Handle card clicks (move from stock to waste if backside is active)
-    handleClick(): void {
-        
-        if (!this.isFaceUp && this.pileType === PileType.Stock) {
-            // Move this card from stock to waste using PileManager
-            
-            GameManager.getInstance(this.scene, this.parentContainer).pileManager.moveTopCardStockToWaste();
-            this.setPile(PileType.Waste, 0); // Update the pile type
-            this.setFaceUp(true); // Reveal the card face
-        }
-    }
+
 
 
     flip(): void {

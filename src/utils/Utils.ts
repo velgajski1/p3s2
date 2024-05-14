@@ -14,3 +14,8 @@ export function formatTime(seconds: number, format: 'hh:mm:ss' | 'mm:ss' = 'mm:s
         return `${pad(totalMinutes, 2)}:${pad(secs, 2)}`;
     }
 }
+
+export function getTweensForObject(scene: Phaser.Scene, target: Phaser.GameObjects.GameObject): Phaser.Tweens.Tween[] {
+    const tweenManager = scene.tweens;
+    return tweenManager.getTweensOf(target)
+}

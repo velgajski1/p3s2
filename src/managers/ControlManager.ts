@@ -1,11 +1,13 @@
 // ControlManager.ts
 import { PileType } from '../config/Consts';
 import Card from '../elements/Card';
+import { GameManager } from './GameManager';
 import PileManager from './PileManager';
 
 class ControlManager {
 
     private pileManager: PileManager;
+    private isClickEnabled: boolean = true;
 
     constructor(pileManager: PileManager) {
         this.pileManager = pileManager;
@@ -13,8 +15,11 @@ class ControlManager {
 
     // Set up click controls for a specific card
     setupCardClickControl(card: Card) {
+     
+        card.removeAllListeners('pointerdown');
         card.setInteractive();
         card.on('pointerdown', () => this.handleCardClick(card));
+        card.controlManager = this;
     }
 
     setupControls() {
@@ -37,6 +42,15 @@ class ControlManager {
     // Handler for card click events
     // Handle the click event based on card's pile type
     private handleCardClick(card: Card) {
+        // Prevent additional clicks if a card click was already processed
+        if (!this.isClickEnabled) {
+          
+            return;
+        }
+
+        // Disable clicks for the cooldown period
+        this.disableCardClicksTemporarily();
+
         switch (card.pileType) {
             case PileType.Tableau:
                 if (card.isFaceUp)  this.pileManager.handleTableauClicked(card);
@@ -44,17 +58,22 @@ class ControlManager {
 
             case PileType.Foundation:
                 // Example: Show an error or display a message
-                console.log('Foundation cards are not interactive in this game.');
+               
                 break;
 
             case PileType.Stock:
                 // Example: Move to the waste pile or flip if applicable
+               
+                
                 this.pileManager.moveTopCardStockToWaste();
                 break;
 
             case PileType.Waste:
+               
                 // Example: Attempt to move the card to another pile if possible
-                console.log('Clicked on waste card ', card.getName());
+                this.pileManager.handleWasteClicked(card);
+                // this.pileManager.listTableauCardsWithDepthAndName();
+                this.pileManager.gameplayContainer.sort("depth");
                 break;
 
             default:
@@ -62,6 +81,16 @@ class ControlManager {
                 break;
         }
     }
+
+        // Disable card clicks and re-enable after 100 ms
+        private disableCardClicksTemporarily() {
+            this.isClickEnabled = false;
+    
+            // Re-enable clicks after 100 milliseconds
+            setTimeout(() => {
+                this.isClickEnabled = true;
+            }, 120);
+        }
 
 }
 

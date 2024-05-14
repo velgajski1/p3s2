@@ -19,6 +19,7 @@ export class GameManager {
 
     private gameplayContainer: Phaser.GameObjects.Container;
     controlManager: ControlManager;
+    quickTimeEvent: Phaser.Time.TimerEvent;
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         GameManager.instance = this;
@@ -39,13 +40,26 @@ export class GameManager {
             loop: true
         });
 
+        this.addQuickTimeEvent()
+
         this.gameScene.time.addEvent({
             delay: 10,
-            callback: this.updateTimerQuick,
+            callback:  () => this.gameplayContainer.sort('depth'),
             callbackScope: this,
             loop: true
         });
 
+    }
+
+    public addQuickTimeEvent()
+    {
+        this.quickTimeEvent = this.gameScene.time.addEvent({
+            delay: 300,
+            callback: this.updateTimerQuick,
+            callbackScope: this,
+            loop: true
+        });        
+        
     }
 
     public static getInstance(scene: Phaser.Scene, container : Phaser.GameObjects.Container): GameManager {
@@ -80,13 +94,16 @@ export class GameManager {
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
         // this.pileManager.listTableauCardsWithDepthAndName()
+        this.pileManager.listWasteCardsWithDepthAndName()
+        
 
 
     }   
     
     updateTimerQuick(): void {
-        this.gameplayContainer.sort('depth');
-        for (var i = 0; i < 7; i++) this.pileManager.moveTopCardTableauToFoundation(i)
+        for (var i = 0; i < 7; i++) {
+            if (this.pileManager.moveTopCardTableauToFoundation(i)) break
+        }
     }
 
     getElapsedTime(): number {
