@@ -1,11 +1,36 @@
 // Card.ts
 import Phaser from 'phaser';
-import { PileType } from '../config/Consts';
+import { PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { GameManager } from '../managers/GameManager';
 import ControlManager from '../managers/ControlManager';
+import { getTweensForObject } from '../utils/Utils';
+
 
 export default class Card extends Phaser.GameObjects.Sprite {
+    renewWasteCoords(cManager : ControlManager): void
+    {
+        if (cManager)
+        {
+            this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK;
+            this.y = STOCK_COORDS.y;
+        }
+        
+
+    }
+    
+    finishTweens()
+    {
+        getTweensForObject(this.scene, this).forEach(x => x.complete());
+    }
+
+    isOnTableu()
+    {
+        return (PileType.Tableau == this.pileType)
+    }
+    
+    isBeingFlipped: boolean = false;
+    
     addInteractive()
     {
         this.controlManager.setupCardClickControl(this);
@@ -26,11 +51,13 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
+
         let faceTexture = CardNameManager.Instance.getCardName(suit, rank);
+
         super(scene, x, y, 'cards', 'cards/backside.png');
         if (isFaceUp)
         {
-            this.setTexture(faceTexture);
+            this.setTexture2(faceTexture);
         }
         this.suit = suit;
         this.rank = rank;
@@ -38,7 +65,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
         
         this.faceTexture = faceTexture;
-        this.backTexture =  'cards/backside.png';
+        this.backTexture =  'backside';
         this.isFaceUp = isFaceUp; // Initially, cards are face down
 
 
@@ -57,10 +84,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     flip(): void {
         if (this.isFaceUp) {
-            this.setTexture(this.backTexture);
+            this.setTexture2(this.backTexture);
             this.isFaceUp = false;
         } else {
-            this.setTexture(this.faceTexture);
+            this.setTexture2(this.faceTexture);
             this.isFaceUp = true;
         }
     }
@@ -68,10 +95,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
     setFaceUp(isFaceUp: boolean)
     {
         if (isFaceUp) {
-            this.setTexture(this.faceTexture);
+            this.setTexture2(this.faceTexture);
             this.isFaceUp = isFaceUp;
         } else {
-            this.setTexture(this.backTexture);
+            this.setTexture2(this.backTexture);
             this.isFaceUp = isFaceUp;
         }
     }
@@ -81,8 +108,9 @@ export default class Card extends Phaser.GameObjects.Sprite {
         this.pileIndex = pileIndex;
     }
 
-    override setTexture(frame: string) : this
+    setTexture2(frame: string) : this
     {
+      
         super.setTexture('cards', 'cards/' + frame + '.png')
         return this;
     }

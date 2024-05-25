@@ -21,7 +21,7 @@ export class BackgroundScene extends Phaser.Scene {
     create(): void {
         // Set the default background color
         this.changeBackgroundColor();
-        // console.log("created")
+        // 
         // Additional setup as needed
     }
 
@@ -41,7 +41,7 @@ export class BackgroundScene extends Phaser.Scene {
         // Apply the background color
         this.cameras.main.setBackgroundColor(this.backgroundColors[this.currentColorIndex]);
 
-        // console.log(this.backgroundColors[this.currentColorIndex])
+        // 
         // Example of how to cycle colors every call
         // this.currentColorIndex = (this.currentColorIndex + 1) % this.backgroundColors.length;
     }

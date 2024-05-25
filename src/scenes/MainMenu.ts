@@ -72,7 +72,7 @@ export class MainMenu extends Phaser.Scene {
         });
 
         this.cancelButton = new Button(this, 0, 180, translate(LanguageConfig.Cancel), () => {
-            // console.log('Button clicked');
+            // 
             this.scene.remove('MainMenu');
         }, {
             color: 0x6CA4A8, 
@@ -96,7 +96,7 @@ export class MainMenu extends Phaser.Scene {
 
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
         // Use provided gameSize or current game size
-        // console.log(gameSize);
+        // 
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
     
@@ -123,7 +123,7 @@ export class MainMenu extends Phaser.Scene {
     }
     
     restartGame = () => {
-        console.log("restartGame")
+        
     }    
     newGame1 = () => {
 

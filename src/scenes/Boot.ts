@@ -21,6 +21,6 @@ export class Boot extends Scene
     {
         this.scene.start('Preloader');
         Language.initLanguage(this.game)
-        console.log(Language.getTranslation("GameOver"));
+   
     }
 }

@@ -4,6 +4,13 @@ import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
+    layoutAll(stockpile:Card[], wastepile :Card[], tableauPiles: Array<Array<Card>>,foundationPiles: Array<Array<Card>>) 
+    {
+        this.layoutStockPile(stockpile)
+        this.layoutWastePile(wastepile)
+        this.layoutTableauPiles(tableauPiles)
+        this.layoutFoundationPiles(foundationPiles)
+    }
     // Layout method for stock pile, usually a single stack
     layoutStockPile(cards: Card[]) {
         cards.forEach((card, index) => {

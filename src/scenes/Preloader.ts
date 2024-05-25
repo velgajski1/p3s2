@@ -62,7 +62,7 @@ export class Preloader extends Scene
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         const cardData = this.cache.json.get('cardData');
-        console.log(cardData);
+      
         const frames = cardData.textures[0].frames;
         
 

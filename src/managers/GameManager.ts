@@ -4,6 +4,7 @@ import PileManager from './PileManager';
 import CardLayoutManager from './CardLayoutManager';
 import { Rank, Suit } from './CardNameManager';
 import ControlManager from './ControlManager';
+import UndoManager from './UndoManager';
 
 export class GameManager {
     private static instance: GameManager | null = null;
@@ -14,21 +15,24 @@ export class GameManager {
     private moves: number = 0;
 
     public pileManager: PileManager;
-    private layoutManager: CardLayoutManager;
+    public layoutManager: CardLayoutManager;
     private deck: Card[] = [];
 
     private gameplayContainer: Phaser.GameObjects.Container;
     controlManager: ControlManager;
     quickTimeEvent: Phaser.Time.TimerEvent;
 
+    public static gameScene : Phaser.Scene 
+
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         GameManager.instance = this;
         this.gameScene = gameScene;
         this.startTime = Date.now();
         this.gameplayContainer = gameplayContainer;
+        GameManager.gameScene = gameScene;
 
         // Initialize the managers responsible for handling piles and layout
-        this.pileManager = new PileManager(this.gameplayContainer);
+        this.pileManager = new PileManager(this.gameplayContainer, this);
         this.layoutManager = new CardLayoutManager();
         this.controlManager = new ControlManager(this.pileManager);
 
@@ -44,7 +48,10 @@ export class GameManager {
 
         this.gameScene.time.addEvent({
             delay: 10,
-            callback:  () => this.gameplayContainer.sort('depth'),
+            callback:  () => {
+                // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
+                this.gameplayContainer.sort('depth');
+            },
             callbackScope: this,
             loop: true
         });
@@ -54,7 +61,7 @@ export class GameManager {
     public addQuickTimeEvent()
     {
         this.quickTimeEvent = this.gameScene.time.addEvent({
-            delay: 300,
+            delay: 600,
             callback: this.updateTimerQuick,
             callbackScope: this,
             loop: true
@@ -93,17 +100,24 @@ export class GameManager {
 
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
-        // this.pileManager.listTableauCardsWithDepthAndName()
-        this.pileManager.listWasteCardsWithDepthAndName()
+        // this.pileManager.listTableauCardsWithDepthAndName(true)
         
 
 
     }   
     
     updateTimerQuick(): void {
+        
         for (var i = 0; i < 7; i++) {
-            if (this.pileManager.moveTopCardTableauToFoundation(i)) break
+            let c = this.pileManager.getTopCardFromTableau(i);
+            if (c?.isFaceUp==false && c?.isBeingFlipped == false) 
+            {
+                c.setFaceUp(true);
+            }
+            
         }
+        this.pileManager.fixTableuDepth()
+    
     }
 
     getElapsedTime(): number {
@@ -155,11 +169,17 @@ export class GameManager {
         this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
         this.layoutManager.addWasteIndicator(this.gameScene,this.gameplayContainer)
         this.layoutManager.addStockIndicator(this.pileManager, this.gameScene,this.gameplayContainer)
+
         this.pileManager.distributeCardsToPiles(this.deck);
+
         this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
         this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());
         this.layoutManager.layoutStockPile(this.pileManager.getStockPile())
         this.layoutManager.layoutWastePile(this.pileManager.getWastePile())
+
+        
+        
+        UndoManager.getInstance().saveState(this.pileManager.getState())
         
     }
 }

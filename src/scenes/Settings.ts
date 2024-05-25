@@ -90,8 +90,8 @@ export class Settings extends Phaser.Scene {
         new ItemCycleControl(this, -35, 110,  Language.getTranslation(LanguageConfig.Background), BACKGROUND_COLORS, (selectedItem) => {
             
             const backgroundScene = this.scene.get('BackgroundScene') as any; // Use 'as any' if TypeScript complains about missing methods
-            console.log(backgroundScene)
-            console.log(selectedItem)
+            
+            
             // Now, call the method to change the background color
             if (backgroundScene) {
                 backgroundScene.setToColor(selectedItem);

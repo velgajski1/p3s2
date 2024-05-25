@@ -19,3 +19,4 @@ export function getTweensForObject(scene: Phaser.Scene, target: Phaser.GameObjec
     const tweenManager = scene.tweens;
     return tweenManager.getTweensOf(target)
 }
+

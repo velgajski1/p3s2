@@ -1,9 +1,10 @@
-import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA } from "../config/Consts";
-import Card from "../elements/Card";
-import getRankValue, { Rank } from "./CardNameManager";
-import { GameManager } from "./GameManager";
-import PileManager from "./PileManager";
-import UndoManager from "./UndoManager";
+// ControlManager.ts
+import { FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, PileType, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT } from '../config/Consts';
+import Card from '../elements/Card';
+import { getTweensForObject } from '../utils/Utils';
+import getRankValue, { Rank } from './CardNameManager';
+import { GameManager } from './GameManager';
+import PileManager from './PileManager';
 
 class ControlManager {
 
@@ -15,16 +16,12 @@ class ControlManager {
     dragging: any;
     private activeCard?: Card; 
     substack: Card[];
-    private lastKnownPointerPosition: { x: number; y: number } = { x: 0, y: 0 };
-    keyU: any
 
     constructor(pileManager: PileManager) {
         this.pileManager = pileManager;
         this.pileManager.gameplayContainer.setInteractive()
         this.setupGlobalListeners();  // Setup global listeners for move and up events
     }
-
-    public getActiveCard(): Card | undefined { return this.activeCard; }
 
     setupCardClickControl(card: Card): void {
         card.removeAllListeners();
@@ -37,13 +34,6 @@ class ControlManager {
                 this.handleCardClick(card);
                 return;
             } 
-            if (this.activeCard == card) return;
- 
-            if (card.inTransition)
-            {
-                
-                card.finishTweens()
-            }
             
             this.activeCard = card;  // Set the active card
             this.dragStart = pointer.downTime;
@@ -64,35 +54,32 @@ class ControlManager {
     }
 
     private canMoveCard(card: Card): boolean {
-        return card.isFaceUp && (card.pileType === PileType.Waste || card.pileType === PileType.Tableau || card.pileType === PileType.Foundation);
+        return card.isFaceUp && (card.pileType === PileType.Waste || card.pileType === PileType.Tableau);
     }
 
     setupGlobalListeners(): void {
-        const input = this.pileManager.gameplayContainer.scene.input;
-
-        input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-            this.lastKnownPointerPosition = { x: pointer.x, y: pointer.y };
-
+        this.pileManager.gameplayContainer.scene.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+            
             if (!this.dragging && this.activeCard) {
                 const localPoint = this.pileManager.gameplayContainer.getLocalPoint(pointer.x, pointer.y);
                 const movedDistance = Phaser.Math.Distance.Between(
-                    this.activeCard.getData('startX'),
-                    this.activeCard.getData('startY'),
-                    localPoint.x - this.activeCard.getData('dragOffsetX'),
+                    this.activeCard.getData('startX'), 
+                    this.activeCard.getData('startY'), 
+                    localPoint.x - this.activeCard.getData('dragOffsetX'), 
                     localPoint.y - this.activeCard.getData('dragOffsetY')
                 );
                 const holdDuration = pointer.downTime - this.dragStart;
 
                 if (movedDistance > 10 || holdDuration > 700) {
                     this.dragging = true;
-                    this.activeCard.setDepth(this.activeCard.depth + 10000);
+                    this.activeCard.setDepth(this.activeCard.depth+10000)
                     this.substack.forEach(s => {
                         if (s == this.activeCard) return;
-                        s.setDepth(s.depth + 10000);
+                        s.setDepth(s.depth + 10000)
                     });
                 }
             }
-
+            
             if (this.dragging && this.activeCard) {
                 const localPoint = this.pileManager.gameplayContainer.getLocalPoint(pointer.x, pointer.y);
                 const newX = localPoint.x - this.activeCard.getData('dragOffsetX');
@@ -104,19 +91,24 @@ class ControlManager {
                     if (card == this.activeCard) return;
                     card.x = this.activeCard.x;
                     card.y = this.activeCard.y + card.getData('substackoffsetY');  // Adjust Y based on original offset in the substack
+
                 });
             }
         });
-
-        input.on('pointerup', () => {
-            if (this.activeCard) {
+    
+        this.pileManager.gameplayContainer.scene.input.on('pointerup', () => {
+ 
+            if (this.activeCard)
+            {
+                
+            
                 if (this.dragging && this.activeCard) {
-                    this.activeCard.setDepth(this.activeCard.depth - 10000);
+                    this.activeCard.setDepth(this.activeCard.depth-10000)
                     this.substack.forEach(s => {
                         if (s == this.activeCard) return;
-                        s.setDepth(s.depth - 10000);
+                        s.setDepth(s.depth - 10000)
                     });
-
+                   
                     this.handleCardDrop(this.activeCard);
 
                     this.activeCard = undefined;  // Clear the active card reference
@@ -126,34 +118,8 @@ class ControlManager {
                     this.activeCard = undefined;  // Clear the active card reference
                 }
             }
+
         });
-
-    
-    
-        input.on('pointerupoutside', () => {
-            if (this.activeCard) {
-                input.emit('pointerup', this.lastKnownPointerPosition);
-            }
-        });
-
-        // Add window event listeners
-        window.addEventListener('blur', this.handleWindowBlur.bind(this));
-        window.addEventListener('mouseout', this.handleWindowMouseOut.bind(this));
-    }
-
-    private handleWindowBlur(): void {
-        
-        if (this.activeCard) {
-            this.pileManager.gameplayContainer.scene.input.emit('pointerup', this.lastKnownPointerPosition);
-        }
-    }
-    
-    private handleWindowMouseOut(event: MouseEvent): void {
-        if (event.relatedTarget === null || event.relatedTarget === window) {
-            if (this.activeCard) {
-                this.pileManager.gameplayContainer.scene.input.emit('pointerup', this.lastKnownPointerPosition);
-            }
-        }
     }
 
     handleCardDrop(activeCard: Card): void {
@@ -376,7 +342,6 @@ class ControlManager {
         
         
         card.setData("substackoffsetY",0);
-        if (card.pileType == PileType.Waste) card.renewWasteCoords(this)
         this.isClickEnabled = true;
 
     }
@@ -420,24 +385,11 @@ class ControlManager {
                 this.disableCardClicksTemporarily();
             }
         });
-
-        // Create a key object for 'U' for undo
-        this.keyU = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.U);
-        this.keyU.on('down', () => {
-            const undoManager = UndoManager.getInstance(); 
-            const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
-            if (!state) {
-                
-            } else {
-                this.pileManager.setToGameState(state)
-            }
-        });
     }
 
     // Handler for card click events
     // Handle the click event based on card's pile type
     private handleCardClick(card: Card) {
-        
         // Prevent additional clicks if a card click was already processed
         if (!this.isClickEnabled) {
           
@@ -463,7 +415,6 @@ class ControlManager {
 
             case PileType.Waste:
                
-            
                 // Example: Attempt to move the card to another pile if possible
                 this.pileManager.handleWasteClicked(card);
                 // this.pileManager.listTableauCardsWithDepthAndName();

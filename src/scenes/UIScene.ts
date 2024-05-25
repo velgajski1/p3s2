@@ -53,7 +53,7 @@ export class UIScene extends Phaser.Scene {
 
     update(time: number, delta: number): void
     {
-        // console.log("update: "+ this.gameManager.getCurrentScore())
+        // 
         this.scoreText.text = ""+translate(LanguageConfig.Score)+this.gameManager.getCurrentScore()
         this.timeText.text = " | "+translate(LanguageConfig.Time) + formatTime(this.gameManager.getElapsedTime())
         this.movesText.text = " | "+translate(LanguageConfig.Moves) +this.gameManager.getMoves()
@@ -113,6 +113,6 @@ export class UIScene extends Phaser.Scene {
     }
 
     public setTime(time: number) : void {
-        console.log(time);
+        
     }
 }

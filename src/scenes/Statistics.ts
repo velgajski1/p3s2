@@ -104,7 +104,7 @@ export class Statistics extends Phaser.Scene {
 
         this.resetButton = new Button(this, 100, 200, Language.getTranslation(LanguageConfig.ResetStats), () => {
             // Add logic to reset stats here
-            console.log('Reset Stats');
+            
         }, {
             color: 0x4C6A92,
             textColor: '#FFFFFF',

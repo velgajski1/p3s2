@@ -66,7 +66,7 @@ export class WonScene extends Phaser.Scene {
             this.timeBonus, // Example value, replace with actual game data
             this.totalScore // Example value, replace with actual game data
         ];
-        console.log(values)
+        
         const labelStyle = {
             fontFamily: 'Open Sans', 
             fontSize: '24px', 

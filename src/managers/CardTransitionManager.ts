@@ -21,7 +21,7 @@ class CardTransitionManager {
                 
         }
         
-      
+        
         // Reverse the waste pile and add to the stock
         while (wastePile.length > 0) {
             const card = wastePile.pop();
@@ -41,14 +41,14 @@ class CardTransitionManager {
 
     moveCardToTableau(card: Card, targetPileIndex : number, indexWithinTargetPile:number, container: Phaser.GameObjects.Container, onComplete: () => void) {
         card.setInteractive(false); // Temporarily disable interaction during the movement
-        getTweensForObject(card.scene, card).forEach(x => x.remove());
+        getTweensForObject(card.scene, card).forEach(x => x.complete());
 
         // Tween to move the card to the new pile visually
         card.scene.tweens.add({
             targets: card,
             x: TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x*targetPileIndex,
             y: TABLEU_COORDS_INIT.y + TABLEU_COORDS_DELTA.y*(indexWithinTargetPile),
-            duration: 400, // Adjust as necessary
+            duration: 360, // Adjust as necessary
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 // Enable interaction and call the completion callback
@@ -73,7 +73,7 @@ class CardTransitionManager {
             targets: card,
             x: targetX,
             y: targetY,
-            duration: 600, // Adjust as needed
+            duration: 360, // Adjust as needed
             ease: 'Cubic.easeInOut',
             onComplete: () => {
 
@@ -84,6 +84,7 @@ class CardTransitionManager {
 
                 // Re-enable interaction
                 card.setInteractive(true);
+                card.setFaceUp(true)
             }
         });
         card.setDepth (12000);
@@ -94,20 +95,23 @@ class CardTransitionManager {
     moveTopCardStockToWaste(card: Card, stockPile: any[], wastePile: any[], gameplayContainer: Phaser.GameObjects.Container, onComplete?: () => void) 
     {
         getTweensForObject(card.scene, card).forEach(x => x.remove());
+
         
         if (card) {
             // Temporarily disable interaction
             // card.removeInteractive()
 
+            card.inTransition = true;
+
             card.scene.tweens.add({
                 targets: card,
                 x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,
                 y: STOCK_COORDS.y,
-                duration: 300, // Adjust the duration as needed
+                duration: 240, // Adjust the duration as needed
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
+                    card.inTransition = false
                     if (onComplete) onComplete();
-                    // card.addInteractive()
                 }
             });
 
@@ -118,20 +122,25 @@ class CardTransitionManager {
 
     // Flip the card with animation (from back to front or vice versa)
     flipCard(card: Card, duration: number = 300, onComplete?: () => void) {
-
+        if (card.isBeingFlipped) return;
+        card.isBeingFlipped = true;
         card.scene.tweens.add({
             targets: card,
             scaleX: 0, // Shrink to zero width to simulate a flip
             duration: duration / 2,
             onComplete: () => {
                 // Swap textures and then expand back to normal size
+                card.scaleX = 0;
                 card.flip();
+                
                 card.scene.tweens.add({
                     targets: card,
                     scaleX: CARD_SCALE,
                     duration: duration / 2,
                     onComplete: () => {
                         if (onComplete) onComplete();
+                        card.isBeingFlipped = false;
+                        card.scaleX = CARD_SCALE;
                     }
                 });
             }
