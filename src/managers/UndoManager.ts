@@ -1,3 +1,4 @@
+import Card from "../elements/Card";
 import { GameState } from "../utils/types";
 
 export default class UndoManager {
@@ -54,9 +55,44 @@ export default class UndoManager {
     }
 
     private areStatesEqual(state1: GameState, state2: GameState): boolean {
-        return JSON.stringify(state1) === JSON.stringify(state2);
+        // Check if the counts of cards in each pile type match
+        if (state1.tableauPiles.length !== state2.tableauPiles.length ||
+            state1.foundationPiles.length !== state2.foundationPiles.length ||
+            state1.stockPile.length !== state2.stockPile.length ||
+            state1.wastePile.length !== state2.wastePile.length) {
+            return false;
+        }
+    
+        // Function to compare two card piles
+        const comparePiles = (pile1: Card[], pile2: Card[]) => {
+            return pile1.length === pile2.length && pile1.every((card, index) => 
+                card.suit === pile2[index].suit && 
+                card.rank === pile2[index].rank && 
+                card.isFaceUp === pile2[index].isFaceUp);
+        };
+    
+        // Compare each tableau pile
+        for (let i = 0; i < state1.tableauPiles.length; i++) {
+            if (!comparePiles(state1.tableauPiles[i], state2.tableauPiles[i])) {
+                return false;
+            }
+        }
+    
+        // Compare each foundation pile
+        for (let i = 0; i < state1.foundationPiles.length; i++) {
+            if (!comparePiles(state1.foundationPiles[i], state2.foundationPiles[i])) {
+                return false;
+            }
+        }
+    
+        // Compare stock and waste piles
+        if (!comparePiles(state1.stockPile, state2.stockPile) || !comparePiles(state1.wastePile, state2.wastePile)) {
+            return false;
+        }
+    
+        return true;
     }
-
+    
     public undo(): GameState | null {
         if (this.states.length > 1) {
             this.states.pop();

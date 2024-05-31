@@ -4,12 +4,24 @@ import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
-    layoutAll(stockpile:Card[], wastepile :Card[], tableauPiles: Array<Array<Card>>,foundationPiles: Array<Array<Card>>) 
+    stockpile: Card[];
+    wastepile: Card[];
+    tableauPiles: Card[][];
+    foundationPiles: Card[][];
+    pileManager: PileManager;
+
+    init(pileManager : PileManager)
     {
-        this.layoutStockPile(stockpile)
-        this.layoutWastePile(wastepile)
-        this.layoutTableauPiles(tableauPiles)
-        this.layoutFoundationPiles(foundationPiles)
+        this.pileManager = pileManager;;
+    }
+
+    layoutAll(pileManager : PileManager) 
+    {
+        this.layoutStockPile(pileManager.getStockPile())
+        this.layoutWastePile(pileManager.getWastePile())
+        this.layoutTableauPiles(pileManager.getTableauPiles())
+        this.layoutFoundationPiles(pileManager.getFoundationPiles())
+        
     }
     // Layout method for stock pile, usually a single stack
     layoutStockPile(cards: Card[]) {
@@ -36,26 +48,32 @@ class CardLayoutManager {
     layoutTableauPiles(tableauPiles: Array<Array<Card>>) {
         tableauPiles.forEach((pile, pileIndex) => {
             const x = TABLEU_COORDS_INIT.x + pileIndex * TABLEU_COORDS_DELTA.x; // Adjust horizontal spacing
+            let y = TABLEU_COORDS_INIT.y; // Initialize the y coordinate for the first card in the pile
+    
             pile.forEach((card, cardIndex) => {
                 card.x = x;
-                card.y = TABLEU_COORDS_INIT.y + cardIndex * TABLEU_COORDS_DELTA.y; // Vertical overlapping offset
-                card.setDepth(pileIndex*100 + cardIndex); // Ensure correct stacking order
+                card.y = y;
+    
+                if (card.isFaceUp) {
+                    y += TABLEU_COORDS_DELTA.y; // Use larger vertical offset for face-up cards
+                } else {
+                    y += TABLEU_COORDS_DELTA.y_covered; // Use smaller vertical offset for face-down cards
+                }
+    
+                card.setDepth(pileIndex * 100 + cardIndex); // Ensure correct stacking order
                 card.scale = CARD_SCALE;
-                
-
             });
-            
         });
-        
     }
+    
 
     // Layout method for the foundation piles
     layoutFoundationPiles(foundationPiles: Array<Array<Card>>, baseX: number = 700, baseY: number = 100, horizontalOffset: number = 150) {
         foundationPiles.forEach((pile, pileIndex) => {
             const x = baseX + pileIndex * horizontalOffset; // Adjust horizontal spacing
             pile.forEach((card, cardIndex) => {
-                card.x = x;
-                card.y = baseY;
+                card.x = FOUNDATION_COORDS_INIT.x + pileIndex * FOUNDATION_COORDS_DELTA.x;
+                card.y = FOUNDATION_COORDS_INIT.y;
                 card.setDepth(1000 + pileIndex * 10 + cardIndex); // Ensure correct stacking order
             });
         });

@@ -5,6 +5,7 @@ import CardLayoutManager from './CardLayoutManager';
 import { Rank, Suit } from './CardNameManager';
 import ControlManager from './ControlManager';
 import UndoManager from './UndoManager';
+import { STOCK_COORDS } from '../config/Consts';
 
 export class GameManager {
     private static instance: GameManager | null = null;
@@ -100,7 +101,7 @@ export class GameManager {
 
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
-        // this.pileManager.listTableauCardsWithDepthAndName(true)
+        // this.pileManager.listWasteCardsWithDepthAndName()
         
 
 
@@ -108,15 +109,25 @@ export class GameManager {
     
     updateTimerQuick(): void {
         
-        for (var i = 0; i < 7; i++) {
-            let c = this.pileManager.getTopCardFromTableau(i);
-            if (c?.isFaceUp==false && c?.isBeingFlipped == false) 
+        this.pileManager.fixTableuDepthAndFlipstatus()
+        this.pileManager.getWastePile().forEach(c => {
+            c.setFaceUp(true)
+        });
+
+
+        if (this.pileManager.allCardsUncovered())
+        {
+            let wasteTop = this.pileManager.getTopCardFromWaste();
+            if (wasteTop)
             {
-                c.setFaceUp(true);
-            }
-            
+                if (this.pileManager.moveCardToFoundationIfPossible(wasteTop)) return;
+            } 
+            this.pileManager.getTableauPiles().some((pile, index) => {
+                if (this.pileManager.moveTopCardTableauToFoundation(index)) return true;
+            });
         }
-        this.pileManager.fixTableuDepth()
+
+
     
     }
 

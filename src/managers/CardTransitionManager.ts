@@ -1,4 +1,4 @@
-import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
+import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 import { getTweensForObject } from '../utils/Utils';
 
@@ -39,28 +39,43 @@ class CardTransitionManager {
         }
     }
 
-    moveCardToTableau(card: Card, targetPileIndex : number, indexWithinTargetPile:number, container: Phaser.GameObjects.Container, onComplete: () => void) {
+    moveCardToTableau(tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
         card.setInteractive(false); // Temporarily disable interaction during the movement
         getTweensForObject(card.scene, card).forEach(x => x.complete());
-
+    
+        // Calculate the correct y position for the card based on the pile state
+        let yPosition = TABLEU_COORDS_INIT.y;
+        const targetPile = tableuPiles[targetPileIndex]; // Assuming tableauPiles is available from pileManager
+    
+        for (let i = 0; i < indexWithinTargetPile; i++) {
+            if (targetPile[i].isFaceUp) {
+                yPosition += TABLEU_COORDS_DELTA.y;
+            } else {
+                yPosition += TABLEU_COORDS_DELTA.y_covered;
+            }
+        }
+    
         // Tween to move the card to the new pile visually
         card.scene.tweens.add({
             targets: card,
-            x: TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x*targetPileIndex,
-            y: TABLEU_COORDS_INIT.y + TABLEU_COORDS_DELTA.y*(indexWithinTargetPile),
-            duration: 360, // Adjust as necessary
+            x: TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x * targetPileIndex,
+            y: yPosition,
+            duration: TABLEU_STACK_TWEEN_DURATION, // Adjust as necessary
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 // Enable interaction and call the completion callback
                 card.setInteractive(true);
+                
+                card.x = TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x * targetPileIndex;
+                card.y = yPosition;
                 onComplete();
             }
         });
-
-        card.setDepth (10000+indexWithinTargetPile);
+    
+        // card.setDepth(10000 + indexWithinTargetPile);
         container.sort("depth");
-  
     }
+    
 
     // Move a card to the foundation with a visual transition
     moveCardToFoundation(card: Card, targetX: number, targetY: number, foundationPile: Card[], pileIndex: number, gameplayContainer : Phaser.GameObjects.Container, onComplete?: () => void) {
@@ -77,7 +92,8 @@ class CardTransitionManager {
             ease: 'Cubic.easeInOut',
             onComplete: () => {
 
-
+                card.x= targetX;
+                card.y= targetY
 
                 // Optionally, call additional completion logic
                 if (onComplete) onComplete();
@@ -102,17 +118,22 @@ class CardTransitionManager {
             // card.removeInteractive()
 
             card.inTransition = true;
+            // console.log("card is in transition")
 
             card.scene.tweens.add({
                 targets: card,
                 x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,
                 y: STOCK_COORDS.y,
-                duration: 240, // Adjust the duration as needed
+                duration: 160, // Adjust the duration as needed
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
                     card.inTransition = false
+                    // console.log("card is removed from transition")
                     if (onComplete) onComplete();
-                }
+                    card.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK
+                    card.y = STOCK_COORDS.y
+                }, 
+               
             });
 
             card.setDepth (11000);

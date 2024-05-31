@@ -8,6 +8,10 @@ import { getTweensForObject } from '../utils/Utils';
 
 
 export default class Card extends Phaser.GameObjects.Sprite {
+    isOnStock()
+    {
+        return (PileType.Stock == this.pileType)
+    }
     renewWasteCoords(cManager : ControlManager): void
     {
         if (cManager)
@@ -15,8 +19,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
             this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK;
             this.y = STOCK_COORDS.y;
         }
-        
-
     }
     
     finishTweens()

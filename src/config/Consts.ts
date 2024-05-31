@@ -29,9 +29,13 @@ export const STOCK_COORDS = { x : -488, y : 80 };
 export const WASTE_DELTA_FROM_STOCK = 160;
 export const WASTE_OVERLAP = 0;
 export const TABLEU_COORDS_INIT = { x : STOCK_COORDS.x, y : 290 }
-export const TABLEU_COORDS_DELTA = {x:160, y:30}
+export const TABLEU_COORDS_DELTA = {x:160, y:34, y_covered:14}
 export const FOUNDATION_COORDS_INIT = {x:STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK*3, y:80}
 export const FOUNDATION_COORDS_DELTA = {x:160, y:0}
+export const CARD_MOVE_BEFORE_DRAG_ACTIVE = 25;
+export const TABLEU_STACK_TWEEN_DURATION = 360;
+export const DISABLE_CLICK_DURATION_NORMAL = 120
+export const DISABLE_CLICK_DURATION_STOCK = 80;
 
 
 
