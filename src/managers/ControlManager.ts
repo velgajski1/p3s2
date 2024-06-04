@@ -22,6 +22,7 @@ class ControlManager {
     keyCtrl: any ;
     keyZ: any ;
     substackClearTimeout: NodeJS.Timeout;
+    holdTimeoutFlag: boolean = false;
 
     constructor(pileManager: PileManager) {
         this.pileManager = pileManager;
@@ -47,7 +48,20 @@ class ControlManager {
                     card.finishTweens()
                 }
                 else {
-                    if (card.pileType != PileType.Waste) return;
+                    if (card.pileType != PileType.Waste){
+                        console.log("intransition")
+                        // HERE
+                        setTimeout(() => {
+                            if (pointer.isDown) {
+                                card.emit('pointerdown', pointer);
+                            }
+                            else
+                            {
+                                this.handleCardClick(card)
+                            }
+                        }, 100);  // 100ms delay
+                        return;
+                    } 
                 }
                 console.log("card is in transition: " + card.name)
 
@@ -57,7 +71,10 @@ class ControlManager {
             {
                 if (this.substack && this.substack.includes(card))
                 {
-                    if (this.substack.indexOf(card)>0) return;
+                    if (this.substack.indexOf(card)>0){
+                        console.log("substack included")
+                        return;
+                    } 
                 } 
 
                 this.handleCardClick(card);
@@ -82,6 +99,7 @@ class ControlManager {
             card.setData('dragOffsetX', localPoint.x - card.x);
             card.setData('dragOffsetY', localPoint.y - card.y);
             this.dragging = false;  // Start dragging
+            this.holdTimeoutFlag = true
 
             // Move the card 3px up
             // card.y -= 3;
@@ -93,13 +111,8 @@ class ControlManager {
 
             // Set a timeout to enable dragging after a specified duration
             this.holdTimeout = setTimeout(() => {
-                if (!this.dragging && this.activeCard) {
-                    this.dragging = true;
-                    this.activeCard.setDepth(this.activeCard.depth + 10000);
-                    this.substack.forEach(s => {
-                        if (s == this.activeCard) return;
-                        s.setDepth(s.depth + 10000);
-                    });
+                if (this.holdTimeoutFlag && this.activeCard) {
+                    this.holdTimeoutFlag = false;
                 }
             }, 600);  // Duration in milliseconds
             
@@ -170,31 +183,31 @@ class ControlManager {
             clearTimeout(this.holdTimeout);
             if (this.activeCard) {
                 
-                if (this.dragging && this.activeCard) {
+                if (this.dragging) {
                     this.activeCard.setDepth(this.activeCard.depth - 10000);
                     this.substack.forEach(s => {
                         if (s == this.activeCard) return;
                         s.setDepth(s.depth - 10000);
                     });
 
-                    this.handleCardDrop(this.activeCard);
+                    //foundation doesnt use click at all, so it always goes to drop
+                    if (this.holdTimeoutFlag && this.activeCard.pileType != PileType.Foundation) { 
+                        this.handleClick(this.activeCard)
+                    }
+                    else
+                    {
+                        this.handleCardDrop(this.activeCard);
+                        
+                    }
+                    
 
                     this.activeCard = undefined;  // Clear the active card reference
                     this.dragging = false;
+                    this.holdTimeoutFlag = false;
                     this.addSubstackClearTimeout()
 
                 } else if (this.activeCard && this.isClickEnabled) {
-                    if (this.substack.length > 0) { 
-                        this.substack.forEach(c => c.y += 3)
-                    }else{
-                        this.activeCard.y += 3;
-                    } 
-
-                    if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this)
-                        
-                    this.handleCardClick(this.activeCard);
-                    this.activeCard = undefined;  // Clear the active card reference
-                    this.addSubstackClearTimeout()
+                    this.handleClick(this.activeCard);
                 }
             }
         });
@@ -210,6 +223,23 @@ class ControlManager {
         // Add window event listeners
         window.addEventListener('blur', this.handleWindowBlur.bind(this));
         window.addEventListener('mouseout', this.handleWindowMouseOut.bind(this));
+    }
+
+    private handleClick(activeCard : Card) {
+        if (this.substack.length > 0) { 
+            this.substack.forEach(c => c.y += 3)
+        }else{
+            activeCard.y += 3;
+        } 
+
+        // if (activeCard.pileType == PileType.Waste) activeCard.renewWasteCoords(this)
+            
+        if (!this.handleCardClick(activeCard)){
+            this.resetDraggedCards(activeCard, this.substack);
+        }
+        
+        this.activeCard = undefined;  // Clear the active card reference
+        this.addSubstackClearTimeout()
     }
 
     private handleWindowBlur(): void {
@@ -284,13 +314,23 @@ class ControlManager {
                 this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
             } else {
                 // Invalid drop, reset the card and any substack to original position
-                this.resetCardDragState(activeCard);
-                this.substack.forEach(card => {
-                    if (card === activeCard) return;
-                    this.resetCardDragState(card);
-                });
+                if (this.activeCard){
+                    this.resetDraggedCards(this.activeCard, this.substack);
+                    if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this)
+                    console.log(this.activeCard.depth)
+                } 
             }
         }
+    }
+
+    resetDraggedCards(activeCard: Card, substack : Card[])
+    {
+        console.log("reset dragged cards");
+        this.resetCardDragState(activeCard);
+        this.substack.forEach(card => {
+            if (card === activeCard) return;
+            this.resetCardDragState(card);
+        });
     }
     
     
@@ -511,6 +551,17 @@ class ControlManager {
     }
     
     handleUKey() {
+        if (this.pileManager.getAllCards().find(c => c.inTransition)){
+            setTimeout(() => {
+                if (this.pileManager.getAllCards().find(c => c.inTransition)) return
+                const undoManager = UndoManager.getInstance();
+                const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
+                if (state) {
+                    this.pileManager.setToGameState(state);
+                }  
+            }, 250);
+            return;
+        } 
         const undoManager = UndoManager.getInstance();
         const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
         if (state) {
@@ -526,21 +577,24 @@ class ControlManager {
 
 // Handler for card click events
     // Handle the click event based on card's pile type
-    private handleCardClick(card: Card) {
+    private handleCardClick(card: Card) : boolean{
         
         console.log("handle card click: " + card.getName(), card.pileType)
 
         // Prevent additional clicks if a card click was already processed
         if (!this.isClickEnabled) {
             console.log("click disabled")
-            return;
+            return false;
         }
 
         let disableClickDuration = DISABLE_CLICK_DURATION_NORMAL;
+        let ret = false
 
         switch (card.pileType) {
             case PileType.Tableau:
-                if (card.isFaceUp)  this.pileManager.handleTableauClicked(card);
+                if (card.isFaceUp)  {
+                    ret = this.pileManager.handleTableauClicked(card);
+                }
                 break;
 
             case PileType.Foundation:
@@ -551,13 +605,15 @@ class ControlManager {
                 // Example: Move to the waste pile or flip if applicable
                 this.pileManager.moveTopCardStockToWaste();
                 disableClickDuration = DISABLE_CLICK_DURATION_STOCK;
+                ret = true
                 break;
 
             case PileType.Waste:
                
             
                 // Example: Attempt to move the card to another pile if possible
-                this.pileManager.handleWasteClicked(card);
+                ret = this.pileManager.handleWasteClicked(card);
+
                 // this.pileManager.listTableauCardsWithDepthAndName();
                 this.pileManager.gameplayContainer.sort("depth");
                 break;
@@ -568,6 +624,7 @@ class ControlManager {
         }
         // Disable clicks for the cooldown period
         this.disableCardClicksTemporarily(disableClickDuration);
+        return ret
         
     }
 

@@ -94,6 +94,7 @@ export default class UndoManager {
     }
     
     public undo(): GameState | null {
+        
         if (this.states.length > 1) {
             this.states.pop();
             const prevState = this.states[this.states.length - 1];

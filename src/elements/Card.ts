@@ -8,36 +8,6 @@ import { getTweensForObject } from '../utils/Utils';
 
 
 export default class Card extends Phaser.GameObjects.Sprite {
-    isOnStock()
-    {
-        return (PileType.Stock == this.pileType)
-    }
-    renewWasteCoords(cManager : ControlManager): void
-    {
-        if (cManager)
-        {
-            this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK;
-            this.y = STOCK_COORDS.y;
-        }
-    }
-    
-    finishTweens()
-    {
-        getTweensForObject(this.scene, this).forEach(x => x.complete());
-    }
-
-    isOnTableu()
-    {
-        return (PileType.Tableau == this.pileType)
-    }
-    
-    isBeingFlipped: boolean = false;
-    
-    addInteractive()
-    {
-        this.controlManager.setupCardClickControl(this);
-    }
-
 
     private faceTexture: string; // Path to the face texture
     private backTexture: string; // Path to the back texture
@@ -48,8 +18,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
     rank: Rank;
     controlManager: ControlManager;
     inTransition: boolean = false;
-
-
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -75,6 +43,40 @@ export default class Card extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
 
     }
+
+    isOnStock()
+    {
+        return (PileType.Stock == this.pileType)
+    }
+    renewWasteCoords(cManager : ControlManager): void
+    {
+        if (cManager)
+        {
+            this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK;
+            this.y = STOCK_COORDS.y;
+
+
+        }
+    }
+    
+    finishTweens()
+    {
+        getTweensForObject(this.scene, this).forEach(x => x.complete());
+    }
+
+    isOnTableu()
+    {
+        return (PileType.Tableau == this.pileType)
+    }
+    
+    isBeingFlipped: boolean = false;
+    
+    addInteractive()
+    {
+        this.controlManager.setupCardClickControl(this);
+    }
+
+
 
     setPileType(pileType: PileType)
     {

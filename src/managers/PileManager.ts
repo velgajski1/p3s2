@@ -11,6 +11,7 @@ import UndoManager from "./UndoManager";
 export default class PileManager {
 
 
+
     gameManager: GameManager;
 
     setToGameState(state: GameState): void {
@@ -58,7 +59,7 @@ export default class PileManager {
     {
         this.getFoundationPiles().forEach(pile => {
             pile.forEach((card, index) => {
-                card.setDepth(index);
+                if (card.inTransition == false)  card.setDepth(index);
             })
         })
         this.gameplayContainer.sort("depth");
@@ -103,6 +104,16 @@ export default class PileManager {
         })
     }
 
+    getAllCards(): Card[] {
+        // Combine all the piles into a single array
+        return [
+            ...this.stockPile,
+            ...this.wastePile,
+            ...this.transitionPile,
+            ...this.tableauPiles.flat(),
+            ...this.foundationPiles.flat()
+        ];
+    }
 
     private tableauPiles: Array<Array<Card>>;
     private foundationPiles: Array<Array<Card>>;
@@ -133,26 +144,27 @@ export default class PileManager {
         this.cardTransitionManager = new CardTransitionManager();
     }
 
-    handleWasteClicked(card: Card)
+    handleWasteClicked(card: Card) : boolean
     {
         
         const topWasteCard = card;
         if (topWasteCard) {
             if (this.moveCardToFoundationIfPossible(topWasteCard)) {
                 UndoManager.getInstance().saveState(this.getState())
-                return;
+                return true;
             }
             for (let i = 0; i < this.tableauPiles.length; i++) {
                 const targetPile = this.tableauPiles[i];
                 if (this.canMoveToTableauPile(topWasteCard, targetPile)) {
                     this.addCardToTableuPile(topWasteCard, i);
                     UndoManager.getInstance().saveState(this.getState())
-                    return; // Card moved, so no further action is required
+                    return true; // Card moved, so no further action is required
                 }
             }
             
         }
         UndoManager.getInstance().saveState(this.getState())
+        return false
     }
     public getTableuPileIndexFromCard(card: Card): number {
         return this.tableauPiles.findIndex(pile => pile.includes(card));
@@ -184,7 +196,7 @@ export default class PileManager {
     }
 
     // Method to handle clicks on a tableau card
-    handleTableauClicked(card: Card) {
+    handleTableauClicked(card: Card) : boolean {
       
         const pileIndex = card.pileIndex;
         console.log("pile index = ", card.pileIndex)
@@ -195,7 +207,7 @@ export default class PileManager {
             // Step 1: Check if the card can move to the foundation
             if (this.moveCardToFoundationIfPossible(card)) {
                 UndoManager.getInstance().saveState(this.getState())
-                return; // Card moved to foundation, so no further action is required
+                return true; // Card moved to foundation, so no further action is required
             }
 
             // Step 2: Check if the card can move to another tableau pile
@@ -223,13 +235,14 @@ export default class PileManager {
                         }
     
                         UndoManager.getInstance().saveState(this.getState())
-                        return; // Cards moved, so no further action is required
+                        return true; // Cards moved, so no further action is required
                     }
                 }
             }
         } else {
             console.warn('Invalid pile index');
         }
+        return false
     }
 
 
