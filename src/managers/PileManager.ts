@@ -10,15 +10,13 @@ import UndoManager from "./UndoManager";
 
 export default class PileManager {
 
+    static substackId : number = 0;
 
 
     gameManager: GameManager;
 
     setToGameState(state: GameState): void {
         // Clear all current piles without affecting the cards themselves
-
-        
-        
 
         this.clearPiles();
 
@@ -206,6 +204,10 @@ export default class PileManager {
 
             // Step 1: Check if the card can move to the foundation
             if (this.moveCardToFoundationIfPossible(card)) {
+                if (tableauPile.length > 0) {
+                    this.uncoverTableuPile(pileIndex);
+                }
+
                 UndoManager.getInstance().saveState(this.getState())
                 return true; // Card moved to foundation, so no further action is required
             }
@@ -218,11 +220,11 @@ export default class PileManager {
                         // Identify the substack starting from the clicked card to the end
                         const substack = this.getSubstack(card);
     
-                        
+                        card.substackid = PileManager.substackId++;
                         // Move the substack to the new tableau pile using the transition manager
                         substack.forEach((movingCard, subIndex) => {
-                            // 
-
+                            console.log(movingCard.getName(), subIndex)
+                            movingCard.substackid = PileManager.substackId;
                             this.addCardToTableuPile(movingCard, i);
                         });
     
@@ -230,7 +232,8 @@ export default class PileManager {
                         this.removeSubstack(tableauPile, card)
     
                         // Uncover the top card of the original pile, if any
-                        if (tableauPile.length > 0) {
+                        // console.log(tab)
+                        if (targetPile.length > 0) {
                             this.uncoverTableuPile(pileIndex);
                         }
     
@@ -260,13 +263,15 @@ export default class PileManager {
     }
     uncoverTableuPile(pileIndex: number)
     {
+        console.log("uncover tableu called")
         // Retrieve the pile by index
         const tableauPile = this.tableauPiles[pileIndex];
         if (tableauPile && tableauPile.length > 0) {
             // Get the top card
             const topCard = tableauPile[tableauPile.length - 1];
+            console.log(topCard.isFaceUp);
             if (!topCard.isFaceUp){
-                this.cardTransitionManager.flipCard(topCard, 240);
+                this.cardTransitionManager.flipCard(topCard, 120);
             }
         }
     }
@@ -583,6 +588,7 @@ export default class PileManager {
         let targetPile = this.tableauPiles[pileIndex];
 
         this.cardTransitionManager.moveCardToTableau(
+
             this.getTableauPiles(),
             card,
             pileIndex,

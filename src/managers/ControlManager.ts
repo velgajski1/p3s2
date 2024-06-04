@@ -34,11 +34,12 @@ class ControlManager {
 
     setupCardClickControl(card: Card): void {
         card.removeAllListeners();
-        card.setInteractive();
+        const hitArea = new Phaser.Geom.Rectangle(0, 0, card.width, card.height);
+        card.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
 
         card.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
 
-            console.log(this.substack, card.inTransition, this.canMoveCard(card), card.pileType)
+            // console.log(this.substack, card.inTransition, this.canMoveCard(card), card.pileType)
 
             if (this.activeCard == card) return;
  
@@ -101,8 +102,6 @@ class ControlManager {
             this.dragging = false;  // Start dragging
             this.holdTimeoutFlag = true
 
-            // Move the card 3px up
-            // card.y -= 3;
             if (this.substack.length > 0) {
                 this.substack.forEach(c => c.y -= 3)
             }else{
@@ -130,7 +129,7 @@ class ControlManager {
     }
 
     private canMoveCard(card: Card): boolean {
-        return card.isFaceUp && (card.pileType === PileType.Waste || card.pileType === PileType.Tableau || card.pileType === PileType.Foundation);
+        return (card.isFaceUp ||card.isBeingFlipped) && (card.pileType === PileType.Waste || card.pileType === PileType.Tableau || card.pileType === PileType.Foundation);
     }
 
     setupGlobalListeners(): void {
@@ -226,15 +225,18 @@ class ControlManager {
     }
 
     private handleClick(activeCard : Card) {
-        if (this.substack.length > 0) { 
-            this.substack.forEach(c => c.y += 3)
-        }else{
-            activeCard.y += 3;
-        } 
+
+
 
         // if (activeCard.pileType == PileType.Waste) activeCard.renewWasteCoords(this)
             
         if (!this.handleCardClick(activeCard)){
+            if (this.substack.length > 0) { 
+                this.substack.forEach(c => c.y += 3)
+            }else{
+                activeCard.y += 3;
+            } 
+
             this.resetDraggedCards(activeCard, this.substack);
         }
         
@@ -592,7 +594,7 @@ class ControlManager {
 
         switch (card.pileType) {
             case PileType.Tableau:
-                if (card.isFaceUp)  {
+                if (card.isFaceUp || card.isBeingFlipped)  {
                     ret = this.pileManager.handleTableauClicked(card);
                 }
                 break;

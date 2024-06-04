@@ -18,6 +18,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     rank: Rank;
     controlManager: ControlManager;
     inTransition: boolean = false;
+    substackid: Number = 0;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         

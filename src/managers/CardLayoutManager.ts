@@ -53,6 +53,8 @@ class CardLayoutManager {
             pile.forEach((card, cardIndex) => {
                 card.x = x;
                 card.y = y;
+
+                // console.log(card.getName(), card.y, card.depth);
     
                 if (card.isFaceUp) {
                     y += TABLEU_COORDS_DELTA.y; // Use larger vertical offset for face-up cards

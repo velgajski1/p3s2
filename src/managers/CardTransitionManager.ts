@@ -39,13 +39,25 @@ class CardTransitionManager {
         }
     }
 
-    moveCardToTableau(tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
+    moveCardToTableau( tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
         card.setInteractive(false); // Temporarily disable interaction during the movement
         getTweensForObject(card.scene, card).forEach(x => x.complete());
+        
     
         // Calculate the correct y position for the card based on the pile state
         let yPosition = TABLEU_COORDS_INIT.y;
         const targetPile = tableuPiles[targetPileIndex]; // Assuming tableauPiles is available from pileManager
+
+    
+        targetPile.filter(card => card.inTransition).forEach(c => {
+            if (card.substackid != c.substackid) {
+                getTweensForObject(c.scene, c).forEach(x => x.complete());
+            }
+                
+            
+        });   
+        
+
     
         for (let i = 0; i < indexWithinTargetPile; i++) {
             if (targetPile[i].isFaceUp) {
@@ -72,7 +84,7 @@ class CardTransitionManager {
             }
         });
     
-        // card.setDepth(10000 + indexWithinTargetPile);
+        card.setDepth(10000 + indexWithinTargetPile);
         container.sort("depth");
     }
     
@@ -88,8 +100,8 @@ class CardTransitionManager {
             targets: card,
             x: targetX,
             y: targetY,
-            duration: 360, // Adjust as needed
-            ease: 'Cubic.easeInOut',
+            duration: TABLEU_STACK_TWEEN_DURATION, // Adjust as needed
+            ease: 'Cubic.easeOut',
             onComplete: () => {
 
                 card.x= targetX;
@@ -143,6 +155,7 @@ class CardTransitionManager {
 
     // Flip the card with animation (from back to front or vice versa)
     flipCard(card: Card, duration: number = 300, onComplete?: () => void) {
+        console.log("flipping card: " + card.getName())
         if (card.isBeingFlipped) return;
         card.isBeingFlipped = true;
         card.scene.tweens.add({
