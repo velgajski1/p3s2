@@ -7,6 +7,7 @@ import getRankValue, { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
 import { GameManager } from "./GameManager";
 import UndoManager from "./UndoManager";
+import { STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 
 
 export default class PileManager {
@@ -58,17 +59,22 @@ export default class PileManager {
         const topWasteCard = card;
         if (topWasteCard) {
             if (this.moveCardToFoundationIfPossible(topWasteCard)) {
+                this.cardLayoutManager.init(this)
+                this.cardLayoutManager.layoutWastePile(this.getWastePile()) 
                 UndoManager.getInstance().saveState(this.getState())
+                
                 return true;
             }
             for (let i = 0; i < this.tableauPiles.length; i++) {
                 const targetPile = this.tableauPiles[i];
                 if (this.canMoveToTableauPile(topWasteCard, targetPile)) {
                     this.fixTableuYDelta(i, [topWasteCard])
-                    console.log(this.tableuPilesYDelta)
+                   
                     this.cardLayoutManager.init(this)
+                   
                     this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
                     this.addCardToTableuPile(topWasteCard, i);
+                    this.cardLayoutManager.layoutWastePile(this.getWastePile()) 
                     UndoManager.getInstance().saveState(this.getState())
                     return true; // Card moved, so no further action is required
                 }
@@ -143,7 +149,7 @@ export default class PileManager {
                         this.fixTableuYDelta(i, substack)
                         this.cardLayoutManager.init(this)
                         this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
-                        console.log(this.tableuPilesYDelta)
+                        
 
                         card.substackid = PileManager.substackId++;
                         // Move the substack to the new tableau pile using the transition manager
@@ -215,16 +221,37 @@ export default class PileManager {
     
     // Move the top card from the stock pile to the waste pile
     moveTopCardStockToWaste() {
-        const card = this.getTopStockCard();
-        if (card) {
-            this._addCardToWaste(card);
-            this.cardTransitionManager.moveTopCardStockToWaste(card, this.stockPile, this.wastePile, this.gameplayContainer, () => this._addCardToWaste(card));
-            card.setFaceUp(true);
-            UndoManager.getInstance().saveState(this.getState())
+        if (STOCK_THREE_MODE_ACTIVE) {
+            
+            const cards : Card[] = this.getTopStockCards(3).reverse();
+
+            cards.forEach( (card, index) => {
+                this._addCardToWaste(card);
+                this.cardTransitionManager.moveTopCardStockToWaste(card, index, this.stockPile, this.wastePile, this.gameplayContainer, () => {
+                    this._addCardToWaste(card);
+                });
+                setTimeout(() => {
+                    this.cardLayoutManager.layoutWastePile(this.getWastePile()) 
+                }, 170);
+                
+                card.setFaceUp(true);
+            })
+        } else {
+            const card = this.getTopStockCard();
+            if (card) {
+                this._addCardToWaste(card);
+                this.cardTransitionManager.moveTopCardStockToWaste(card, 0, this.stockPile, this.wastePile, this.gameplayContainer, () => this._addCardToWaste(card));
+                card.setFaceUp(true);
+                
+            }
         }
+        UndoManager.getInstance().saveState(this.getState())
+
 
        
     }
+
+
     // Move a card to the foundation if possible (using the transition manager)
     public moveCardToFoundationIfPossible(card: Card, foundationIdx : number = -1, skipLayoutAll : boolean = false): boolean {
         // Verify that the card is on top of its tableau pile
@@ -281,6 +308,11 @@ export default class PileManager {
     getTopStockCard(): Card | undefined {
         
         return this.stockPile[this.stockPile.length - 1];
+    }
+
+    getTopStockCards(num: number = 3): Card[] {
+        const numberOfCardsToRetrieve = Math.min(num, this.stockPile.length);
+        return this.stockPile.slice(-numberOfCardsToRetrieve);
     }
 
    // Distribute the deck into piles based on Klondike Solitaire rules
@@ -409,7 +441,7 @@ export default class PileManager {
         let height = this.calculateTableuPileHeight(pileIndex, this.tableuPilesYDelta[pileIndex], TABLEU_COORDS_DELTA.y_covered, substack)+30;
         
         let x = (GameManager.rendererHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
-        console.log(pileIndex, height, substack.length, x);
+        
         if (x > 20 && this.tableuPilesYDelta[pileIndex] < TABLEU_COORDS_DELTA.y) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] + 1;
             return this.fixTableuYDelta(pileIndex, substack, maxTries);
@@ -421,7 +453,7 @@ export default class PileManager {
         }
         else
         {
-            // console.log(this.tableuPilesYDelta[pileIndex]);
+            // 
             return this.tableuPilesYDelta[pileIndex];
         }
 
@@ -673,16 +705,16 @@ export default class PileManager {
     listTableauCardsWithDepthAndName(listOnlyFaceUp : boolean) {
         
         this.tableauPiles.forEach((pile, pileIndex) => {
-            console.log(`Tableau Pile ${pileIndex}:`);
+            
             pile.forEach((card) => {
                 const depth = card.depth; // Assuming `depth` is a property on Card
                 const name = card.getName(); // Assuming `getName` is a method on Card
                 const isfaceup = card.isFaceUp;
                 if (listOnlyFaceUp && isfaceup) {
-                    console.log(`Card: ${name}, Depth: ${depth}, isfaceup: ${isfaceup}`);
+                    
                 }
                 else if (!listOnlyFaceUp) {
-                    console.log(`Card: ${name}, Depth: ${depth}, isfaceup: ${isfaceup}`);
+                    
                 }
                 
             });
@@ -698,7 +730,7 @@ export default class PileManager {
                 const depth = card.depth; // Assuming `depth` is a property on Card
                 const name = card.getName(); // Assuming `getName` is a method on Card
                 
-                console.log(`Card: ${name}, Depth: ${depth}, isFaceUp: ${card.isFaceUp}`);
+                
             });
 
 
@@ -709,7 +741,7 @@ export default class PileManager {
             const depth = card.depth; // Assuming `depth` is a property on Card
             const name = card.getName(); // Assuming `getName` is a method on Card
             const isfaceup = card.isFaceUp;
-            console.log(`Card: ${name}, Depth: ${depth}, isfaceup: ${isfaceup}`);
+            
 
         })
     }
@@ -717,7 +749,7 @@ export default class PileManager {
     setToGameState(state: GameState): void {
         // Clear all current piles without affecting the cards themselves
 
-        console.log("clear piles")
+        
         this.clearPiles();
 
         // Rearrange cards according to the saved state
@@ -760,7 +792,7 @@ export default class PileManager {
         this.getFoundationPiles().forEach(pile => {
             pile.forEach((card, index) => {
                 if (card.inTransition == false){
-                    console.log("card: " + index, card.getName())
+                    
                     card.setDepth(getRankValue(card.rank))
                 
                 }  

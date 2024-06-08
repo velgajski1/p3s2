@@ -284,7 +284,7 @@ class ControlManager {
                 if (this.canPlaceCardOnTableau(activeCard, card)) {
                     let dropIdx = this.pileManager.getTableuPileIndexFromCard(card);
                     if (dropIdx >= 0) {
-                        console.log("fix tableu y delta drop: " + this.substack)
+                        
                         this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack])
                         this.pileManager.cardLayoutManager.init(this.pileManager)
                         this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true)

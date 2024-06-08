@@ -1,5 +1,6 @@
 // CardLayoutManager.ts
-import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_OVERLAP } from "../config/Consts";
+import { STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
@@ -19,7 +20,7 @@ class CardLayoutManager {
 
     layoutAll(pileManager : PileManager, withTween : boolean = false) 
     {
-        console.log("layout all")
+        
         this.init(pileManager)
         this.layoutStockPile(pileManager.getStockPile())
         this.layoutWastePile(pileManager.getWastePile())
@@ -40,19 +41,27 @@ class CardLayoutManager {
 
     // Layout method for waste pile, which might have slight overlap
     layoutWastePile(cards: Card[]) {
+        console.log("layoutWastePile: ")
         cards.forEach((card, index) => {
+            // console.log(card.getName());
             card.finishTweens()
-            card.x = STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK + index * WASTE_OVERLAP; // Overlapping horizontally for each card
+            card.wasteDeltaX = 0;
+            if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 2
+            if (index == cards.length-2) card.wasteDeltaX = WASTE_DELTA_X * 1
+            if (index == cards.length-3) card.wasteDeltaX = WASTE_DELTA_X * 0
+            if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
+            
+            console.log(card.getName(), index, card.wasteDeltaX)
+            card.x = STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK + index * WASTE_OVERLAP + card.wasteDeltaX; // Overlapping horizontally for each card
             card.y = STOCK_COORDS.y;
             card.setDepth(index); // Correct stacking order for waste pile
-            // console.log(card.getName())
 
         });
     }
 
     layoutTableauPile(tableauPiles : Array<Array<Card>>, pileIndex: number, withTween : boolean = false) 
     {
-        console.log("lyout tableu pile: " + pileIndex, withTween);
+        
        let pile = tableauPiles[pileIndex];
 
        const x = TABLEU_COORDS_INIT.x + pileIndex * TABLEU_COORDS_DELTA.x; // Adjust horizontal spacing
@@ -69,7 +78,7 @@ class CardLayoutManager {
            }
 
            if (card.isFaceUp) {
-           console.log(this.pileManager)
+           
                if (this.pileManager) {
                    y += this.pileManager.getTableuCardsDeltaYForPile(pileIndex); // Use larger vertical offset for face-up cards
                }
@@ -84,7 +93,7 @@ class CardLayoutManager {
 
            if (card.inTransition) {
             card.setDepth(20000 + cardIndex)
-            // console.log("set depth for transition: " + card.getName())
+            // 
            }
            else
            {

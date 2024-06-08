@@ -20,6 +20,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     controlManager: ControlManager;
     inTransition: boolean = false;
     substackid: Number = 0;
+    wasteDeltaX: number;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -54,7 +55,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     {
         if (cManager)
         {
-            this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK;
+            this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK+this.wasteDeltaX;
             this.y = STOCK_COORDS.y;
 
 
@@ -86,10 +87,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
     }
 
     hasTweens() {
-        console.log("call hastweens")
+        
         if (getTweensForObject(this.scene, this).length > 0) {
-            console.log("found tweens: " + this.getName())
-            console.log(getTweensForObject(this.scene, this))
+            
+            
             return true;
         }
 
@@ -118,7 +119,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     removeCompletedTweens(): void
     {
         getTweensForObject(this.scene, this).forEach(x => {
-            console.log(x.totalProgress, x.progress)
+            
             if (x.totalProgress >= 1) x.remove();
         });
         
@@ -127,7 +128,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     setFaceUp(isFaceUp: boolean)
     {
         if (isFaceUp) {
-            console.log(this.faceTexture)
+            
             this.setTexture2(this.faceTexture);
             this.isFaceUp = isFaceUp;
         } else {

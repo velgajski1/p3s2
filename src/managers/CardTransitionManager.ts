@@ -1,4 +1,5 @@
-import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
+import { STOCK_THREE_MODE_ACTIVE } from '../config/Config';
+import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 import { getTweensForObject } from '../utils/Utils';
 
@@ -77,7 +78,7 @@ class CardTransitionManager {
                 card.x = TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x * targetPileIndex;
                 card.y = yPosition;
                 onComplete();
-                // console.log("tween complete for " + card.getName())
+                // 
             }
         });
     
@@ -136,18 +137,13 @@ class CardTransitionManager {
     }
   
 
-    moveTopCardStockToWaste(card: Card, stockPile: any[], wastePile: any[], gameplayContainer: Phaser.GameObjects.Container, onComplete?: () => void) 
+    moveTopCardStockToWaste(card: Card, index : number, stockPile: any[], wastePile: any[], gameplayContainer: Phaser.GameObjects.Container, onComplete?: () => void) 
     {
-        getTweensForObject(card.scene, card).forEach(x => x.remove());
 
-        
+        getTweensForObject(card.scene, card).forEach(x => x.remove());
         if (card) {
-            // Temporarily disable interaction
-            // card.removeInteractive()
 
             card.inTransition = true;
-            // 
-
             card.scene.tweens.add({
                 targets: card,
                 x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,

@@ -29,7 +29,7 @@ export class GameManager {
     static gameplayContainerScale: number;
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
-        console.log("create new instance")
+        
         GameManager.instance = this;
         this.gameScene = gameScene;
         this.startTime = Date.now();
@@ -56,7 +56,7 @@ export class GameManager {
             callback:  () => {
                 // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
                 this.gameplayContainer.sort('depth');
-                // if (this.gameScene.game.loop.actualFps < 59)  console.log(this.gameScene.game.loop.actualFps)
+                // if (this.gameScene.game.loop.actualFps < 59)  
                 // if (!this.controlManager.activeCard && !this.gameScene.input.activePointer.isDown) {
                     
                 // }
@@ -85,7 +85,7 @@ export class GameManager {
         if (this.instance == null) {
             this.instance = new GameManager(scene, container);
         }else {
-            console.log("instance exists: " , this.instance)
+            
         }
 
         return this.instance;
@@ -166,7 +166,7 @@ export class GameManager {
     {  
          
         this.instance = null
-        console.log(this.instance)
+        
     }
 
     getElapsedTime(): number {

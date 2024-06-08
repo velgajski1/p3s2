@@ -28,6 +28,7 @@ export const CARD_SCALE = 0.75;
 export const STOCK_COORDS = { x : -488, y : 80 };
 export const WASTE_DELTA_FROM_STOCK = 160;
 export const WASTE_OVERLAP = 0;
+export const WASTE_DELTA_X = 20;
 export const TABLEU_COORDS_INIT = { x : STOCK_COORDS.x, y : 290 }
 export const TABLEU_COORDS_DELTA = {x:160, y:34, y_covered:64}
 export const FOUNDATION_COORDS_INIT = {x:STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK*3, y:80}
