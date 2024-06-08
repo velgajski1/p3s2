@@ -6,14 +6,14 @@ import PileManager from "./PileManager";
 import UndoManager from "./UndoManager";
 
 class ControlManager {
-
+    keyR: any;
     private pileManager: PileManager;
     private isClickEnabled: boolean = true;
     keyD: any;
     dragStart: number;
     initialPosition: { x: number; y: number; };
     dragging: any;
-    private activeCard?: Card; 
+    public activeCard?: Card; 
     substack: Card[];
     private lastKnownPointerPosition: { x: number; y: number } = { x: 0, y: 0 };
     keyU: any
@@ -23,11 +23,17 @@ class ControlManager {
     keyZ: any ;
     substackClearTimeout: NodeJS.Timeout;
     holdTimeoutFlag: boolean = false;
+    public enabled: boolean = true;
 
     constructor(pileManager: PileManager) {
         this.pileManager = pileManager;
         this.pileManager.gameplayContainer.setInteractive()
         this.setupGlobalListeners();  // Setup global listeners for move and up events
+    }
+
+    disableControls()
+    {
+        this.enabled = false;
     }
 
     public getActiveCard(): Card | undefined { return this.activeCard; }
@@ -39,7 +45,7 @@ class ControlManager {
 
         card.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
 
-            // console.log(this.substack, card.inTransition, this.canMoveCard(card), card.pileType)
+            if (!this.enabled) return;
 
             if (this.activeCard == card) return;
  
@@ -49,8 +55,8 @@ class ControlManager {
                     card.finishTweens()
                 }
                 else {
-                    if (card.pileType != PileType.Waste){
-                        console.log("intransition")
+                    if (card.pileType != PileType.Waste && card.pileType != PileType.Stock) {
+                        // 
                         // HERE
                         setTimeout(() => {
                             if (pointer.isDown) {
@@ -64,7 +70,7 @@ class ControlManager {
                         return;
                     } 
                 }
-                console.log("card is in transition: " + card.name)
+                
 
             }
 
@@ -73,7 +79,7 @@ class ControlManager {
                 if (this.substack && this.substack.includes(card))
                 {
                     if (this.substack.indexOf(card)>0){
-                        console.log("substack included")
+                        
                         return;
                     } 
                 } 
@@ -84,7 +90,7 @@ class ControlManager {
 
             
             this.activeCard = card;  // Set the active card
-            console.log("set active card: " + card.getName())
+            
             this.dragStart = pointer.downTime;
             this.initialPosition = { x: card.x, y: card.y };
             clearTimeout(this.substackClearTimeout);
@@ -149,7 +155,7 @@ class ControlManager {
 
 
                 if (movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE ) {
-                    console.log("dragging set to true")
+                    
                     this.dragging = true;
                     this.activeCard.setDepth(this.activeCard.depth + 10000);
                     this.substack.forEach(s => {
@@ -208,6 +214,8 @@ class ControlManager {
                 } else if (this.activeCard && this.isClickEnabled) {
                     this.handleClick(this.activeCard);
                 }
+
+                // this.pileManager.applyFoldingIfNotInTransition()
             }
         });
 
@@ -260,7 +268,7 @@ class ControlManager {
     }
 
     handleCardDrop(activeCard: Card): void {
-        console.log("handle card drop: " + activeCard.getName());
+        
         const overlappedCards = this.findDropTargets(activeCard);
         
     
@@ -276,6 +284,10 @@ class ControlManager {
                 if (this.canPlaceCardOnTableau(activeCard, card)) {
                     let dropIdx = this.pileManager.getTableuPileIndexFromCard(card);
                     if (dropIdx >= 0) {
+                        console.log("fix tableu y delta drop: " + this.substack)
+                        this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack])
+                        this.pileManager.cardLayoutManager.init(this.pileManager)
+                        this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true)
                         this.placeCardOnTableau(activeCard, dropIdx);
                         this.substack.forEach(c => {
                             if (c === activeCard) return;
@@ -319,7 +331,7 @@ class ControlManager {
                 if (this.activeCard){
                     this.resetDraggedCards(this.activeCard, this.substack);
                     if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this)
-                    console.log(this.activeCard.depth)
+                    
                 } 
             }
         }
@@ -327,7 +339,7 @@ class ControlManager {
 
     resetDraggedCards(activeCard: Card, substack : Card[])
     {
-        console.log("reset dragged cards");
+        
         this.resetCardDragState(activeCard);
         this.substack.forEach(card => {
             if (card === activeCard) return;
@@ -467,6 +479,8 @@ class ControlManager {
         this.pileManager.addCardToTableuPile(activeCard, targetPileIndex);
         this.pileManager.getTableauPiles().forEach((pile, index) => {
             this.pileManager.uncoverTableuPile(index)
+            // this.pileManager.fixTableuYDelta(index)
+            // this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), index, true)
         })
 
         
@@ -521,7 +535,11 @@ class ControlManager {
     setupKeyboardControls() {
         // Create a key object for 'D'
         this.keyD = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.keyD.on('down', this.handleDKey, this);
+        this.keyD.on('down', this.handleDKey, this);   
+        
+        // Create a key object for 'D'
+        this.keyR = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        this.keyR.on('down', this.handleRKey, this);
     
         // Create a key object for 'U' for undo
         this.keyU = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.U);
@@ -538,6 +556,12 @@ class ControlManager {
     
         this.isClickEnabled = true; // Assuming this is defined somewhere in your class
     }
+    handleRKey(arg0: string, handleRKey: any, arg2: this)
+    {
+        GameManager.removeInstance();
+        GameManager.gameScene.events.emit('restartScene');
+        // this.events.emit
+    }
     
     handleDKey() {
         if (this.isClickEnabled) {
@@ -553,15 +577,17 @@ class ControlManager {
     }
     
     handleUKey() {
-        if (this.pileManager.getAllCards().find(c => c.inTransition)){
+        if (this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens()) )){
             setTimeout(() => {
-                if (this.pileManager.getAllCards().find(c => c.inTransition)) return
+                if (this.pileManager.getAllCards().find(c => c.inTransition || (c.isBeingFlipped==false && c.hasTweens()))) return
                 const undoManager = UndoManager.getInstance();
                 const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
                 if (state) {
                     this.pileManager.setToGameState(state);
                 }  
             }, 250);
+            // this.pileManager.getAllCards().forEach(c => c.finishTweens())
+            this.pileManager.getAllCards().forEach(c => c.removeCompletedTweens())
             return;
         } 
         const undoManager = UndoManager.getInstance();
@@ -581,11 +607,11 @@ class ControlManager {
     // Handle the click event based on card's pile type
     private handleCardClick(card: Card) : boolean{
         
-        console.log("handle card click: " + card.getName(), card.pileType)
+        
 
         // Prevent additional clicks if a card click was already processed
         if (!this.isClickEnabled) {
-            console.log("click disabled")
+            
             return false;
         }
 

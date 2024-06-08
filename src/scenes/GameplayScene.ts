@@ -29,6 +29,13 @@ export class GameplayScene extends Phaser.Scene {
         this.resize(this.scale.gameSize as unknown as Phaser.Structs.Size);
 
         this.scene.launch("UIScene");
+
+        this.game.canvas.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+        })
+
+            // Listen for the custom event
+        this.events.once('restartScene', this.restartScene, this);
     }
 
     private resize(gameSize: Phaser.Structs.Size): void {
@@ -44,6 +51,14 @@ export class GameplayScene extends Phaser.Scene {
         Registry.uiElemStartX = width / 2 +400 * scale;
     }
 
+    private restartScene(): void {
+        // Stop the UIScene if it needs to be stopped
+        this.scene.stop("UIScene");
+        this.scene.stop("GameplayScene");
+
+        // Restart the GameplayScene
+        this.scene.restart();
+    }
 
 }
 

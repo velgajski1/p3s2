@@ -24,8 +24,12 @@ export class GameManager {
     quickTimeEvent: Phaser.Time.TimerEvent;
 
     public static gameScene : Phaser.Scene 
+    static rendererHeight: number;
+    static gameplayContainerY: number;
+    static gameplayContainerScale: number;
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
+        console.log("create new instance")
         GameManager.instance = this;
         this.gameScene = gameScene;
         this.startTime = Date.now();
@@ -52,6 +56,11 @@ export class GameManager {
             callback:  () => {
                 // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
                 this.gameplayContainer.sort('depth');
+                // if (this.gameScene.game.loop.actualFps < 59)  console.log(this.gameScene.game.loop.actualFps)
+                // if (!this.controlManager.activeCard && !this.gameScene.input.activePointer.isDown) {
+                    
+                // }
+                
             },
             callbackScope: this,
             loop: true
@@ -62,18 +71,23 @@ export class GameManager {
     public addQuickTimeEvent()
     {
         this.quickTimeEvent = this.gameScene.time.addEvent({
-            delay: 600,
+            delay: 200,
             callback: this.updateTimerQuick,
             callbackScope: this,
             loop: true
         });        
+
+        
         
     }
 
     public static getInstance(scene: Phaser.Scene, container : Phaser.GameObjects.Container): GameManager {
-        if (this.instance === null) {
+        if (this.instance == null) {
             this.instance = new GameManager(scene, container);
+        }else {
+            console.log("instance exists: " , this.instance)
         }
+
         return this.instance;
     }
 
@@ -109,26 +123,50 @@ export class GameManager {
     
     updateTimerQuick(): void {
         
+        
+        
+     
+        GameManager.rendererHeight = this.gameScene.renderer.height;
+        GameManager.gameplayContainerY = this.gameplayContainer.y
+        GameManager.gameplayContainerScale = this.gameplayContainer.scale;
+        
+        
         this.pileManager.fixTableuDepthAndFlipstatus()
         this.pileManager.getWastePile().forEach(c => {
             c.setFaceUp(true)
         });
 
-
-        if (this.pileManager.allCardsUncovered())
+        if (this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length <= 1 && this.pileManager.getStockPile().length == 0)
         {
+            UndoManager.getInstance().disableUndo()
+            this.controlManager.disableControls()
             let wasteTop = this.pileManager.getTopCardFromWaste();
             if (wasteTop)
             {
-                if (this.pileManager.moveCardToFoundationIfPossible(wasteTop)) return;
+                if (this.pileManager.moveCardToFoundationIfPossible(wasteTop, -1, true)) return;
             } 
             this.pileManager.getTableauPiles().some((pile, index) => {
                 if (this.pileManager.moveTopCardTableauToFoundation(index)) return true;
             });
+
+            if (this.pileManager.getWastePile().length == 0 && this.pileManager.getTableauPiles().every(pile => pile.length == 0)) {
+                this.restart()
+            }
         }
 
+    }
 
-    
+    restart() {
+        GameManager.removeInstance();
+        GameManager.instance = null;
+        this.gameScene.events.emit('restartScene');
+
+    }
+    static removeInstance()
+    {  
+         
+        this.instance = null
+        console.log(this.instance)
     }
 
     getElapsedTime(): number {
@@ -176,6 +214,7 @@ export class GameManager {
 
     // Lay out the cards in the initial game arrangement
     private layoutInitialCards() {
+        this.layoutManager.init(this.pileManager)
         // Use the pile manager to distribute cards and the layout manager to arrange them
         this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
         this.layoutManager.addWasteIndicator(this.gameScene,this.gameplayContainer)

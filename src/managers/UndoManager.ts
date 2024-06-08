@@ -2,8 +2,10 @@ import Card from "../elements/Card";
 import { GameState } from "../utils/types";
 
 export default class UndoManager {
+
     private static instance: UndoManager;
     private states: GameState[] = [];
+    public enabled = true;
 
     private constructor() {}
 
@@ -12,6 +14,10 @@ export default class UndoManager {
             UndoManager.instance = new UndoManager();
         }
         return UndoManager.instance;
+    }
+    disableUndo()
+    {
+        this.enabled = false;
     }
 
     public saveState(state: GameState) {
@@ -95,6 +101,7 @@ export default class UndoManager {
     
     public undo(): GameState | null {
         
+        if (!this.enabled) return null;
         if (this.states.length > 1) {
             this.states.pop();
             const prevState = this.states[this.states.length - 1];

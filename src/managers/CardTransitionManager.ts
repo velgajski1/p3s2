@@ -4,6 +4,7 @@ import { getTweensForObject } from '../utils/Utils';
 
 class CardTransitionManager {
 
+
     private scene: Phaser.Scene;
 
     constructor( ) { }
@@ -39,7 +40,7 @@ class CardTransitionManager {
         }
     }
 
-    moveCardToTableau( tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
+    moveCardToTableau( tab_deltaY : number, tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
         card.setInteractive(false); // Temporarily disable interaction during the movement
         getTweensForObject(card.scene, card).forEach(x => x.complete());
         
@@ -53,15 +54,11 @@ class CardTransitionManager {
             if (card.substackid != c.substackid) {
                 getTweensForObject(c.scene, c).forEach(x => x.complete());
             }
-                
-            
         });   
         
-
-    
         for (let i = 0; i < indexWithinTargetPile; i++) {
             if (targetPile[i].isFaceUp) {
-                yPosition += TABLEU_COORDS_DELTA.y;
+                yPosition += tab_deltaY;
             } else {
                 yPosition += TABLEU_COORDS_DELTA.y_covered;
             }
@@ -77,10 +74,10 @@ class CardTransitionManager {
             onComplete: () => {
                 // Enable interaction and call the completion callback
                 card.setInteractive(true);
-                
                 card.x = TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x * targetPileIndex;
                 card.y = yPosition;
                 onComplete();
+                // console.log("tween complete for " + card.getName())
             }
         });
     
@@ -88,6 +85,25 @@ class CardTransitionManager {
         container.sort("depth");
     }
     
+    moveWithTween(card : Card, x : number, y : number)
+    {
+        if (card.x == x && card.y == y) return;
+        if (card.hasTweens()) card.finishTweens()
+        card.scene.tweens.add({
+            targets: card,
+            x: x,
+            y: y,
+            duration: TABLEU_STACK_TWEEN_DURATION/4, // Adjust as necessary
+            ease: 'Cubic.easeOut',
+        });
+    }
+
+    moveWithoutTween(card: Card, x: number, y: number)
+    {
+        card.finishTweens();
+        card.x = x;
+        card.y = y;
+    }
 
     // Move a card to the foundation with a visual transition
     moveCardToFoundation(card: Card, targetX: number, targetY: number, foundationPile: Card[], pileIndex: number, gameplayContainer : Phaser.GameObjects.Container, onComplete?: () => void) {
@@ -100,7 +116,7 @@ class CardTransitionManager {
             targets: card,
             x: targetX,
             y: targetY,
-            duration: TABLEU_STACK_TWEEN_DURATION, // Adjust as needed
+            duration: TABLEU_STACK_TWEEN_DURATION-2, // Adjust as needed
             ease: 'Cubic.easeOut',
             onComplete: () => {
 
@@ -130,7 +146,7 @@ class CardTransitionManager {
             // card.removeInteractive()
 
             card.inTransition = true;
-            // console.log("card is in transition")
+            // 
 
             card.scene.tweens.add({
                 targets: card,
@@ -140,7 +156,6 @@ class CardTransitionManager {
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
                     card.inTransition = false
-                    // console.log("card is removed from transition")
                     if (onComplete) onComplete();
                     card.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK
                     card.y = STOCK_COORDS.y
@@ -155,7 +170,7 @@ class CardTransitionManager {
 
     // Flip the card with animation (from back to front or vice versa)
     flipCard(card: Card, duration: number = 300, onComplete?: () => void) {
-        console.log("flipping card: " + card.getName())
+        
         if (card.isBeingFlipped) return;
         card.isBeingFlipped = true;
         card.scene.tweens.add({

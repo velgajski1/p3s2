@@ -2,8 +2,10 @@
 import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
+import CardTransitionManager from "./CardTransitionManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
+
     stockpile: Card[];
     wastepile: Card[];
     tableauPiles: Card[][];
@@ -15,11 +17,13 @@ class CardLayoutManager {
         this.pileManager = pileManager;;
     }
 
-    layoutAll(pileManager : PileManager) 
+    layoutAll(pileManager : PileManager, withTween : boolean = false) 
     {
+        console.log("layout all")
+        this.init(pileManager)
         this.layoutStockPile(pileManager.getStockPile())
         this.layoutWastePile(pileManager.getWastePile())
-        this.layoutTableauPiles(pileManager.getTableauPiles())
+        this.layoutTableauPiles(pileManager.getTableauPiles(), withTween)
         this.layoutFoundationPiles(pileManager.getFoundationPiles())
         
     }
@@ -37,34 +41,68 @@ class CardLayoutManager {
     // Layout method for waste pile, which might have slight overlap
     layoutWastePile(cards: Card[]) {
         cards.forEach((card, index) => {
+            card.finishTweens()
             card.x = STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK + index * WASTE_OVERLAP; // Overlapping horizontally for each card
             card.y = STOCK_COORDS.y;
             card.setDepth(index); // Correct stacking order for waste pile
+            // console.log(card.getName())
+
         });
+    }
+
+    layoutTableauPile(tableauPiles : Array<Array<Card>>, pileIndex: number, withTween : boolean = false) 
+    {
+        console.log("lyout tableu pile: " + pileIndex, withTween);
+       let pile = tableauPiles[pileIndex];
+
+       const x = TABLEU_COORDS_INIT.x + pileIndex * TABLEU_COORDS_DELTA.x; // Adjust horizontal spacing
+       let y = TABLEU_COORDS_INIT.y; // Initialize the y coordinate for the first card in the pile
+
+       pile.forEach((card, cardIndex) => {
+           if (withTween && this.pileManager) {
+               this.pileManager.cardTransitionManager.moveWithTween(card, x, y)
+           }
+           else
+           {
+               card.x = x;
+               card.y = y;
+           }
+
+           if (card.isFaceUp) {
+           console.log(this.pileManager)
+               if (this.pileManager) {
+                   y += this.pileManager.getTableuCardsDeltaYForPile(pileIndex); // Use larger vertical offset for face-up cards
+               }
+               else
+               {
+                   y += TABLEU_COORDS_DELTA.y;
+               }
+               
+           } else {
+               y += TABLEU_COORDS_DELTA.y_covered; // Use smaller vertical offset for face-down cards
+           }
+
+           if (card.inTransition) {
+            card.setDepth(20000 + cardIndex)
+            // console.log("set depth for transition: " + card.getName())
+           }
+           else
+           {
+            card.setDepth(pileIndex * 100 + cardIndex); // Ensure correct stacking order
+           }
+
+
+           card.scale = CARD_SCALE;
+       });
+   
+       
     }
 
     // Add more layout methods for additional pile types or special layouts...
     // Layout method for the tableau piles
-    layoutTableauPiles(tableauPiles: Array<Array<Card>>) {
+    layoutTableauPiles(tableauPiles: Array<Array<Card>>, withTween : boolean = false) {
         tableauPiles.forEach((pile, pileIndex) => {
-            const x = TABLEU_COORDS_INIT.x + pileIndex * TABLEU_COORDS_DELTA.x; // Adjust horizontal spacing
-            let y = TABLEU_COORDS_INIT.y; // Initialize the y coordinate for the first card in the pile
-    
-            pile.forEach((card, cardIndex) => {
-                card.x = x;
-                card.y = y;
-
-                // console.log(card.getName(), card.y, card.depth);
-    
-                if (card.isFaceUp) {
-                    y += TABLEU_COORDS_DELTA.y; // Use larger vertical offset for face-up cards
-                } else {
-                    y += TABLEU_COORDS_DELTA.y_covered; // Use smaller vertical offset for face-down cards
-                }
-    
-                card.setDepth(pileIndex * 100 + cardIndex); // Ensure correct stacking order
-                card.scale = CARD_SCALE;
-            });
+            this.layoutTableauPile(tableauPiles, pileIndex, withTween);
         });
     }
     
@@ -74,6 +112,7 @@ class CardLayoutManager {
         foundationPiles.forEach((pile, pileIndex) => {
             const x = baseX + pileIndex * horizontalOffset; // Adjust horizontal spacing
             pile.forEach((card, cardIndex) => {
+                card.removeTweens()
                 card.x = FOUNDATION_COORDS_INIT.x + pileIndex * FOUNDATION_COORDS_DELTA.x;
                 card.y = FOUNDATION_COORDS_INIT.y;
                 card.setDepth(1000 + pileIndex * 10 + cardIndex); // Ensure correct stacking order

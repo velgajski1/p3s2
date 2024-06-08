@@ -1,4 +1,5 @@
-import { FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from "../config/Consts";
+import { Game } from "phaser";
+import { FOLD_PIXELS_RATE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_FOLD_HEIGHT, WASTE_DELTA_FROM_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import { GameState } from "../utils/types";
 import CardLayoutManager from './CardLayoutManager';
@@ -10,118 +11,26 @@ import UndoManager from "./UndoManager";
 
 export default class PileManager {
 
+
+
     static substackId : number = 0;
 
 
     gameManager: GameManager;
 
-    setToGameState(state: GameState): void {
-        // Clear all current piles without affecting the cards themselves
-
-        this.clearPiles();
-
-        // Rearrange cards according to the saved state
-        state.tableauPiles.forEach((pile, pileIndex) => {
-            pile.forEach(card => this.addCardToPile(card, PileType.Tableau, pileIndex));
-        });
-        state.foundationPiles.forEach((pile, pileIndex) => {
-            pile.forEach(card => this.addCardToPile(card, PileType.Foundation, pileIndex));
-        });
-        state.stockPile.forEach(card => {
-            
-            this.addCardToPile(card, PileType.Stock, 0);
-        });
-        state.wastePile.forEach(card => {
-            this.addCardToPile(card, PileType.Waste, 0);
-            card.setFaceUp(true);
-        });
-
-        this.applyFlippedCounts(state.flippedCounts)
-        this.gameManager.layoutManager.layoutAll(this)
-        this.fixTableuDepthAndFlipstatus()
-    }
-
-    fixTableuDepthAndFlipstatus()
-    {
-        for (var i = 0; i < 7; i++) {
-            let c = this.getTopCardFromTableau(i);
-            if (c?.isFaceUp==false && c?.isBeingFlipped == false) 
-            {
-                c.setFaceUp(true);
-            }
-            
-        }
-        this.fixTableuDepth()
-    }
-    fixFoundationLayering()
-    {
-        this.getFoundationPiles().forEach(pile => {
-            pile.forEach((card, index) => {
-                if (card.inTransition == false)  card.setDepth(index);
-            })
-        })
-        this.gameplayContainer.sort("depth");
-    }
-
-    private applyFlippedCounts(flippedCounts: number[]): void {
-        this.tableauPiles.forEach((pile, index) => {
-            const count = flippedCounts[index] || 0; // Get the count of face-up cards or default to 0
-            let faceUpCount = 0;
-            // Traverse the pile from the top (end of the array) downwards
-            for (let i = pile.length - 1; i >= 0; i--) {
-                if (faceUpCount < count) {
-                    // pile[i].isFaceUp = true;
-                    pile[i].setFaceUp(true)
-                    faceUpCount++;
-                } else {
-                    pile[i].setFaceUp(false); // Ensure cards above the last face-up are facedown if needed
-                }
-            }
-        });
-    }
-
-    private clearPiles(): void {
-        // Clear the arrays but keep the card objects in memory
-        this.tableauPiles.forEach(pile => pile.length = 0);
-        this.foundationPiles.forEach(pile => pile.length = 0);
-        this.stockPile.length = 0;
-        this.wastePile.length = 0;
-    }
-
-    fixTableuDepth()
-    {
-        this.getTableauPiles().forEach((pile, pileindex) => {
-            pile.forEach((c, index) => {
-                if (!c.isBeingFlipped && !c.inTransition && c.depth < 1000)
-                {
-                    
-                    c.setDepth(100*pileindex+index);
-                }
-                
-            })
-        })
-    }
-
-    getAllCards(): Card[] {
-        // Combine all the piles into a single array
-        return [
-            ...this.stockPile,
-            ...this.wastePile,
-            ...this.transitionPile,
-            ...this.tableauPiles.flat(),
-            ...this.foundationPiles.flat()
-        ];
-    }
+    
 
     private tableauPiles: Array<Array<Card>>;
     private foundationPiles: Array<Array<Card>>;
     private stockPile: Array<Card>;
     private wastePile: Array<Card>;
     private transitionPile : Array<Card>;
+    private tableuPilesYDelta : Array<number>;
 
     cardLayoutManager: CardLayoutManager;
     gameplayContainer: Phaser.GameObjects.Container;
     cardTransitionManager : CardTransitionManager;
+    static foldYDelta: number = 1;
 
     constructor(gameplayContainer : Phaser.GameObjects.Container, gameManager : GameManager) {
         
@@ -129,6 +38,7 @@ export default class PileManager {
         this.gameplayContainer = gameplayContainer;
         this.gameManager = gameManager;
         this.tableauPiles = Array.from({ length: 7 }, () => []);
+        this.tableuPilesYDelta = Array.from({length:7}, () => TABLEU_COORDS_DELTA.y)
 
         // Initialize empty foundation piles (4 in total, one per suit)
         this.foundationPiles = Array.from({ length: 4 }, () => []);
@@ -154,6 +64,10 @@ export default class PileManager {
             for (let i = 0; i < this.tableauPiles.length; i++) {
                 const targetPile = this.tableauPiles[i];
                 if (this.canMoveToTableauPile(topWasteCard, targetPile)) {
+                    this.fixTableuYDelta(i, [topWasteCard])
+                    console.log(this.tableuPilesYDelta)
+                    this.cardLayoutManager.init(this)
+                    this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
                     this.addCardToTableuPile(topWasteCard, i);
                     UndoManager.getInstance().saveState(this.getState())
                     return true; // Card moved, so no further action is required
@@ -189,15 +103,18 @@ export default class PileManager {
 
     allCardsUncovered() : boolean
     {
-        // console.log( this.tableauPiles.every(pile => pile.every(card => card.isFaceUp)))
         return this.tableauPiles.every(pile => pile.every(card => card.isFaceUp));
     }
+
+
+
+
 
     // Method to handle clicks on a tableau card
     handleTableauClicked(card: Card) : boolean {
       
         const pileIndex = card.pileIndex;
-        console.log("pile index = ", card.pileIndex)
+        
         // Ensure the index is valid
         if (pileIndex >= 0 && pileIndex < this.tableauPiles.length) {
             const tableauPile = this.tableauPiles[pileIndex];
@@ -206,7 +123,11 @@ export default class PileManager {
             if (this.moveCardToFoundationIfPossible(card)) {
                 if (tableauPile.length > 0) {
                     this.uncoverTableuPile(pileIndex);
+                    this.fixTableuYDelta(pileIndex)
+                    this.cardLayoutManager.init(this)
+                    this.cardLayoutManager.layoutTableauPile(this.getTableauPiles(), pileIndex, true)
                 }
+
 
                 UndoManager.getInstance().saveState(this.getState())
                 return true; // Card moved to foundation, so no further action is required
@@ -219,22 +140,31 @@ export default class PileManager {
                     if (this.canMoveToTableauPile(card, targetPile)) {
                         // Identify the substack starting from the clicked card to the end
                         const substack = this.getSubstack(card);
-    
+                        this.fixTableuYDelta(i, substack)
+                        this.cardLayoutManager.init(this)
+                        this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
+                        console.log(this.tableuPilesYDelta)
+
                         card.substackid = PileManager.substackId++;
                         // Move the substack to the new tableau pile using the transition manager
                         substack.forEach((movingCard, subIndex) => {
-                            console.log(movingCard.getName(), subIndex)
                             movingCard.substackid = PileManager.substackId;
                             this.addCardToTableuPile(movingCard, i);
                         });
     
                         // Remove the moved substack from the original pile
                         this.removeSubstack(tableauPile, card)
+
+                        this.fixTableuYDelta(pileIndex)
+                        this.cardLayoutManager.init(this)
+                        this.cardLayoutManager.layoutTableauPile(this.tableauPiles, pileIndex, true)
     
                         // Uncover the top card of the original pile, if any
-                        // console.log(tab)
+                        // 
                         if (targetPile.length > 0) {
                             this.uncoverTableuPile(pileIndex);
+                            
+                            // this.cardLayoutManager.layoutTableauPile(this.getTableauPiles(), card.pileIndex, true)
                         }
     
                         UndoManager.getInstance().saveState(this.getState())
@@ -252,9 +182,10 @@ export default class PileManager {
     moveTopCardTableauToFoundation(pileIndex: number) {
         const card = this.getTopCardFromTableau(pileIndex);
         if (card) {
-            if (this.moveCardToFoundationIfPossible(card))
+            if (this.moveCardToFoundationIfPossible(card, -1, true))
             {
                 this.uncoverTableuPile(pileIndex);
+                this.fixTableuYDelta(card.pileIndex)
                 UndoManager.getInstance().saveState(this.getState())
                 return true;
             }
@@ -263,13 +194,13 @@ export default class PileManager {
     }
     uncoverTableuPile(pileIndex: number)
     {
-        console.log("uncover tableu called")
+        
         // Retrieve the pile by index
         const tableauPile = this.tableauPiles[pileIndex];
         if (tableauPile && tableauPile.length > 0) {
             // Get the top card
             const topCard = tableauPile[tableauPile.length - 1];
-            console.log(topCard.isFaceUp);
+            
             if (!topCard.isFaceUp){
                 this.cardTransitionManager.flipCard(topCard, 120);
             }
@@ -295,7 +226,7 @@ export default class PileManager {
        
     }
     // Move a card to the foundation if possible (using the transition manager)
-    public moveCardToFoundationIfPossible(card: Card, foundationIdx : number = -1): boolean {
+    public moveCardToFoundationIfPossible(card: Card, foundationIdx : number = -1, skipLayoutAll : boolean = false): boolean {
         // Verify that the card is on top of its tableau pile
         if (card.pileType === PileType.Tableau) {
             const tableauPile = this.tableauPiles[card.pileIndex];
@@ -330,9 +261,12 @@ export default class PileManager {
             () => {
                 this.removeCardFromTransition(card)
                 this._addCardToFoundation(card, pileIndex)
+                if (!skipLayoutAll){
+                    // this.fixTableuYDeltaAll();
+                    // this.cardLayoutManager.layoutAll(this, true)
+                }
                 this.fixFoundationLayering()
-                
-                
+
             }
         );
 
@@ -441,6 +375,62 @@ export default class PileManager {
 
     getWastePile(): Card[] {
         return this.wastePile;
+    }
+
+    calculateTableuPileHeight(pileIndex : number, tabCoordsDeltaY :number, tabCoordsDeltaYCovered : number, substack : Card[] = []): number {
+        let targetPile = this.tableauPiles[pileIndex];
+        let yPosition = TABLEU_COORDS_INIT.y;
+        for (let i = 0; i < targetPile.length; i++) {
+            if (targetPile[i].isFaceUp) {
+                yPosition += tabCoordsDeltaY;
+            } else {
+                yPosition += tabCoordsDeltaYCovered;
+            }
+        }
+        for (let i = 0; i < substack.length; i++) {
+            if (substack[i].isFaceUp) {
+                yPosition += tabCoordsDeltaY;
+            } else {
+                yPosition += tabCoordsDeltaYCovered;
+            }
+        }
+        return yPosition;
+
+    }
+
+    fixTableuYDeltaAll() {
+        this.tableuPilesYDelta.forEach((x,i) => this.fixTableuYDelta(i));
+    }
+
+    fixTableuYDelta(pileIndex: number, substack : Card[] = [], maxTries : number = 50) : number
+    {
+        maxTries--;
+        if (maxTries <= 0) return this.tableuPilesYDelta[pileIndex];
+        let height = this.calculateTableuPileHeight(pileIndex, this.tableuPilesYDelta[pileIndex], TABLEU_COORDS_DELTA.y_covered, substack)+30;
+        
+        let x = (GameManager.rendererHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
+        console.log(pileIndex, height, substack.length, x);
+        if (x > 20 && this.tableuPilesYDelta[pileIndex] < TABLEU_COORDS_DELTA.y) {
+            this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] + 1;
+            return this.fixTableuYDelta(pileIndex, substack, maxTries);
+
+        }
+        else if (x < 0) {
+            this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] - 1;
+            return this.fixTableuYDelta(pileIndex, substack, maxTries);
+        }
+        else
+        {
+            // console.log(this.tableuPilesYDelta[pileIndex]);
+            return this.tableuPilesYDelta[pileIndex];
+        }
+
+       
+    };
+
+    getTableuCardsDeltaYForPile(pileIndex : number) : number {
+
+        return this.tableuPilesYDelta[pileIndex];
     }
 
     // Check if a card can be placed in the target tableau pile according to Klondike rules
@@ -567,9 +557,7 @@ export default class PileManager {
         this.gameplayContainer.sort("depth");
 
            
-      
-
-
+    
     }
 
     public getState() : GameState {
@@ -587,8 +575,9 @@ export default class PileManager {
     public addCardToTableuPile(card: Card, pileIndex: number) {
         let targetPile = this.tableauPiles[pileIndex];
 
+        
         this.cardTransitionManager.moveCardToTableau(
-
+            this.getTableuCardsDeltaYForPile(pileIndex),
             this.getTableauPiles(),
             card,
             pileIndex,
@@ -597,9 +586,10 @@ export default class PileManager {
             () => {
                 this.removeCardFromTransition(card);
                 this._addCardToTableau(card, pileIndex);
-                this.cardLayoutManager.layoutAll(this)
+                // this.cardLayoutManager.layoutAll(this, true)
                 this.fixTableuDepthAndFlipstatus()
                 this.gameplayContainer.sort("depth");
+                
                 
             }
         );
@@ -609,7 +599,9 @@ export default class PileManager {
         this._addCardToTableau(card, pileIndex);
         card.setInteractive(false);
         
-    };
+    }
+    
+
 
     public addCardToFoundationPile(card: Card, foundationIndex: number) {
         
@@ -629,6 +621,8 @@ export default class PileManager {
                 // Callback after the transition is complete
                 this.removeCardFromTransition(card);
                 this._addCardToFoundation(card, foundationIndex);
+                // this.fixTableuYDeltaAll();
+                // this.cardLayoutManager.layoutAll(this, true)
                 this.fixFoundationLayering()
             }
         );
@@ -658,7 +652,7 @@ export default class PileManager {
 
     // Add a card to the waste pile
     private _addCardToWaste(card: Card) {
-        // console.log("add to waste pile")
+        // 
         this.addCardToPile(card, PileType.Waste, 0); // Only one waste pile
     }
 
@@ -718,6 +712,112 @@ export default class PileManager {
             console.log(`Card: ${name}, Depth: ${depth}, isfaceup: ${isfaceup}`);
 
         })
+    }
+
+    setToGameState(state: GameState): void {
+        // Clear all current piles without affecting the cards themselves
+
+        console.log("clear piles")
+        this.clearPiles();
+
+        // Rearrange cards according to the saved state
+        state.tableauPiles.forEach((pile, pileIndex) => {
+            pile.forEach(card => this.addCardToPile(card, PileType.Tableau, pileIndex));
+            this.fixTableuYDelta(pileIndex);
+        });
+        state.foundationPiles.forEach((pile, pileIndex) => {
+            pile.forEach(card => this.addCardToPile(card, PileType.Foundation, pileIndex));
+        });
+        state.stockPile.forEach(card => {
+            
+            this.addCardToPile(card, PileType.Stock, 0);
+        });
+        state.wastePile.forEach(card => {
+            this.addCardToPile(card, PileType.Waste, 0);
+            card.setFaceUp(true);
+        });
+
+        this.applyFlippedCounts(state.flippedCounts)
+       
+        this.gameManager.layoutManager.layoutAll(this)
+        this.fixTableuDepthAndFlipstatus()
+    }
+
+    fixTableuDepthAndFlipstatus()
+    {
+        for (var i = 0; i < 7; i++) {
+            let c = this.getTopCardFromTableau(i);
+            if (c?.isFaceUp==false && c?.isBeingFlipped == false) 
+            {
+                c.setFaceUp(true);
+            }
+            
+        }
+        this.fixTableuDepth()
+    }
+    fixFoundationLayering()
+    {
+        this.getFoundationPiles().forEach(pile => {
+            pile.forEach((card, index) => {
+                if (card.inTransition == false){
+                    console.log("card: " + index, card.getName())
+                    card.setDepth(getRankValue(card.rank))
+                
+                }  
+            })
+            pile.sort((a, b) => a.depth - b.depth);
+        })
+        
+        this.gameplayContainer.sort("depth");
+    }
+
+    private applyFlippedCounts(flippedCounts: number[]): void {
+        this.tableauPiles.forEach((pile, index) => {
+            const count = flippedCounts[index] || 0; // Get the count of face-up cards or default to 0
+            let faceUpCount = 0;
+            // Traverse the pile from the top (end of the array) downwards
+            for (let i = pile.length - 1; i >= 0; i--) {
+                if (faceUpCount < count) {
+                    // pile[i].isFaceUp = true;
+                    pile[i].setFaceUp(true)
+                    faceUpCount++;
+                } else {
+                    pile[i].setFaceUp(false); // Ensure cards above the last face-up are facedown if needed
+                }
+            }
+        });
+    }
+
+    private clearPiles(): void {
+        // Clear the arrays but keep the card objects in memory
+        this.tableauPiles.forEach(pile => pile.length = 0);
+        this.foundationPiles.forEach(pile => pile.length = 0);
+        this.stockPile.length = 0;
+        this.wastePile.length = 0;
+    }
+
+    fixTableuDepth()
+    {
+        this.getTableauPiles().forEach((pile, pileindex) => {
+            pile.forEach((c, index) => {
+                if (!c.isBeingFlipped && !c.inTransition && c.depth < 1000)
+                {
+                    c.setDepth(100*pileindex+index);
+                }
+                
+            })
+        })
+    }
+
+    getAllCards(): Card[] {
+        // Combine all the piles into a single array
+        return [
+            ...this.stockPile,
+            ...this.wastePile,
+            ...this.transitionPile,
+            ...this.tableauPiles.flat(),
+            ...this.foundationPiles.flat()
+        ];
     }
 
     // Additional utility methods like checking game rules, validating moves, etc.

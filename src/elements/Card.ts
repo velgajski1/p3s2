@@ -9,6 +9,7 @@ import { getTweensForObject } from '../utils/Utils';
 
 export default class Card extends Phaser.GameObjects.Sprite {
 
+
     private faceTexture: string; // Path to the face texture
     private backTexture: string; // Path to the back texture
     public isFaceUp: boolean; // Card's state
@@ -63,6 +64,13 @@ export default class Card extends Phaser.GameObjects.Sprite {
     finishTweens()
     {
         getTweensForObject(this.scene, this).forEach(x => x.complete());
+        this.inTransition = false;
+    }
+
+    removeTweens()
+    {
+        getTweensForObject(this.scene, this).forEach(x => x.remove());
+        this.inTransition = false;
     }
 
     isOnTableu()
@@ -77,6 +85,16 @@ export default class Card extends Phaser.GameObjects.Sprite {
         this.controlManager.setupCardClickControl(this);
     }
 
+    hasTweens() {
+        console.log("call hastweens")
+        if (getTweensForObject(this.scene, this).length > 0) {
+            console.log("found tweens: " + this.getName())
+            console.log(getTweensForObject(this.scene, this))
+            return true;
+        }
+
+        return false;
+    }
 
 
     setPileType(pileType: PileType)
@@ -97,9 +115,19 @@ export default class Card extends Phaser.GameObjects.Sprite {
         }
     }
 
+    removeCompletedTweens(): void
+    {
+        getTweensForObject(this.scene, this).forEach(x => {
+            console.log(x.totalProgress, x.progress)
+            if (x.totalProgress >= 1) x.remove();
+        });
+        
+    }
+
     setFaceUp(isFaceUp: boolean)
     {
         if (isFaceUp) {
+            console.log(this.faceTexture)
             this.setTexture2(this.faceTexture);
             this.isFaceUp = isFaceUp;
         } else {
@@ -115,12 +143,12 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     setTexture2(frame: string) : this
     {
-      
+        
         super.setTexture('cards', 'cards/' + frame + '.png')
         return this;
     }
 
-    getName() : string { return this.name;}
+    getName() : string { return this.name + ", faceup="+this.isFaceUp+", pile="+this.pileType + " x/y= " + this.x +","+ this.y }
 
     // Additional methods to manipulate the card state...
 }
