@@ -47,6 +47,14 @@ class ControlManager {
 
             if (!this.enabled) return;
 
+            let wastepile = this.pileManager.getWastePile()
+            if (wastepile.length > 0 && card.pileType == PileType.Waste) {
+                console.log(wastepile)
+                console.log(wastepile[wastepile.length-1].getName(), card.getName())
+                if (wastepile[wastepile.length-1]!=card) return;
+            }
+            console.log("click normally")
+
             if (this.activeCard == card) return;
  
             if (card.inTransition)
@@ -135,6 +143,8 @@ class ControlManager {
     }
 
     private canMoveCard(card: Card): boolean {
+
+
         return (card.isFaceUp ||card.isBeingFlipped) && (card.pileType === PileType.Waste || card.pileType === PileType.Tableau || card.pileType === PileType.Foundation);
     }
 
@@ -564,6 +574,7 @@ class ControlManager {
     }
     
     handleDKey() {
+        if (!this.enabled) return;
         if (this.isClickEnabled) {
             if (this.pileManager.getTopStockCard() === undefined) {
                 this.pileManager.moveAllCardsFromWasteToStock();
@@ -577,6 +588,7 @@ class ControlManager {
     }
     
     handleUKey() {
+        if (!this.enabled) return;
         if (this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens()) )){
             setTimeout(() => {
                 if (this.pileManager.getAllCards().find(c => c.inTransition || (c.isBeingFlipped==false && c.hasTweens()))) return
@@ -608,7 +620,7 @@ class ControlManager {
     private handleCardClick(card: Card) : boolean{
         
         
-
+        console.log("handleCardClick")
         // Prevent additional clicks if a card click was already processed
         if (!this.isClickEnabled) {
             

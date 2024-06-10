@@ -8,6 +8,7 @@ import CardTransitionManager from "./CardTransitionManager";
 import { GameManager } from "./GameManager";
 import UndoManager from "./UndoManager";
 import { STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import ControlManager from "./ControlManager";
 
 
 export default class PileManager {
@@ -55,7 +56,7 @@ export default class PileManager {
 
     handleWasteClicked(card: Card) : boolean
     {
-        
+        console.log("handleWasteClicked: " + card.getName());
         const topWasteCard = card;
         if (topWasteCard) {
             if (this.moveCardToFoundationIfPossible(topWasteCard)) {
@@ -81,6 +82,8 @@ export default class PileManager {
             }
             
         }
+        this.cardLayoutManager.init(this)
+        this.cardLayoutManager.layoutWastePile(this.getWastePile()) 
         UndoManager.getInstance().saveState(this.getState())
         return false
     }
@@ -214,7 +217,6 @@ export default class PileManager {
     }
 
     moveAllCardsFromWasteToStock() {
-   
         this.cardTransitionManager.moveAllCardsFromWasteToStock(this.stockPile, this.wastePile, this.gameplayContainer);
         UndoManager.getInstance().saveState(this.getState())
     }
@@ -222,17 +224,15 @@ export default class PileManager {
     // Move the top card from the stock pile to the waste pile
     moveTopCardStockToWaste() {
         if (STOCK_THREE_MODE_ACTIVE) {
-            
-            const cards : Card[] = this.getTopStockCards(3).reverse();
-
+            const cards : Card[] = this.getTopStockCards(3)
             cards.forEach( (card, index) => {
                 this._addCardToWaste(card);
-                this.cardTransitionManager.moveTopCardStockToWaste(card, index, this.stockPile, this.wastePile, this.gameplayContainer, () => {
-                    this._addCardToWaste(card);
-                });
+                // this.cardTransitionManager.moveTopCardStockToWaste(card, index, this.stockPile, this.wastePile, this.gameplayContainer, () => {
+                //     this._addCardToWaste(card);
+                // });
                 setTimeout(() => {
                     this.cardLayoutManager.layoutWastePile(this.getWastePile()) 
-                }, 170);
+                }, 50);
                 
                 card.setFaceUp(true);
             })

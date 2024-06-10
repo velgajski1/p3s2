@@ -4,6 +4,7 @@ import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COOR
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
+import ControlManager from "./ControlManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
 
@@ -12,6 +13,7 @@ class CardLayoutManager {
     tableauPiles: Card[][];
     foundationPiles: Card[][];
     pileManager: PileManager;
+    stockIndicator: Phaser.GameObjects.Sprite;
 
     init(pileManager : PileManager)
     {
@@ -46,9 +48,17 @@ class CardLayoutManager {
             // console.log(card.getName());
             card.finishTweens()
             card.wasteDeltaX = 0;
-            if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 2
-            if (index == cards.length-2) card.wasteDeltaX = WASTE_DELTA_X * 1
-            if (index == cards.length-3) card.wasteDeltaX = WASTE_DELTA_X * 0
+            if (cards.length > 2) {
+                if (index == cards.length-3) card.wasteDeltaX = WASTE_DELTA_X * 0
+                if (index == cards.length-2) card.wasteDeltaX = WASTE_DELTA_X * 1
+                if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 2
+            }else if (cards.length == 2) {
+                if (index == cards.length-2) card.wasteDeltaX = WASTE_DELTA_X * 0
+                if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 1 
+            }else {
+                if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 0 
+            }
+
             if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
             
             console.log(card.getName(), index, card.wasteDeltaX)
@@ -158,14 +168,14 @@ class CardLayoutManager {
     // Add a visual indicator for the stock pile
     addStockIndicator(pileManager: PileManager, scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        const stockIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'cards', 'cards/holder_stock_cards.png');
-        stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
-        stockIndicator.setScale(CARD_SCALE);
-        cont.add(stockIndicator);
+        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'cards', 'cards/holder_stock_cards.png');
+        this.stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
+        this.stockIndicator.setScale(CARD_SCALE);
+        cont.add(this.stockIndicator);
 
         // Make the indicator interactive and listen for clicks
-        stockIndicator.setInteractive();
-        stockIndicator.on('pointerdown', () => {
+        this.stockIndicator.setInteractive();
+        this.stockIndicator.on('pointerdown', () => {
             pileManager.moveAllCardsFromWasteToStock(); // Move all cards from waste back to stock
         });
     }

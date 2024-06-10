@@ -140,6 +140,7 @@ export class GameManager {
         {
             UndoManager.getInstance().disableUndo()
             this.controlManager.disableControls()
+            this.layoutManager.stockIndicator.removeAllListeners()
             let wasteTop = this.pileManager.getTopCardFromWaste();
             if (wasteTop)
             {
