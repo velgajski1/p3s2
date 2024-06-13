@@ -34,10 +34,25 @@
                 titleElement.textContent = 'SOLITAIREFUN.COM - SOLITAIRE';
             }
         }
+
+        function calculateTopBarPosition() {
+            const topBar = document.querySelector('.top-bar');
+            const topBarHeight = topBar.offsetHeight;
+            const viewportHeight = window.innerHeight;
+            const bottomPositionPercentage = (topBarHeight / viewportHeight) * 100;
+
+            console.log('Bottom position of .top-bar as percentage of screen height:', bottomPositionPercentage + '%');
+        }
     
         // Run on initial load and window resize
-        window.addEventListener('load', adjustTitle);
-        window.addEventListener('resize', adjustTitle);
+        window.addEventListener('load', () => {
+            adjustTitle();
+            calculateTopBarPosition();
+        });
+        window.addEventListener('resize', () => {
+            adjustTitle();
+            calculateTopBarPosition();
+        });
     </script>
     
 </body>

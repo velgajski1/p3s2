@@ -9,8 +9,36 @@ export class Preloader extends Scene
         super('Preloader');
     }
 
+    isMobile() {
+        const ua = navigator.userAgent;
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+    }
+
+    enterFullscreen() {
+        if (!this.scale.isFullscreen) {
+            console.log('Enter Fullscreen')
+            this.scale.startFullscreen();
+        }
+    }
+
+    maintainFullscreen() {
+        if (this.isMobile() && !this.scale.isFullscreen) {
+            console.log("call fullscreen")
+            this.scale.startFullscreen();
+        }
+    }
+
     init ()
     {
+
+        // Add tap/click event listener to enter fullscreen mode
+        this.input.on('pointerup', () => {
+            console.log("pointer up")
+            if (this.isMobile()) {
+                this.enterFullscreen();
+            }
+        });
+
 
         //  A simple progress bar. This is the outline of the bar.
         this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
@@ -37,6 +65,9 @@ export class Preloader extends Scene
         this.load.image('ace', 'ace.png');
         this.load.image('hint', 'hint.png');
         this.load.image('klondike_1_turn', 'klondike_1_turn.png');
+        this.load.image('holder_foundation_cards', 'holder_foundation_cards.png');
+        this.load.image('holder_stock_cards', 'holder_stock_cards.png');
+        this.load.image('holder_tableau_cards', 'holder_tableau_cards.png');
         this.load.image('klondike_1_turn_selected', 'klondike_1_turn_selected.png');
         this.load.image('klondike_3_turn', 'klondike_3_turn.png');
         this.load.image('klondike_3_turn_selected', 'klondike_3_turn_selected.png');
@@ -52,7 +83,14 @@ export class Preloader extends Scene
 
         this.load.json('cardData', 'assets.json');
 
-        this.load.multiatlas('cards', 'assets.json', 'assets');
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        // Load the appropriate multiatlas
+        if (isMobile) {
+            this.load.multiatlas('cards', 'assets_mobile.json', 'assets');
+        } else {
+            this.load.multiatlas('cards', 'assets.json', 'assets');
+        }
     }
 
     create ()

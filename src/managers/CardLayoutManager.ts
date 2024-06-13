@@ -140,27 +140,42 @@ class CardLayoutManager {
     }
 
 
-        // Add visual indicators for the foundation piles
-        addFoundationIndicators(scene: Phaser.Scene, cont : Phaser.GameObjects.Container) {
-            for (let i = 0; i < 4; i++) {
-                const x = FOUNDATION_COORDS_INIT.x + i * FOUNDATION_COORDS_DELTA.x;
-                const y = FOUNDATION_COORDS_INIT.y;
-    
-                // Create a sprite for the foundation indicator
-                const foundationIndicator = scene.add.sprite(x, y, 'cards', 'cards/holder_foundation_cards.png');
-                foundationIndicator.setDepth(9000); // Ensure the indicator is below cards
-                cont.add(foundationIndicator);
-                // Optionally, customize the indicator with scale or tint
-                foundationIndicator.setScale(CARD_SCALE);
-                // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
-            }
+    // Add visual indicators for the foundation piles
+    addFoundationIndicators(scene: Phaser.Scene, cont : Phaser.GameObjects.Container) {
+        for (let i = 0; i < 4; i++) {
+            const x = FOUNDATION_COORDS_INIT.x + i * FOUNDATION_COORDS_DELTA.x;
+            const y = FOUNDATION_COORDS_INIT.y;
+
+            // Create a sprite for the foundation indicator
+            const foundationIndicator = scene.add.sprite(x, y, 'holder_foundation_cards');
+            foundationIndicator.setDepth(9000); // Ensure the indicator is below cards
+            cont.add(foundationIndicator);
+            // Optionally, customize the indicator with scale or tint
+            foundationIndicator.setScale(CARD_SCALE);
+            // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
         }
+    }
+
+    addTableuIndicators(scene : Phaser.Scene, cont : Phaser.GameObjects.Container) {
+        for (let i = 0; i < 7; i++) {
+            const x = TABLEU_COORDS_INIT.x + i * TABLEU_COORDS_DELTA.x;
+            const y = TABLEU_COORDS_INIT.y;
+
+            // Create a sprite for the foundation indicator
+            const tabIndicator = scene.add.sprite(x, y, 'holder_tableau_cards'); //
+            tabIndicator.setDepth(-100); // Ensure the indicator is below cards
+            cont.add(tabIndicator);
+            // Optionally, customize the indicator with scale or tint
+            tabIndicator.setScale(CARD_SCALE);
+            // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
+        }
+    }
 
 
     // Add a visual indicator for the waste pile
     addWasteIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        const wasteIndicator = scene.add.sprite(STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK, STOCK_COORDS.y, 'cards', 'cards/holder_foundation_cards.png');
+        const wasteIndicator = scene.add.sprite(STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK, STOCK_COORDS.y, 'holder_foundation_cards');
         wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
         wasteIndicator.setScale(CARD_SCALE);
         cont.add(wasteIndicator);
@@ -168,7 +183,7 @@ class CardLayoutManager {
     // Add a visual indicator for the stock pile
     addStockIndicator(pileManager: PileManager, scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'cards', 'cards/holder_stock_cards.png');
+        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'holder_stock_cards');
         this.stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
         this.stockIndicator.setScale(CARD_SCALE);
         cont.add(this.stockIndicator);

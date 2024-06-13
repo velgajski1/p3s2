@@ -84,8 +84,9 @@ export class UIScene extends Phaser.Scene {
     }
 
     private resize(gameSize: Phaser.Structs.Size): void {
+        
         const { width, height } = gameSize;
-  
+        
         let textStartX = Registry.uiTextStartX;
         let elementsStartX = Registry.uiElemStartX;
         this.textContainer.setPosition(textStartX, 30);
@@ -104,8 +105,27 @@ export class UIScene extends Phaser.Scene {
         this.timeText.setStyle(textStyle)
         this.movesText.setStyle(textStyle)
         this.updateTextPos()
+        this.calculateContainerHeightPercentage(height)
     }
 
+    private calculateContainerHeightPercentage(screenHeight: number): void {
+        // Assuming original dimensions of the gameplay container (for example purposes)
+        const originalContainerHeight = this.textContainer.y + 20 +22; // Adjust this to your container's original height
+        
+        // Get the current scale applied to the container
+        const currentScale = this.textContainer.scaleY;
+        console.log(originalContainerHeight, this.textContainer.y, this.textContainer.height, currentScale)
+
+        // Calculate the scaled height of the container
+        const scaledContainerHeight = originalContainerHeight * currentScale;
+
+        // Calculate the percentage of the screen height taken by the container
+        const heightPercentage = (scaledContainerHeight / screenHeight) * 100;
+
+        // Log the percentage
+        console.log('Text container height percentage:', heightPercentage + '%');
+        this.registry.set('topUiWidthPercentage', heightPercentage/100)
+    }
     updateTextPos(){
         this.timeText.x = this.scoreText.x + this.scoreText.width
         this.movesText.x = this.timeText.x + this.timeText.width

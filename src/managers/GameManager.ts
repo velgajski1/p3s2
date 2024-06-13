@@ -31,6 +31,7 @@ export class GameManager {
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
         GameManager.instance = this;
+        UndoManager.getInstance().enableUndo()
         this.gameScene = gameScene;
         this.startTime = Date.now();
         this.gameplayContainer = gameplayContainer;
@@ -218,6 +219,7 @@ export class GameManager {
         this.layoutManager.init(this.pileManager)
         // Use the pile manager to distribute cards and the layout manager to arrange them
         this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
+        this.layoutManager.addTableuIndicators(this.gameScene,this.gameplayContainer)
         this.layoutManager.addWasteIndicator(this.gameScene,this.gameplayContainer)
         this.layoutManager.addStockIndicator(this.pileManager, this.gameScene,this.gameplayContainer)
 
