@@ -43,9 +43,9 @@ class CardLayoutManager {
 
     // Layout method for waste pile, which might have slight overlap
     layoutWastePile(cards: Card[]) {
-        console.log("layoutWastePile: ")
+        
         cards.forEach((card, index) => {
-            // console.log(card.getName());
+            // 
             card.finishTweens()
             card.wasteDeltaX = 0;
             if (cards.length > 2) {
@@ -61,7 +61,7 @@ class CardLayoutManager {
 
             if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
             
-            console.log(card.getName(), index, card.wasteDeltaX)
+            
             card.x = STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK + index * WASTE_OVERLAP + card.wasteDeltaX; // Overlapping horizontally for each card
             card.y = STOCK_COORDS.y;
             card.setDepth(index); // Correct stacking order for waste pile

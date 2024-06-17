@@ -22,8 +22,8 @@ export default class BaseScene extends Phaser.Scene {
             })
         }
 
-        private maintainFullscreen() {
-            console.log(this.isMobile(), this.isFullscreen(), this.isLandscape())
+        protected maintainFullscreen() {
+            
             if (this.isMobile() && !this.isFullscreen() && this.isLandscape()) {
                 this.enterFullscreen();
             }
@@ -34,29 +34,36 @@ export default class BaseScene extends Phaser.Scene {
             
         }
 
-        private isLandscape(): boolean {
+        protected isLandscape(): boolean {
             return window.innerWidth > window.innerHeight;
         }
     
-        private isFullscreen(): boolean {
+        protected isFullscreen(): boolean {
             return this.scale.isFullscreen;
         }
     
         private exitFullscreen(): void {
-            console.log("exitFullscreen")
+            
             if (this.scale.isFullscreen) {
                 this.scale.stopFullscreen();
             }
         }
-    private isMobile(): boolean {
-        const ua = navigator.userAgent;
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-    }
+        private isMobile() {
+            const userAgent = navigator.userAgent
+            console.log(this.sys.game.device.os.android,this.sys.game.device.os.iOS,this.sys.game.device.os.windows)
+            return this.sys.game.device.os.android || 
+                   this.sys.game.device.os.iOS;
+        }
 
     private enterFullscreen(): void {
-        console.log("enterFullscreen")
-        if (!this.scale.isFullscreen) {
-            this.scale.startFullscreen();
+        
+        if (!this.scale.isFullscreen && this.isMobile()) {
+            try {
+                this.scale.startFullscreen();
+            } catch (e) {
+                console.log(e)
+            }
+            
         }
     }
 

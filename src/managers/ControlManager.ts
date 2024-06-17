@@ -49,11 +49,11 @@ class ControlManager {
 
             let wastepile = this.pileManager.getWastePile()
             if (wastepile.length > 0 && card.pileType == PileType.Waste) {
-                console.log(wastepile)
-                console.log(wastepile[wastepile.length-1].getName(), card.getName())
+                
+                
                 if (wastepile[wastepile.length-1]!=card) return;
             }
-            console.log("click normally")
+            
 
             if (this.activeCard == card) return;
  
@@ -620,7 +620,7 @@ class ControlManager {
     private handleCardClick(card: Card) : boolean{
         
         
-        console.log("handleCardClick")
+        
         // Prevent additional clicks if a card click was already processed
         if (!this.isClickEnabled) {
             

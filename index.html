@@ -41,7 +41,8 @@
             const viewportHeight = window.innerHeight;
             const bottomPositionPercentage = (topBarHeight / viewportHeight) * 100;
 
-            console.log('Bottom position of .top-bar as percentage of screen height:', bottomPositionPercentage + '%');
+            
+            window.topBarBottomPosition = bottomPositionPercentage * window.innerHeight / 100;
         }
     
         // Run on initial load and window resize

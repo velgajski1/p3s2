@@ -56,7 +56,7 @@ export default class PileManager {
 
     handleWasteClicked(card: Card) : boolean
     {
-        console.log("handleWasteClicked: " + card.getName());
+        
         const topWasteCard = card;
         if (topWasteCard) {
             if (this.moveCardToFoundationIfPossible(topWasteCard)) {

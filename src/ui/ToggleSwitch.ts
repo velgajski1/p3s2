@@ -1,13 +1,18 @@
-class ToggleSwitch extends Phaser.GameObjects.Container {
+import Phaser from 'phaser';
+
+export class ToggleSwitch extends Phaser.GameObjects.Container {
     icon1: Phaser.GameObjects.Image;
     icon2: Phaser.GameObjects.Image;
 
-    constructor(scene: Phaser.Scene, x: number , y: number , icon1OffTexture: any, icon1OnTexture: any, icon2OffTexture: any, icon2OnTexture: any) {
+    constructor(scene: Phaser.Scene, x: number , y: number , icon1OffTexture: any, icon1OnTexture: any, icon2OffTexture: any, icon2OnTexture: any, itemDeltaX : number, itemDeltaY : number) {
         super(scene, x, y);
 
         // Create icons using the provided texture names
-        this.icon1 = this.createIcon(icon1OffTexture, icon1OnTexture);
-        this.icon2 = this.createIcon(icon2OffTexture, icon2OnTexture, 100); // Assuming some horizontal spacing for example
+        this.icon1 = this.createIcon(icon1OffTexture, icon1OnTexture, 0, 0);
+        this.icon2 = this.createIcon(icon2OffTexture, icon2OnTexture, itemDeltaX, itemDeltaY); // Assuming some horizontal spacing for example
+
+        this.icon1.setOrigin(0, 0);
+        this.icon2.setOrigin(0, 0);
 
         // Add icons to the container
         this.add([this.icon1, this.icon2]);
@@ -19,9 +24,9 @@ class ToggleSwitch extends Phaser.GameObjects.Container {
         this.toggleIcon(this.icon1, true);
     }
 
-    createIcon(offTexture: string | Phaser.Textures.Texture, onTexture: any, xOffset = 0) {
+    createIcon(offTexture: string | Phaser.Textures.Texture, onTexture: any, xOffset = 0, yOffset = 0) {
         // Create both "on" and "off" states for an icon
-        let icon = this.scene.add.image(xOffset, 0, offTexture).setInteractive();
+        let icon = this.scene.add.image(xOffset, yOffset, offTexture).setInteractive({ useHandCursor: true });
         (icon as any).onTexture = onTexture;
         (icon as any).offTexture = offTexture;
         (icon as any).state = false; // Start as "off"

@@ -16,14 +16,14 @@ export class Preloader extends Scene
 
     enterFullscreen() {
         if (!this.scale.isFullscreen) {
-            console.log('Enter Fullscreen')
+            
             this.scale.startFullscreen();
         }
     }
 
     maintainFullscreen() {
         if (this.isMobile() && !this.scale.isFullscreen) {
-            console.log("call fullscreen")
+            
             this.scale.startFullscreen();
         }
     }
@@ -33,7 +33,7 @@ export class Preloader extends Scene
 
         // Add tap/click event listener to enter fullscreen mode
         this.input.on('pointerup', () => {
-            console.log("pointer up")
+            
             if (this.isMobile()) {
                 this.enterFullscreen();
             }

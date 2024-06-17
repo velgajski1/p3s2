@@ -4,6 +4,11 @@ export class ImageButton extends Phaser.GameObjects.Container {
     private normalImage: Phaser.GameObjects.Image;
     private hoverImage: Phaser.GameObjects.Image;
 
+    private orX : number = 0.5;
+    private orY : number = 0.5;
+    private originDeltaX: number = 0;
+    private originDeltaY: number = 0;
+
     constructor(scene: Phaser.Scene, x: number, y: number, normalTexture: string, hoverTexture: string, onClick: () => void, options?: {
         parentContainer?: Phaser.GameObjects.Container
     }) {
@@ -13,8 +18,8 @@ export class ImageButton extends Phaser.GameObjects.Container {
         const { parentContainer } = options || {};
 
         // Create normal and hover images
-        this.normalImage = scene.add.image(0, 0, normalTexture).setVisible(true);
-        this.hoverImage = scene.add.image(0, 0, hoverTexture).setVisible(false);
+        this.normalImage = scene.add.image(0, 0, normalTexture).setVisible(true).setOrigin(0.5,0.5);
+        this.hoverImage = scene.add.image(0, 0, hoverTexture).setVisible(false).setOrigin(0.5, 0.5);
 
         // Add images to this container
         this.add([this.normalImage, this.hoverImage]);
@@ -43,6 +48,25 @@ export class ImageButton extends Phaser.GameObjects.Container {
         this.hoverImage.setVisible(false);
         this.normalImage.setVisible(true);
     }
+
+    public setOrigin(x: number, y: number): this {
+        this.orX = x; this.orY = y;
+
+        this.originDeltaX = ( 0.5 - this.orX ) * this.width
+        this.originDeltaY = (0.5 - this.orY) * this.height
+
+        this.x += this.originDeltaX
+        this.y += this.originDeltaY
+        return this;
+        
+    }
+
+    public setXY(x :number, y: number): this {
+        this.x = x + this.originDeltaX
+        this.y = y + this.originDeltaY
+        return this
+    }
+
 }
 
 export default ImageButton;

@@ -11,7 +11,7 @@ import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
 
-//  Find out more information about the Game Config at:
+//  Find out more information about the Game Config at:dd
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Types.Core.GameConfig = {
     type: Phaser.AUTO,

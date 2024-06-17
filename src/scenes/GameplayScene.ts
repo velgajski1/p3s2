@@ -58,12 +58,25 @@ export class GameplayScene extends BaseScene {
         if (topUI==undefined) topUI = 0.04;
         let scale = Math.min(width / 1200, height / 900);
         this.gameplayContainer.setScale(scale);
-        this.gameplayContainer.setPosition(width / 2, height * (0.04 + topUI));
-        console.log(height*(0.07+topUI), width, height);
+        // let top = height * (0.04 + topUI);
+        let top = this.registry.get("uiBottomPx")
+        
+        
+        if (this.scale.isFullscreen && this.isLandscape()) {
+            top = 20;
+            scale *= 1.2; 
+            this.gameplayContainer.setScale(scale);
+            this.scene.launch("UIScene");
+            this.registry.set("isFullscreen", true);
+        }
+
+        this.gameplayContainer.setPosition(width / 2, top);
+        
 
         const adjustedStartX = (width / 2) + -554 * scale;
         Registry.uiTextStartX = adjustedStartX
-        Registry.uiElemStartX = width / 2 +400 * scale; 
+        // Registry.uiElemStartX = adjustedStartX + 1500
+        Registry.uiElemStartX = width/2 +550*scale; 
     }
 
 
