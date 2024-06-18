@@ -10,6 +10,7 @@ import { UIScene } from './scenes/UIScene';
 import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
+import InversePipelinePlugin from 'phaser3-rex-plugins/plugins/inversepipeline-plugin.js';
 
 //  Find out more information about the Game Config at:dd
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -20,6 +21,15 @@ const config: Types.Core.GameConfig = {
     parent: 'game-container',
     backgroundColor: '#028af8',
     roundPixels: true,
+    plugins: {
+        global: [{
+            key: 'rexInversePipeline',
+            plugin: InversePipelinePlugin,
+            start: true
+        },
+        // ...
+        ]
+    },
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH

@@ -21,6 +21,9 @@ export default class Card extends Phaser.GameObjects.Sprite {
     inTransition: boolean = false;
     substackid: Number = 0;
     wasteDeltaX: number;
+    textures: Phaser.Textures.TextureManager;
+    hintBlinkCount: number;
+    hintMaxBlinks: number;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -41,10 +44,105 @@ export default class Card extends Phaser.GameObjects.Sprite {
         this.backTexture =  'backside';
         this.isFaceUp = isFaceUp; // Initially, cards are face down
 
-
         // Add this card to the scene
         scene.add.existing(this);
 
+        this.textures = this.scene.textures;
+        this.createInvertedFrameTexture('cards', 'cards/' + faceTexture + '.png', faceTexture+'_hint');
+        if (this.faceTexture == 'clubs_2') {
+            this.createInvertedFrameTexture('cards', 'cards/' + 'backside' + '.png', 'backside'+'_hint');
+        }
+        
+        setTimeout(() => {
+            if (Math.random() < 0.05) {
+                this.startHintAnim(5, 4000)
+            }
+              
+        }, 1000);
+
+    }
+
+    createInvertedFrameTexture(spritesheetKey: string, frameIndex: string, newTextureKey: string) {
+
+        const frame = this.textures.getFrame(spritesheetKey, frameIndex);
+
+        if (!frame) {
+            console.error(`Frame ${frameIndex} not found in texture ${spritesheetKey}`);
+            return;
+        }
+
+        const sourceImage = frame.source.image as HTMLImageElement | HTMLCanvasElement | HTMLVideoElement;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+            canvas.width = frame.width;
+            canvas.height = frame.height;
+
+            // Draw the specific frame onto the canvas
+            ctx.drawImage(
+                sourceImage,
+                frame.cutX,
+                frame.cutY,
+                frame.width,
+                frame.height,
+                0,
+                0,
+                frame.width,
+                frame.height
+            );
+
+            // Get the image data from the canvas
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            // Invert the colors
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];       // Red
+                data[i + 1] = 255 - data[i + 1]; // Green
+                data[i + 2] = 255 - data[i + 2]; // Blue
+            }
+
+            // Put the modified image data back onto the canvas
+            ctx.putImageData(imageData, 0, 0);
+
+            // Create a new texture from the canvas
+            this.textures.addCanvas(newTextureKey, canvas);
+        }
+    }
+
+    setHintTexture(on : boolean) {
+        console.log(this.name, this.isFaceUp,on)
+        if (this.isFaceUp) {
+            if (on) {
+                this.setTexture(this.faceTexture+'_hint')
+            }
+            else {
+                this.setTexture2(this.faceTexture)
+            }
+        }
+        else {
+            if (on) {
+                this.setTexture(this.backTexture + '_hint')
+            }
+            else {
+                this.setTexture2(this.backTexture)
+            }
+        }
+        
+    }
+
+    startHintAnim(blinks: number, duration: number) {
+        const blinkInterval = duration / (blinks * 2); // Total duration divided by double the number of blinks
+
+        const timerEvent = this.scene.time.addEvent({
+            delay: blinkInterval,
+            repeat: blinks * 2 - 1,
+            callback: () => {
+                this.setHintTexture(this.texture.key.includes('_hint') ? false : true);
+            }
+        });
     }
 
     isOnStock()
@@ -144,7 +242,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     setTexture2(frame: string) : this
     {
-        
         super.setTexture('cards', 'cards/' + frame + '.png')
         return this;
     }

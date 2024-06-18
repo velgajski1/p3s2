@@ -1,11 +1,10 @@
 import { Scene } from 'phaser';
 import { CardNameManager } from '../managers/CardNameManager';
 
-export class Preloader extends Scene
-{
+export class Preloader extends Scene {
     cardManager: CardNameManager;
-    constructor ()
-    {
+
+    constructor() {
         super('Preloader');
     }
 
@@ -16,51 +15,49 @@ export class Preloader extends Scene
 
     enterFullscreen() {
         if (!this.scale.isFullscreen) {
-            
             this.scale.startFullscreen();
         }
     }
 
     maintainFullscreen() {
         if (this.isMobile() && !this.scale.isFullscreen) {
-            
             this.scale.startFullscreen();
         }
     }
 
-    init ()
-    {
-
+    init() {
         // Add tap/click event listener to enter fullscreen mode
         this.input.on('pointerup', () => {
-            
             if (this.isMobile()) {
                 this.enterFullscreen();
             }
         });
 
+        this.createProgressBar();
+    }
 
-        //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+    createProgressBar() {
+        // Create a simple progress bar
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        const centerX = this.cameras.main.centerX;
+        const centerY = this.cameras.main.centerY;
 
-        //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512-230, 384, 4, 28, 0xffffff);
+        // Outline of the progress bar
+        this.add.rectangle(centerX, centerY, 468, 32).setStrokeStyle(1, 0xffffff);
 
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
+        // Progress bar itself
+        const bar = this.add.rectangle(centerX - 230, centerY, 4, 28, 0xffffff).setOrigin(0, 0.5);
+
+        // Update the progress bar based on the percentage of loading completed
         this.load.on('progress', (progress: number) => {
-
-            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
             bar.width = 4 + (460 * progress);
-
         });
     }
 
-    preload ()
-    {
-        //  Load the assets for the game - Replace with your own assets
+    preload() {
+        // Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
-
-        this.load.image('ace', 'ace.png');
 
         this.load.image('ace', 'ace.png');
         this.load.image('hint', 'hint.png');
@@ -83,7 +80,7 @@ export class Preloader extends Scene
 
         this.load.json('cardData', 'assets.json');
 
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isMobile = this.isMobile();
 
         // Load the appropriate multiatlas
         if (isMobile) {
@@ -93,24 +90,25 @@ export class Preloader extends Scene
         }
     }
 
-    create ()
-    {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
+    create() {
+        // When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
+        // For example, you can define global animations here, so we can use them in other scenes.
 
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        // Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         const cardData = this.cache.json.get('cardData');
-      
+
         const frames = cardData.textures[0].frames;
-        
 
         this.cardManager = CardNameManager.Instance;
-        this.cardManager.loadCardData(frames)
-       
+        this.cardManager.loadCardData(frames);
+
         this.scene.start('BackgroundScene');
         this.scene.launch('GameplayScene');
-       
-        // this.scene.bringToTop('MainMenu');
-        
+    }
+
+    resize() {
+        this.createProgressBar();
     }
 }
+
+export default Preloader;
