@@ -24,6 +24,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     textures: Phaser.Textures.TextureManager;
     hintBlinkCount: number;
     hintMaxBlinks: number;
+    hintTimerEvent: Phaser.Time.TimerEvent;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -53,12 +54,12 @@ export default class Card extends Phaser.GameObjects.Sprite {
             this.createInvertedFrameTexture('cards', 'cards/' + 'backside' + '.png', 'backside'+'_hint');
         }
         
-        setTimeout(() => {
-            if (Math.random() < 0.05) {
-                this.startHintAnim(5, 4000)
-            }
+        // setTimeout(() => {
+        //     if (Math.random() < 0.55) {
+        //         if (this.isFaceUp) this.startHintAnim(5, 4000)
+        //     }
               
-        }, 1000);
+        // }, 1000);
 
     }
 
@@ -136,13 +137,18 @@ export default class Card extends Phaser.GameObjects.Sprite {
     startHintAnim(blinks: number, duration: number) {
         const blinkInterval = duration / (blinks * 2); // Total duration divided by double the number of blinks
 
-        const timerEvent = this.scene.time.addEvent({
+        this.hintTimerEvent = this.scene.time.addEvent({
             delay: blinkInterval,
             repeat: blinks * 2 - 1,
             callback: () => {
                 this.setHintTexture(this.texture.key.includes('_hint') ? false : true);
             }
         });
+    }
+
+    cancelHintAnim() {
+        this.hintTimerEvent.destroy()
+        this.setHintTexture(false);
     }
 
     isOnStock()

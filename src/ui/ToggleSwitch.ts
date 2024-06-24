@@ -3,9 +3,23 @@ import Phaser from 'phaser';
 export class ToggleSwitch extends Phaser.GameObjects.Container {
     icon1: Phaser.GameObjects.Image;
     icon2: Phaser.GameObjects.Image;
+    onToggleCallback: (state: boolean) => void;
 
-    constructor(scene: Phaser.Scene, x: number , y: number , icon1OffTexture: any, icon1OnTexture: any, icon2OffTexture: any, icon2OnTexture: any, itemDeltaX : number, itemDeltaY : number) {
+    constructor(
+        scene: Phaser.Scene,
+        x: number,
+        y: number,
+        icon1OffTexture: any,
+        icon1OnTexture: any,
+        icon2OffTexture: any,
+        icon2OnTexture: any,
+        itemDeltaX: number,
+        itemDeltaY: number,
+        onToggleCallback: (state: boolean) => void
+    ) {
         super(scene, x, y);
+
+        this.onToggleCallback = onToggleCallback;
 
         // Create icons using the provided texture names
         this.icon1 = this.createIcon(icon1OffTexture, icon1OnTexture, 0, 0);
@@ -43,14 +57,21 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         icon.setTexture(newStateTexture);
         (icon as any).state = state;
 
+        let newState: boolean;
+
         // When one icon is turned on, the other is turned off
         if (icon === this.icon1) {
             this.icon2.setTexture((this.icon2 as any).offTexture);
-            (this.icon2 as any).state = !state;
+            (this.icon2 as any).state = false;
+            newState = false;
         } else {
             this.icon1.setTexture((this.icon1 as any).offTexture);
-            (this.icon1 as any).state = !state;
+            (this.icon1 as any).state = false;
+            newState = true;
         }
+
+        // Call the callback function with the current state
+        this.onToggleCallback(newState);
     }
 }
 

@@ -6,6 +6,8 @@ import { formatTime } from '../utils/Utils';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
+import { STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
+import CardLayoutManager from '../managers/CardLayoutManager';
 
 export class UIScene extends Phaser.Scene {
     textContainer: Phaser.GameObjects.Container;
@@ -47,13 +49,24 @@ export class UIScene extends Phaser.Scene {
               // Instantiate the ToggleSwitch
         let deltaX = -440
         const toggleSwitch = new ToggleSwitch(
-        this,-10+deltaX,0,
-        'klondike_1_turn', // 1-card pull off texture
-        'klondike_1_turn_selected', // 1-card pull on texture
-        'klondike_3_turn', // 3-card pull off texture
-        'klondike_3_turn_selected', 
-         80, 0
-         );
+            this,
+            -10 + deltaX,
+            0,
+            'klondike_1_turn', // 1-card pull off texture
+            'klondike_1_turn_selected', // 1-card pull on texture
+            'klondike_3_turn', // 3-card pull off texture
+            'klondike_3_turn_selected', // 3-card pull on texture
+            80, 
+            0,
+            (nextState: boolean) => {
+                // console.log(`Next state: ${nextState}`);
+                // You can add more logic here to handle the toggle action
+                toggleThreeModeActive(nextState);
+                this.gameManager = this.registry.get('gameManager');
+                this.gameManager.layoutManager.layoutWastePile(this.gameManager.pileManager.getWastePile())
+                console.log(STOCK_THREE_MODE_ACTIVE)
+            }
+        );
 
          this.elementsContainer.add(toggleSwitch);
 

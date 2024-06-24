@@ -252,32 +252,42 @@ export default class PileManager {
     }
 
 
-    // Move a card to the foundation if possible (using the transition manager)
-    public moveCardToFoundationIfPossible(card: Card, foundationIdx : number = -1, skipLayoutAll : boolean = false): boolean {
+    public canMoveCardToFoundation(card: Card, foundationIdx: number = -1): boolean {
         // Verify that the card is on top of its tableau pile
         if (card.pileType === PileType.Tableau) {
             const tableauPile = this.tableauPiles[card.pileIndex];
             const isTopCard = tableauPile.length > 0 && tableauPile[tableauPile.length - 1] === card;
-
+    
             // If the card isn't on top of its tableau pile, return false
             if (!isTopCard) {
                 return false;
             }
         }
-        
+    
         const pileIndex = foundationIdx === -1 ? this.getFoundationPileIndex(card.suit) : foundationIdx;
-        
+    
         if (pileIndex === -1 || !this.canPlaceInFoundation(card)) {
             return false;
         }
-
+    
+        return true;
+    }
+    
+    public moveCardToFoundationIfPossible(card: Card, foundationIdx: number = -1, skipLayoutAll: boolean = false): boolean {
+        // Check if the card can be moved to the foundation
+        if (!this.canMoveCardToFoundation(card, foundationIdx)) {
+            return false;
+        }
+    
+        const pileIndex = foundationIdx === -1 ? this.getFoundationPileIndex(card.suit) : foundationIdx;
+    
         // Determine the foundation pile and its coordinates
         const foundationPile = this.foundationPiles[pileIndex];
         const targetX = FOUNDATION_COORDS_INIT.x + pileIndex * FOUNDATION_COORDS_DELTA.x; // Adjust base coordinates
         const targetY = FOUNDATION_COORDS_INIT.y;
-
+    
         // Call the transition manager to handle the movement
-        card.setFaceUp(true)
+        card.setFaceUp(true);
         this.cardTransitionManager.moveCardToFoundation(
             card,
             targetX,
@@ -286,24 +296,22 @@ export default class PileManager {
             foundationPile.length,
             this.gameplayContainer,
             () => {
-                this.removeCardFromTransition(card)
-                this._addCardToFoundation(card, pileIndex)
-                if (!skipLayoutAll){
+                this.removeCardFromTransition(card);
+                this._addCardToFoundation(card, pileIndex);
+                if (!skipLayoutAll) {
                     // this.fixTableuYDeltaAll();
-                    // this.cardLayoutManager.layoutAll(this, true)
+                    // this.cardLayoutManager.layoutAll(this, true);
                 }
-                this.fixFoundationLayering()
-
+                this.fixFoundationLayering();
             }
         );
-
-        this._addCardToTransition(card)
-        this._addCardToFoundation(card, pileIndex)
-        
-
+    
+        this._addCardToTransition(card);
+        this._addCardToFoundation(card, pileIndex);
+    
         return true;
     }
-
+    
 
     getTopStockCard(): Card | undefined {
         
@@ -515,7 +523,7 @@ export default class PileManager {
         return getRankValue(card.rank) === getRankValue(topCard.rank) + 1;
     }
 
-    private getFoundationPileIndex(suit: Suit): number {
+    public getFoundationPileIndex(suit: Suit): number {
         let firstEmptyIndex = -1;  // Initialize to keep track of the first empty index
     
         // Iterate over the foundation piles to check for the existing suit or record the first empty pile
