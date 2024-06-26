@@ -65,6 +65,11 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     createInvertedFrameTexture(spritesheetKey: string, frameIndex: string, newTextureKey: string) {
 
+        // console.log(newTextureKey)
+        if (this.textures.checkKey(newTextureKey)) {
+            // console.log('createInvertedFrameTexture')
+            return;
+        } 
         const frame = this.textures.getFrame(spritesheetKey, frameIndex);
 
         if (!frame) {

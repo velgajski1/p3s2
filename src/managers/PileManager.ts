@@ -224,6 +224,7 @@ export default class PileManager {
     // Move the top card from the stock pile to the waste pile
     moveTopCardStockToWaste() {
         if (STOCK_THREE_MODE_ACTIVE) {
+            
             const cards : Card[] = this.getTopStockCards(3)
             cards.forEach( (card, index) => {
                 this._addCardToWaste(card);

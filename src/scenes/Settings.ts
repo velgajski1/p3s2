@@ -5,19 +5,24 @@ import { ItemCycleControl } from '../ui/ItemCycleControl';
 import { BACKGROUND_COLORS} from '../config/Consts';
 import {LanguageConfig} from '../config/Language';
 import { Language } from '../utils/Language';
+import { BaseMenuScene } from './BaseMenuScene';
+import { AUTOFINISH_MODE_ACTIVE, BG_INDEX, RIGHT_HANDED_MODE_ACTIVE, SOUND_ACTIVE, setBgIdx, toggleAutofinishActive, toggleRightHandedActive, toggleSoundActive, toggleThreeModeActive } from '../config/Config';
 
-export class Settings extends Phaser.Scene {
+export class Settings extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
-    private modalBackground!: Phaser.GameObjects.Graphics;
     private whiteBg!: Phaser.GameObjects.Graphics;
     prompt_close: Phaser.GameObjects.Image;
+    soundButton: RadioButtonSingle;
+    autofinishButton: RadioButtonSingle;
+    rightHAndedButton: RadioButtonSingle;
+    bgSelector: ItemCycleControl;
 
     constructor() {
         super('Settings');
     }
 
     create(): void {
-        this.createModalBackground();
+        super.create()
         this.createMenuContainer();
         this.createWhiteBackground();
         this.createTitle();
@@ -29,20 +34,29 @@ export class Settings extends Phaser.Scene {
 
         // Listen for resize events to dynamically adjust the layout
         this.scale.on('resize', this.scaleMenuContainer, this);
+
+        // super.create()
     }
+
+    update(time: number, delta: number): void
+    {
+        toggleAutofinishActive(this.autofinishButton.isOn)
+        toggleRightHandedActive(this.rightHAndedButton.isOn)
+        toggleSoundActive(this.soundButton.isOn)
+        setBgIdx(this.bgSelector.currentItemIndex)
+
+        console.log(AUTOFINISH_MODE_ACTIVE, RIGHT_HANDED_MODE_ACTIVE, SOUND_ACTIVE)
+    }
+
     createXButton()
     {
         this.prompt_close = this.add.image(150, -180, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
         this.prompt_close.on('pointerdown', () => {
-            this.scene.remove(this.scene.key);
+            this.remove()
         })
         this.menuContainer.add(this.prompt_close)
     }
 
-    private createModalBackground(): void {
-        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.05 } });
-        this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
-    }
 
     private createMenuContainer(): void {
         this.menuContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
@@ -68,17 +82,17 @@ export class Settings extends Phaser.Scene {
 
     private createRadioButtons(): void {
         // Example positions and initial states are placeholders
-        new RadioButtonSingle(this, -130, -120,  Language.getTranslation(LanguageConfig.SoundOnOff), true, {
+        this.soundButton = new RadioButtonSingle(this, -130, -120,  Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
 
-        new RadioButtonSingle(this, -130, -60,  Language.getTranslation(LanguageConfig.AutoFinish), false, {
+        this.autofinishButton = new RadioButtonSingle(this, -130, -60,  Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
 
-        new RadioButtonSingle(this, -130, 0,  Language.getTranslation(LanguageConfig.RightHanded), true, {
+        this.rightHAndedButton = new RadioButtonSingle(this, -130, 0,  Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
@@ -87,7 +101,7 @@ export class Settings extends Phaser.Scene {
     private createBackgroundSelector(): void {
       
 
-        new ItemCycleControl(this, -35, 110,  Language.getTranslation(LanguageConfig.Background), BACKGROUND_COLORS, (selectedItem) => {
+        this.bgSelector = new ItemCycleControl(this, -35, 110,  Language.getTranslation(LanguageConfig.Background), BACKGROUND_COLORS, (selectedItem) => {
             
             const backgroundScene = this.scene.get('BackgroundScene') as any; // Use 'as any' if TypeScript complains about missing methods
             
@@ -103,12 +117,17 @@ export class Settings extends Phaser.Scene {
                 fontSize : '25px',
                 fontFamily : 'Open Sans'
             }
-        });
+        }, BG_INDEX);
+    }
+
+    remove() : void {
+        // this.scene.setVisible(false)
+        this.scene.sleep()
     }
 
     private createCancelButton(): void {
         new Button(this, 0, 180,  Language.getTranslation(LanguageConfig.SaveExit), () => {
-            this.scene.remove('Settings');
+           this.remove();
         }, {
             color: 0x6CA4A8, 
             textColor: '#ffffff', 
@@ -143,5 +162,6 @@ export class Settings extends Phaser.Scene {
     
         this.menuContainer.setScale(scale);
         this.modalBackground.clear().fillRect(0, 0, width, height);
+
     }
 }

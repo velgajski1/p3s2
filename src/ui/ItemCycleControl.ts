@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 
 interface ControlOptions {
     parentContainer?: Phaser.GameObjects.Container;
-    // Define other properties as needed
+    titleTextOptions?: TextOptions;
+    itemTextOptions?: TextOptions;
 }
 
 interface TextOptions {
@@ -12,23 +13,22 @@ interface TextOptions {
     fontStyle?: string;
 }
 
-interface ControlOptions {
-    parentContainer?: Phaser.GameObjects.Container;
-    titleTextOptions?: TextOptions;
-    itemTextOptions?: TextOptions;
-}
-
 export class ItemCycleControl extends Phaser.GameObjects.Container {
     private items: (string | number)[];
-    private currentItemIndex: number = 0;
+    public currentItemIndex: number = 0;
     private onChange: (item: string | number) => void;
     private titleText: Phaser.GameObjects.Text;
 
 
-    constructor(scene: Phaser.Scene, x: number, y: number, title: string, items: (string | number)[], onChange: (item: string | number) => void, options? :ControlOptions) {
+    constructor(scene: Phaser.Scene, x: number, y: number, title: string, items: (string | number)[], onChange: (item: string | number) => void, options?: ControlOptions, initialItemIndex?: number) {
         super(scene, x, y);
         this.items = items;
         this.onChange = onChange;
+
+        // Set initial item index if provided, ensuring it's within bounds
+        if (typeof initialItemIndex === 'number' && initialItemIndex >= 0 && initialItemIndex < items.length) {
+            this.currentItemIndex = initialItemIndex;
+        }
 
         const titleTextOptions = {
             fontSize: '24px',
@@ -38,13 +38,9 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
             ...options?.titleTextOptions // Override defaults with provided options
         };
 
-
         // Title Text
         this.titleText = scene.add.text(0, 0, title, titleTextOptions).setOrigin(0);
-        this.titleText.y -= this.titleText.height / 2
-
-        // Item Text, showing the current item
-        // this.itemText = scene.add.text(0, 10, this.items[this.currentItemIndex].toString(), { fontSize: '24px', color: '#fff' }).setOrigin(0.5);
+        this.titleText.y -= this.titleText.height / 2;
 
         // Left Button
         const btnLeft = scene.add.image(-100, 0, 'prompt_btn_left').setInteractive();
@@ -61,7 +57,6 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
         this.onChange(this.items[this.currentItemIndex]);
 
         // Add this container to the scene
-        // Use options.parentContainer safely with proper TypeScript understanding
         if (options?.parentContainer) {
             options.parentContainer.add(this);
         } else {
@@ -70,7 +65,6 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
     }
 
     private cycleItem(direction: number) {
-        // Update the current item index based on the direction and cycle through the items
         this.currentItemIndex += direction;
         if (this.currentItemIndex >= this.items.length) {
             this.currentItemIndex = 0; // Wrap to first

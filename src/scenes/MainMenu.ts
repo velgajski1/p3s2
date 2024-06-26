@@ -2,10 +2,12 @@ import Phaser from 'phaser';
 import Button from '../ui/ButtonWithColorBackground';
 import {translate} from '../utils/Language'
 import { LanguageConfig } from '../config/Language';
+import { GameManager } from '../managers/GameManager';
+import { toggleThreeModeActive } from '../config/Config';
+import { BaseMenuScene } from './BaseMenuScene';
 
-export class MainMenu extends Phaser.Scene {
+export class MainMenu extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
-    modalBackground: Phaser.GameObjects.Graphics;
     whiteBg: Phaser.GameObjects.Graphics;
     titleTxt: Phaser.GameObjects.Text;
     cancelButton: Button;
@@ -16,8 +18,8 @@ export class MainMenu extends Phaser.Scene {
     }
 
     create(): void {
-        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.05 } });
-        this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
+
+        super.create()
 
         // Create a container centered in the game
         this.menuContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
@@ -26,6 +28,8 @@ export class MainMenu extends Phaser.Scene {
         this.whiteBg.fillRoundedRect(-200, -250, 400, 500, 12);
         // Add the modal background to the container
         this.menuContainer.add(this.whiteBg);
+
+  
         
         this.titleTxt = this.add.text(0, -200, translate(LanguageConfig.Menu), {
             fontFamily: 'Open Sans', fontSize: '32px', color: '#000000', align: 'left'
@@ -35,7 +39,7 @@ export class MainMenu extends Phaser.Scene {
 
         this.prompt_close = this.add.image(170, -220, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
         this.prompt_close.on('pointerdown', () => {
-            this.scene.remove("MainMenu");
+            this.remove()
         })
         this.menuContainer.add(this.prompt_close)
 
@@ -46,7 +50,7 @@ export class MainMenu extends Phaser.Scene {
             translate(LanguageConfig.NewGameTurn3),
             translate(LanguageConfig.HowToPlaySolitaire),
             translate(LanguageConfig.Statistics),
-            translate(LanguageConfig.HowToPlaySolitaire)
+            translate(LanguageConfig.AllGames)
         ];
 
         const menuActions = [
@@ -73,7 +77,7 @@ export class MainMenu extends Phaser.Scene {
 
         this.cancelButton = new Button(this, 0, 180, translate(LanguageConfig.Cancel), () => {
             // 
-            this.scene.remove('MainMenu');
+            this.remove()
         }, {
             color: 0x6CA4A8, 
             textColor: '#ffffff', 
@@ -92,6 +96,8 @@ export class MainMenu extends Phaser.Scene {
 
         // Set the initial position and scale
         this.scaleMenuContainer();
+
+
     }
 
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
@@ -117,25 +123,37 @@ export class MainMenu extends Phaser.Scene {
             this.menuContainer.setScale(scale);
         }
 
-        this.modalBackground.clear()
-        this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
-    
+
+    }
+
+    remove = () => {
+        // this.scene.setVisible(false,'MainMenu');
+        // this.scene.remove()
+        this.scene.sleep()
     }
     
     restartGame = () => {
-        
+        console.log("restart game called")
+        var gamemanager : GameManager = this.registry.get("gameManager")
+        gamemanager.restart()
+        this.remove()
     }    
     newGame1 = () => {
-
+        toggleThreeModeActive(false)
+        this.restartGame()
     }    
     newGame3 = () => {
-
+        toggleThreeModeActive(true)
+        this.restartGame()
     }    
     howToPlay = () => {
 
     }    
     statistics = () => {
-
+        this.remove()
+        setTimeout(() => {
+            this.scene.launch("Statistics").bringToTop("Statistics")
+        }, 500);
     }
     allGames = () => {
 

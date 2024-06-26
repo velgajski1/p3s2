@@ -6,6 +6,7 @@ import { Rank, Suit } from './CardNameManager';
 import ControlManager from './ControlManager';
 import UndoManager from './UndoManager';
 import { STOCK_COORDS } from '../config/Consts';
+import { AUTOFINISH_MODE_ACTIVE } from '../config/Config';
 
 export class GameManager {
     private static instance: GameManager | null = null;
@@ -137,7 +138,7 @@ export class GameManager {
             c.setFaceUp(true)
         });
 
-        if (this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length <= 1 && this.pileManager.getStockPile().length == 0)
+        if (AUTOFINISH_MODE_ACTIVE && this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length <= 1 && this.pileManager.getStockPile().length == 0)
         {
             UndoManager.getInstance().disableUndo()
             this.controlManager.disableControls()
@@ -152,7 +153,8 @@ export class GameManager {
             });
 
             if (this.pileManager.getWastePile().length == 0 && this.pileManager.getTableauPiles().every(pile => pile.length == 0)) {
-                this.restart()
+                console.log("end game restart")
+                // this.restart()
             }
         }
 
@@ -160,15 +162,15 @@ export class GameManager {
 
     restart() {
         GameManager.removeInstance();
+        UndoManager.removeInstance()
         GameManager.instance = null;
         this.gameScene.events.emit('restartScene');
+        console.log("restart scene")
 
     }
     static removeInstance()
-    {  
-         
-        this.instance = null
-        
+    {    
+        this.instance = null 
     }
 
     getElapsedTime(): number {

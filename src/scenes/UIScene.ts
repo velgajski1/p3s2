@@ -8,6 +8,8 @@ import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
 import { STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
 import CardLayoutManager from '../managers/CardLayoutManager';
+import UndoManager from '../managers/UndoManager';
+import { MainMenu } from './MainMenu';
 
 export class UIScene extends Phaser.Scene {
     textContainer: Phaser.GameObjects.Container;
@@ -20,10 +22,12 @@ export class UIScene extends Phaser.Scene {
     settingsBut: ImageButton;
     hintBut: ImageButton;
     undoBut: ImageButton;
+    inputEnabled: boolean =  true;
 
     constructor() {
         super('UIScene');
     }
+
 
 
     create(): void {
@@ -59,37 +63,53 @@ export class UIScene extends Phaser.Scene {
             80, 
             0,
             (nextState: boolean) => {
+                if (!this.inputEnabled) return;
                 // console.log(`Next state: ${nextState}`);
                 // You can add more logic here to handle the toggle action
                 toggleThreeModeActive(nextState);
                 this.gameManager = this.registry.get('gameManager');
                 this.gameManager.layoutManager.layoutWastePile(this.gameManager.pileManager.getWastePile())
                 console.log(STOCK_THREE_MODE_ACTIVE)
-            }
+            },
+            STOCK_THREE_MODE_ACTIVE
         );
 
          this.elementsContainer.add(toggleSwitch);
 
          this.menuBut = new ImageButton(this, 160+deltaX, 0, 'menu', 'menu', () => {
+            if (!this.inputEnabled) return;
+            if (this.scene.getIndex('MainMenu')>-1) {
+                this.scene.launch("MainMenu").bringToTop("MainMenu");
+            }
+            else if (this.scene) {
+                this.scene.start("MainMenu").bringToTop("MainMenu");
+            } 
+
+            this.input.setDefaultCursor('default');
             
          })
          this.elementsContainer.add(this.menuBut)
          this.menuBut.setOrigin(0, 0);
 
          this.settingsBut = new ImageButton(this, 220+deltaX, 0, 'settings', 'settings', () => {
-            
+            if (!this.inputEnabled) return;
+            this.scene.launch("Settings").bringToTop("Settings");
+            this.input.setDefaultCursor('default');
          })
          this.elementsContainer.add(this.settingsBut)
          this.settingsBut.setOrigin(0, 0);
 
          this.hintBut = new ImageButton(this, 280+deltaX, 0, 'hint', 'hint', () => {
+            if (!this.inputEnabled) return;
             
          })
          this.elementsContainer.add(this.hintBut)
          this.hintBut.setOrigin(0, 0);
 
          this.undoBut = new ImageButton(this, 360+deltaX, 0, 'undo', 'undo', () => {
-            
+            if (!this.inputEnabled) return;
+            this.gameManager = this.registry.get("gameManager")
+            this.gameManager.controlManager.handleUKey()
          })
          this.elementsContainer.add(this.undoBut)
          this.undoBut.setOrigin(0, 0);
@@ -102,6 +122,9 @@ export class UIScene extends Phaser.Scene {
         this.timeText.text = " | "+translate(LanguageConfig.Time) + formatTime(this.gameManager.getElapsedTime())
         this.movesText.text = " | "+translate(LanguageConfig.Moves) +this.gameManager.getMoves()
         this.updateTextPos()
+
+        this.inputEnabled = true
+        if (this.scene.isActive("Settings")||this.scene.isActive("MainMenu")||this.scene.isActive("Statistics")||this.scene.isActive("WonScene")) this.inputEnabled = false
     }
 
     private createTextElements(): void {

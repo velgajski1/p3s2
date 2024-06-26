@@ -15,7 +15,8 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         icon2OnTexture: any,
         itemDeltaX: number,
         itemDeltaY: number,
-        onToggleCallback: (state: boolean) => void
+        onToggleCallback: (state: boolean) => void,
+        initState : boolean
     ) {
         super(scene, x, y);
 
@@ -35,7 +36,13 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         scene.add.existing(this);
 
         // Initialize with the first icon turned "on"
-        this.toggleIcon(this.icon1, true);
+        if (initState) {
+            this.toggleIcon(this.icon2, true, true);
+        }
+        else {
+            this.toggleIcon(this.icon1, true, true);
+        }
+        
     }
 
     createIcon(offTexture: string | Phaser.Textures.Texture, onTexture: any, xOffset = 0, yOffset = 0) {
@@ -52,7 +59,7 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         return icon;
     }
 
-    private toggleIcon(icon: Phaser.GameObjects.Image, state: boolean): void {
+    private toggleIcon(icon: Phaser.GameObjects.Image, state: boolean, skipCallback : boolean = false): void {
         const newStateTexture: string = state ? (icon as any).onTexture : (icon as any).offTexture;
         icon.setTexture(newStateTexture);
         (icon as any).state = state;
@@ -71,7 +78,10 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         }
 
         // Call the callback function with the current state
-        this.onToggleCallback(newState);
+        if (!skipCallback) {
+            this.onToggleCallback(newState);
+        }
+        
     }
 }
 

@@ -2,12 +2,9 @@ import Card from "../elements/Card";
 import { GameState } from "../utils/types";
 
 export default class UndoManager {
-    enableUndo()
-    {
-        this.enabled = true;
-    }
 
-    private static instance: UndoManager;
+
+    private static instance: UndoManager | null ;
     private states: GameState[] = [];
     public enabled = true;
 
@@ -19,9 +16,20 @@ export default class UndoManager {
         }
         return UndoManager.instance;
     }
+    static removeInstance()
+    {
+        this.instance = null;
+    }
+
+
     disableUndo()
     {
         this.enabled = false;
+    }
+
+    enableUndo()
+    {
+        this.enabled = true;
     }
 
     public saveState(state: GameState) {
