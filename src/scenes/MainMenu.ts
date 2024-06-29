@@ -126,18 +126,8 @@ export class MainMenu extends BaseMenuScene {
 
     }
 
-    remove = () => {
-        // this.scene.setVisible(false,'MainMenu');
-        // this.scene.remove()
-        this.scene.sleep()
-    }
     
-    restartGame = () => {
-        console.log("restart game called")
-        var gamemanager : GameManager = this.registry.get("gameManager")
-        gamemanager.restart()
-        this.remove()
-    }    
+  
     newGame1 = () => {
         toggleThreeModeActive(false)
         this.restartGame()

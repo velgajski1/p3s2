@@ -5,6 +5,7 @@ import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { GameManager } from '../managers/GameManager';
 import ControlManager from '../managers/ControlManager';
 import { getTweensForObject } from '../utils/Utils';
+import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX } from '../config/Config';
 
 
 export default class Card extends Phaser.GameObjects.Sprite {
@@ -163,8 +164,9 @@ export default class Card extends Phaser.GameObjects.Sprite {
     renewWasteCoords(cManager : ControlManager): void
     {
         if (cManager)
-        {
-            this.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK+this.wasteDeltaX;
+        { 
+
+            this.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX]+this.wasteDeltaX;
             this.y = STOCK_COORDS.y;
 
 

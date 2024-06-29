@@ -25,14 +25,14 @@ export enum PileType {
 }
 
 export const CARD_SCALE = 0.75;
-export const STOCK_COORDS = { x : -488, y : 80 };
-export const WASTE_DELTA_FROM_STOCK = 160;
+export const WASTE_DELTA_FROM_STOCK = [160, -160];
+export const STOCK_COORDS = { x : [-488, -488+6*WASTE_DELTA_FROM_STOCK[0]], y : 80 };
 export const WASTE_OVERLAP = 0;
 export const WASTE_DELTA_X = 20;
-export const TABLEU_COORDS_INIT = { x : STOCK_COORDS.x, y : 290 }
+export const TABLEU_COORDS_INIT = { x : STOCK_COORDS.x[0], y : 290 }
 export const TABLEU_COORDS_DELTA = {x:160, y:34, y_covered:14}
-export const FOUNDATION_COORDS_INIT = {x:STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK*3, y:80}
-export const FOUNDATION_COORDS_DELTA = {x:160, y:0}
+export const FOUNDATION_COORDS_INIT = {x:[STOCK_COORDS.x[0] + WASTE_DELTA_FROM_STOCK[0]*3, STOCK_COORDS.x[1] - WASTE_DELTA_FROM_STOCK[0]*3], y:80}
+export const FOUNDATION_COORDS_DELTA = {x:[160, -160], y:0}
 export const CARD_MOVE_BEFORE_DRAG_ACTIVE = 0.1;
 export const TABLEU_STACK_TWEEN_DURATION = 300;
 export const DISABLE_CLICK_DURATION_NORMAL = 40

@@ -1,5 +1,5 @@
 // CardLayoutManager.ts
-import { STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
@@ -14,10 +14,14 @@ class CardLayoutManager {
     foundationPiles: Card[][];
     pileManager: PileManager;
     stockIndicator: Phaser.GameObjects.Sprite;
+    wasteIndicator: Phaser.GameObjects.Sprite;
+    tabIndicators: Phaser.GameObjects.Sprite[];
+    foundIndicators: Phaser.GameObjects.Sprite[];
 
     init(pileManager : PileManager)
     {
-        this.pileManager = pileManager;;
+        this.pileManager = pileManager;
+        addEventListener('rightHandedEvent', () => {this.update()});
     }
 
     layoutAll(pileManager : PileManager, withTween : boolean = false) 
@@ -33,7 +37,7 @@ class CardLayoutManager {
     // Layout method for stock pile, usually a single stack
     layoutStockPile(cards: Card[]) {
         cards.forEach((card, index) => {
-            card.x = STOCK_COORDS.x;
+            card.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX];
             card.y = STOCK_COORDS.y;
             card.scale = CARD_SCALE
             card.setDepth(index); // Ensure stacking order for the stock
@@ -62,7 +66,7 @@ class CardLayoutManager {
             if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
             
             
-            card.x = STOCK_COORDS.x + WASTE_DELTA_FROM_STOCK + index * WASTE_OVERLAP + card.wasteDeltaX; // Overlapping horizontally for each card
+            card.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX] + WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX] + index * WASTE_OVERLAP + card.wasteDeltaX; // Overlapping horizontally for each card
             card.y = STOCK_COORDS.y;
             card.setDepth(index); // Correct stacking order for waste pile
 
@@ -132,7 +136,7 @@ class CardLayoutManager {
             const x = baseX + pileIndex * horizontalOffset; // Adjust horizontal spacing
             pile.forEach((card, cardIndex) => {
                 card.removeTweens()
-                card.x = FOUNDATION_COORDS_INIT.x + pileIndex * FOUNDATION_COORDS_DELTA.x;
+                card.x = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + pileIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX];
                 card.y = FOUNDATION_COORDS_INIT.y;
                 card.setDepth(1000 + pileIndex * 10 + cardIndex); // Ensure correct stacking order
             });
@@ -142,8 +146,9 @@ class CardLayoutManager {
 
     // Add visual indicators for the foundation piles
     addFoundationIndicators(scene: Phaser.Scene, cont : Phaser.GameObjects.Container) {
+        this.foundIndicators = [];
         for (let i = 0; i < 4; i++) {
-            const x = FOUNDATION_COORDS_INIT.x + i * FOUNDATION_COORDS_DELTA.x;
+            const x = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + i * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX];
             const y = FOUNDATION_COORDS_INIT.y;
 
             // Create a sprite for the foundation indicator
@@ -153,10 +158,12 @@ class CardLayoutManager {
             // Optionally, customize the indicator with scale or tint
             foundationIndicator.setScale(CARD_SCALE);
             // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
+            this.foundIndicators[i] = foundationIndicator;
         }
     }
 
     addTableuIndicators(scene : Phaser.Scene, cont : Phaser.GameObjects.Container) {
+        this.tabIndicators = [];
         for (let i = 0; i < 7; i++) {
             const x = TABLEU_COORDS_INIT.x + i * TABLEU_COORDS_DELTA.x;
             const y = TABLEU_COORDS_INIT.y;
@@ -168,6 +175,7 @@ class CardLayoutManager {
             // Optionally, customize the indicator with scale or tint
             tabIndicator.setScale(CARD_SCALE);
             // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
+            this.tabIndicators[i] = tabIndicator;
         }
     }
 
@@ -175,15 +183,15 @@ class CardLayoutManager {
     // Add a visual indicator for the waste pile
     addWasteIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        const wasteIndicator = scene.add.sprite(STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK, STOCK_COORDS.y, 'holder_foundation_cards');
-        wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
-        wasteIndicator.setScale(CARD_SCALE);
-        cont.add(wasteIndicator);
+        this.wasteIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'holder_foundation_cards');
+        this.wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
+        this.wasteIndicator.setScale(CARD_SCALE);
+        cont.add(this.wasteIndicator);
     }    
     // Add a visual indicator for the stock pile
     addStockIndicator(pileManager: PileManager, scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x, STOCK_COORDS.y, 'holder_stock_cards');
+        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'holder_stock_cards');
         this.stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
         this.stockIndicator.setScale(CARD_SCALE);
         cont.add(this.stockIndicator);
@@ -195,7 +203,34 @@ class CardLayoutManager {
         });
     }
 
+    updateStockIndicator() {
+        this.stockIndicator.setX(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX])
+    }
+
+    updateWasteIndicator() {
+        this.wasteIndicator.setX(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX])
+    }
+
+    updateTabIndicators() {
+        this.tabIndicators.forEach((tabId, i) => {
+            tabId.setX(TABLEU_COORDS_INIT.x + i * TABLEU_COORDS_DELTA.x)
+        })
+    }
+
+    updateFoundIndicators() {
+        this.foundIndicators.forEach((fid, i) => {
+            fid.setX(FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + i * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX])
+        })
+    }
         
+    update() {
+        this.updateStockIndicator();
+        this.updateWasteIndicator();
+        this.updateFoundIndicators();
+        this.layoutStockPile(this.pileManager.getStockPile())
+        this.layoutWastePile(this.pileManager.getWastePile())
+        this.layoutFoundationPiles(this.pileManager.getFoundationPiles())
+    }
 
     
 }

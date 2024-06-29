@@ -58,7 +58,8 @@ export class RadioButtonSingle extends Phaser.GameObjects.Container {
         this.isOn = !this.isOn;
         this.radioOn.setVisible(this.isOn);
         this.radioOff.setVisible(!this.isOn);
-        console.log(this.isOn)
+
+        dispatchEvent(new Event('radioToggle'));
     }
 
     isRadioOn() {

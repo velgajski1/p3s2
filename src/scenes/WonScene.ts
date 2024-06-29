@@ -3,10 +3,11 @@ import ButtonWithColorBackground from '../ui/ButtonWithColorBackground';
 import { formatTime } from '../utils/Utils';
 import { translate } from '../utils/Language';
 import { LanguageConfig } from '../config/Language';
+import { BaseMenuScene } from './BaseMenuScene';
 
-export class WonScene extends Phaser.Scene {
+export class WonScene extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
-    private modalBackground!: Phaser.GameObjects.Graphics;
+    // private modalBackground!: Phaser.GameObjects.Graphics;
     private whiteBg!: Phaser.GameObjects.Graphics;
     private closeButton!: Phaser.GameObjects.Image;
     private newGameButton!: ButtonWithColorBackground;
@@ -16,7 +17,8 @@ export class WonScene extends Phaser.Scene {
     }
 
     create(): void {
-        this.createModalBackground();
+        super.create()
+        // this.createModalBackground();
         this.createMenuContainer();
         this.createWhiteBackground();
         this.createTextElements();
@@ -28,10 +30,6 @@ export class WonScene extends Phaser.Scene {
         this.scale.on('resize', this.scaleMenuContainer, this);
     }
 
-    private createModalBackground(): void {
-        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.5 } });
-        this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
-    }
 
     private createMenuContainer(): void {
         this.menuContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
@@ -98,6 +96,7 @@ export class WonScene extends Phaser.Scene {
 
     private createNewGameButton(): void {
         this.newGameButton = new ButtonWithColorBackground(this, 0, 120, 'New Game', () => {
+            this.restartGame()
             // New game logic
         }, {
             color: 0x6CA4A8, 

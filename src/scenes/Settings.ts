@@ -96,6 +96,12 @@ export class Settings extends BaseMenuScene {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
+        addEventListener('radioToggle', () => { 
+            setTimeout(()=> {
+                dispatchEvent(new Event('rightHandedEvent'))
+            },100);
+            this.update(0,0)
+         })
     }
 
     private createBackgroundSelector(): void {
@@ -120,10 +126,7 @@ export class Settings extends BaseMenuScene {
         }, BG_INDEX);
     }
 
-    remove() : void {
-        // this.scene.setVisible(false)
-        this.scene.sleep()
-    }
+
 
     private createCancelButton(): void {
         new Button(this, 0, 180,  Language.getTranslation(LanguageConfig.SaveExit), () => {

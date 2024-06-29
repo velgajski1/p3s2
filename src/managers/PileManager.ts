@@ -7,11 +7,13 @@ import getRankValue, { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
 import { GameManager } from "./GameManager";
 import UndoManager from "./UndoManager";
-import { STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 import ControlManager from "./ControlManager";
 
 
 export default class PileManager {
+
+
 
 
 
@@ -36,6 +38,14 @@ export default class PileManager {
 
     constructor(gameplayContainer : Phaser.GameObjects.Container, gameManager : GameManager) {
         
+        this.initializeNormal(gameplayContainer, gameManager);
+
+        this.cardLayoutManager = new CardLayoutManager();
+        this.cardTransitionManager = new CardTransitionManager();
+    }
+
+
+    initializeNormal(gameplayContainer : Phaser.GameObjects.Container, gameManager : GameManager) {
         // Initialize empty tableau piles (7 in total)
         this.gameplayContainer = gameplayContainer;
         this.gameManager = gameManager;
@@ -49,9 +59,6 @@ export default class PileManager {
         this.stockPile = [];
         this.wastePile = [];
         this.transitionPile = [];
-
-        this.cardLayoutManager = new CardLayoutManager();
-        this.cardTransitionManager = new CardTransitionManager();
     }
 
     handleWasteClicked(card: Card) : boolean
@@ -284,7 +291,7 @@ export default class PileManager {
     
         // Determine the foundation pile and its coordinates
         const foundationPile = this.foundationPiles[pileIndex];
-        const targetX = FOUNDATION_COORDS_INIT.x + pileIndex * FOUNDATION_COORDS_DELTA.x; // Adjust base coordinates
+        const targetX = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + pileIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX]; // Adjust base coordinates
         const targetY = FOUNDATION_COORDS_INIT.y;
     
         // Call the transition manager to handle the movement
@@ -338,15 +345,36 @@ export default class PileManager {
                 }
             }
         }
-
-
-
-        // The remaining cards go to the stock pile
-        // this.stockPile = deck; // The rest of the deck becomes the stock
         
         deck.forEach(x => this._addCardToStock(x));
     }
+     sortDeckByRank(deck: Card[]): Card[] {
+        return deck.sort((a, b) => a.rank - b.rank);
+    }
 
+    distributeCardsToPilesEndGame(deck: Card[]) {
+        // Define the suit order for foundation piles
+        const suits: Suit[] = [Suit.Clubs, Suit.Diamonds, Suit.Hearts, Suit.Spades];
+        deck = this.sortDeckByRank(deck)
+    
+        while (deck.length > 0) {
+            const card = deck.shift(); // Take the top card from the deck
+            if (!card) continue; // If by some reason there's no card, continue to the next iteration
+    
+            if ((card.rank === Rank.King) && this.stockPile.length < 8) {
+                // Place Kings and Queens in the stock pile
+                // card.setFaceUp(false);  // Kings and Queens should be facedown in the stock
+                this._addCardToStock(card)
+            } else if (card.rank <= Rank.Queen) {
+                // Check if the card can be placed in the foundation (i.e., is the next card in sequence)
+                this._addCardToFoundation(card, card.suit)
+            }
+        }
+    
+        // Optionally shuffle the stock pile to prevent predictable outcomes
+        // this.shufflePile(this.stockPile);
+    }
+    
     // Tableau Management
 
 
@@ -653,7 +681,7 @@ export default class PileManager {
         // Call the transition manager to animate the card moving to the foundation pile
         this.cardTransitionManager.moveCardToFoundation(
             card,
-            FOUNDATION_COORDS_INIT.x + foundationIndex * FOUNDATION_COORDS_DELTA.x, // X position of the foundation pile
+            FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + foundationIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX], // X position of the foundation pile
             FOUNDATION_COORDS_INIT.y, // Y position of the foundation pile
             targetPile, // Depth in the pile
             targetPile.length,

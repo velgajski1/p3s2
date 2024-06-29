@@ -28,6 +28,7 @@ export class GameManager {
     static rendererHeight: number;
     static gameplayContainerY: number;
     static gameplayContainerScale: number;
+    gameOverFlag : boolean = false
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
@@ -40,7 +41,7 @@ export class GameManager {
 
         // Initialize the managers responsible for handling piles and layout
         this.pileManager = new PileManager(this.gameplayContainer, this);
-        this.layoutManager = new CardLayoutManager();
+        this.layoutManager = this.pileManager.cardLayoutManager;
         this.controlManager = new ControlManager(this.pileManager);
 
         // Set up a timer event to update the elapsed time in the game loop
@@ -152,10 +153,12 @@ export class GameManager {
                 if (this.pileManager.moveTopCardTableauToFoundation(index)) return true;
             });
 
-            if (this.pileManager.getWastePile().length == 0 && this.pileManager.getTableauPiles().every(pile => pile.length == 0)) {
-                console.log("end game restart")
-                // this.restart()
-            }
+
+        }
+
+        if (!this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
+            this.gameScene.scene.launch("WonScene").bringToTop("WonScene");
+            this.gameOverFlag = true
         }
 
     }
@@ -226,6 +229,7 @@ export class GameManager {
         this.layoutManager.addStockIndicator(this.pileManager, this.gameScene,this.gameplayContainer)
 
         this.pileManager.distributeCardsToPiles(this.deck);
+        // this.pileManager.distributeCardsToPilesEndGame(this.deck)
 
         this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
         this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());

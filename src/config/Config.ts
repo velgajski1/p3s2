@@ -1,5 +1,6 @@
 export var STOCK_THREE_MODE_ACTIVE: boolean = false;
 export var RIGHT_HANDED_MODE_ACTIVE: boolean = false;
+export var RIGHT_HANDED_MODE_IDX : number = 0;
 export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
 export var BG_INDEX : number = 0;
@@ -9,9 +10,13 @@ export function toggleThreeModeActive(params:boolean) {
     STOCK_THREE_MODE_ACTIVE=params;
 }
 
-export function toggleRightHandedActive(params:boolean) {
+export function toggleRightHandedActive(params:boolean, skipDispatch : boolean = false) {
     // console.log("set to: " + params);
     RIGHT_HANDED_MODE_ACTIVE=params;
+    RIGHT_HANDED_MODE_IDX = 0;
+    if (params) RIGHT_HANDED_MODE_IDX = 1;
+
+
 }
 
 export function toggleAutofinishActive(params:boolean) {

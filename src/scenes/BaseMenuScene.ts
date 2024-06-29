@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { GameManager } from '../managers/GameManager';
 
 export class BaseMenuScene extends Phaser.Scene { 
     public isActive: boolean = false;
@@ -28,5 +29,17 @@ export class BaseMenuScene extends Phaser.Scene {
         this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.05 } });
         this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
         this.modalBackground.setInteractive({useHandCursor: false, hitArea : new Phaser.Geom.Rectangle(0,0,this.scale.width, this.scale.height), hitAreaCallback:Phaser.Geom.Rectangle.Contains})
+    }
+
+    restartGame = () => {
+        console.log("restart game called")
+        var gamemanager : GameManager = this.registry.get("gameManager")
+        gamemanager.restart()
+        this.remove()
+    }  
+
+    remove() : void {
+        // this.scene.setVisible(false)
+        this.scene.sleep()
     }
 }

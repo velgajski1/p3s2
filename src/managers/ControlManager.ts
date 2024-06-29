@@ -1,3 +1,4 @@
+import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import getRankValue, { Rank } from "./CardNameManager";
@@ -394,8 +395,8 @@ class ControlManager {
             let bestIndex = -1;
     
             for (let i = 0; i < 4; i++) { // Assuming there are 4 foundation piles
-                const pileStartX = FOUNDATION_COORDS_INIT.x + i * FOUNDATION_COORDS_DELTA.x;
-                const pileEndX = pileStartX + FOUNDATION_COORDS_DELTA.x; // Assuming all foundation piles have the same width
+                const pileStartX = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + i * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX];
+                const pileEndX = pileStartX + FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX]; // Assuming all foundation piles have the same width
     
                 // Calculate the overlap with the foundation pile
                 const overlapLeft = Math.max(0, Math.min(x + cardWidth, pileEndX) - Math.max(x, pileStartX));

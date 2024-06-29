@@ -1,4 +1,4 @@
-import { STOCK_THREE_MODE_ACTIVE } from '../config/Config';
+import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from '../config/Config';
 import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 import { getTweensForObject } from '../utils/Utils';
@@ -33,7 +33,7 @@ class CardTransitionManager {
                 stockPile.push(card); // Add back to the stock pile
                 card.setDepth (stockPile.length-1);
                 gameplayContainer.sort("depth");
-                card.setX(STOCK_COORDS.x)
+                card.setX(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX])
                 card.setY(STOCK_COORDS.y)
                 getTweensForObject(card.scene, card).forEach(x => x.remove());
                 
@@ -146,14 +146,14 @@ class CardTransitionManager {
             card.inTransition = true;
             card.scene.tweens.add({
                 targets: card,
-                x: STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK,
+                x: STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX],
                 y: STOCK_COORDS.y,
                 duration: 160, // Adjust the duration as needed
                 ease: 'Cubic.easeOut',
                 onComplete: () => {
                     card.inTransition = false
                     if (onComplete) onComplete();
-                    card.x = STOCK_COORDS.x+WASTE_DELTA_FROM_STOCK
+                    card.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX]
                     card.y = STOCK_COORDS.y
                 }, 
                
