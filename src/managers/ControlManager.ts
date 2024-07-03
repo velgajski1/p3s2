@@ -3,6 +3,7 @@ import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_IN
 import Card from "../elements/Card";
 import getRankValue, { Rank } from "./CardNameManager";
 import { GameManager } from "./GameManager";
+import HintManager from "./HintManager";
 import PileManager from "./PileManager";
 import UndoManager from "./UndoManager";
 
@@ -25,6 +26,7 @@ class ControlManager {
     substackClearTimeout: NodeJS.Timeout;
     holdTimeoutFlag: boolean = false;
     public enabled: boolean = true;
+    keyH: any;
 
     constructor(pileManager: PileManager) {
         this.pileManager = pileManager;
@@ -296,6 +298,13 @@ class ControlManager {
                     let dropIdx = this.pileManager.getTableuPileIndexFromCard(card);
                     if (dropIdx >= 0) {
                         
+                        if (activeCard.pileType == PileType.Foundation) {
+                            this.pileManager.gameManager.incrementScore(-15)
+                        } else  if (activeCard.pileType == PileType.Waste) {
+                            this.pileManager.gameManager.incrementScore(5)
+                        }
+
+
                         this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack])
                         this.pileManager.cardLayoutManager.init(this.pileManager)
                         this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true)
@@ -313,7 +322,7 @@ class ControlManager {
             }
             else if (card.pileType == PileType.Foundation)
             {
-
+                this.pileManager.gameManager.incrementScore(10)
                 let foundIndex = this.pileManager.getFoundationPileIndexFromCard(card)
                 if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
                     // Valid drop on a foundation pile
@@ -329,6 +338,10 @@ class ControlManager {
         if (!placed) {
             if (tableauIndex !== -1 && this.pileManager.getTableauPiles()[tableauIndex].length === 0 && activeCard.rank === Rank.King) {
                 // Valid drop on an empty tableau pile (Kings only)
+                if (activeCard.pileType == PileType.Waste) {
+                    this.pileManager.gameManager.incrementScore(5)
+                    this.pileManager.gameManager.incrementMoves();
+                }
                 this.placeCardOnTableau(activeCard, tableauIndex);
                 this.substack.forEach(c => {
                     if (c === activeCard) return;
@@ -336,6 +349,10 @@ class ControlManager {
                 });
             } else if (foundationIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundationIndex)) {
                 // Valid drop on a foundation pile
+                if (this.activeCard?.pileType != PileType.Foundation) {
+                    this.pileManager.gameManager.incrementMoves()
+                    this.pileManager.gameManager.incrementScore(10);
+                }
                 this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
             } else {
                 // Invalid drop, reset the card and any substack to original position
@@ -546,7 +563,11 @@ class ControlManager {
     setupKeyboardControls() {
         // Create a key object for 'D'
         this.keyD = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.keyD.on('down', this.handleDKey, this);   
+        this.keyD.on('down', this.handleDKey, this);         
+        
+        // Create a key object for 'D'
+        this.keyH = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.H);
+        this.keyH.on('down', this.handleHKey, this);   
         
         // Create a key object for 'D'
         this.keyR = GameManager.gameScene?.input?.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -566,6 +587,10 @@ class ControlManager {
         this.keyZ.on('down', this.handleCtrlZKey, this);
     
         this.isClickEnabled = true; // Assuming this is defined somewhere in your class
+    }
+    handleHKey(arg0: string, handleHKey: any, arg2: this)
+    {
+        HintManager.getInstance().getHint(this.pileManager)
     }
     handleRKey(arg0: string, handleRKey: any, arg2: this)
     {

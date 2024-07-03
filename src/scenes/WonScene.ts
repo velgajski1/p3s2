@@ -4,6 +4,7 @@ import { formatTime } from '../utils/Utils';
 import { translate } from '../utils/Language';
 import { LanguageConfig } from '../config/Language';
 import { BaseMenuScene } from './BaseMenuScene';
+import statsManager from '../managers/StatsManager';
 
 export class WonScene extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
@@ -14,6 +15,14 @@ export class WonScene extends BaseMenuScene {
 
     constructor(public score : number = 0, public timePlayed : number  = 0, public timeBonus : number  = 0, public totalScore : number = 0) {
         super('WonScene');
+    }
+
+    init(data : any) {
+        // Access passed data
+        this.score = data.score;
+        this.timePlayed = data.timeplayed;
+        this.timeBonus = data.timebonus;
+        this.totalScore = data.totalscore;
     }
 
     create(): void {
@@ -28,6 +37,7 @@ export class WonScene extends BaseMenuScene {
 
         // Listen for resize events
         this.scale.on('resize', this.scaleMenuContainer, this);
+        statsManager.updateStatsAfterGame(true, this.totalScore, this.timePlayed);
     }
 
 
@@ -95,7 +105,7 @@ export class WonScene extends BaseMenuScene {
     
 
     private createNewGameButton(): void {
-        this.newGameButton = new ButtonWithColorBackground(this, 0, 120, 'New Game', () => {
+        this.newGameButton = new ButtonWithColorBackground(this, 0, 120, translate(LanguageConfig.NewGame), () => {
             this.restartGame()
             // New game logic
         }, {
@@ -119,15 +129,41 @@ export class WonScene extends BaseMenuScene {
         this.menuContainer.add(this.closeButton);
     }
 
+    // private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
+    //     const { width, height } = gameSize || this.scale;
+    //     this.menuContainer.setPosition(width / 2, height / 2);
+
+    //     const scaleX = width / 800; // Example base width
+    //     const scaleY = height / 800; // Example base height
+    //     const scale = Math.min(scaleX, scaleY);
+
+    //     this.menuContainer.setScale(scale);
+    //     this.modalBackground.clear().fillRect(0, 0, width, height);
+    // }
+
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
+        // Use provided gameSize or current game size
+        // 
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
+    
+        // Calculate scale based on a 1600x900 design, trying to fill as much as possible
+        const scaleX = width / 600;
+        const scaleY = height / 600;
+        // Use the larger scale factor that maintains aspect ratio without exceeding screen dimensions
+        const scale = Math.min(1, Math.max(scaleX, scaleY));
+    
+        // Check if scaling exceeds screen dimensions and adjust if necessary
+        const effectiveWidth = 600 * scale;
+        const effectiveHeight = 600 * scale;
+        if (effectiveWidth > width || effectiveHeight > height) {
+            // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
+            this.menuContainer.setScale(Math.min(scaleX, scaleY));
+        } else {
+            // Otherwise, apply the calculated scale to maximize screen usage
+            this.menuContainer.setScale(scale);
+        }
 
-        const scaleX = width / 800; // Example base width
-        const scaleY = height / 800; // Example base height
-        const scale = Math.min(scaleX, scaleY);
 
-        this.menuContainer.setScale(scale);
-        this.modalBackground.clear().fillRect(0, 0, width, height);
     }
 }

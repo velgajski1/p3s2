@@ -9,6 +9,7 @@ import { GameManager } from "./GameManager";
 import UndoManager from "./UndoManager";
 import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 import ControlManager from "./ControlManager";
+import statsManager from "./StatsManager";
 
 
 export default class PileManager {
@@ -79,6 +80,9 @@ export default class PileManager {
                     this.fixTableuYDelta(i, [topWasteCard])
                    
                     this.cardLayoutManager.init(this)
+
+                    this.gameManager.incrementScore(5)
+                    this.gameManager.incrementMoves()
                    
                     this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
                     this.addCardToTableuPile(topWasteCard, i);
@@ -200,6 +204,8 @@ export default class PileManager {
         if (card) {
             if (this.moveCardToFoundationIfPossible(card, -1, true))
             {
+                this.gameManager.incrementScore(10)
+                this.gameManager.incrementMoves()
                 this.uncoverTableuPile(pileIndex);
                 this.fixTableuYDelta(card.pileIndex)
                 UndoManager.getInstance().saveState(this.getState())
@@ -219,6 +225,7 @@ export default class PileManager {
             
             if (!topCard.isFaceUp){
                 this.cardTransitionManager.flipCard(topCard, 120);
+                this.gameManager.incrementScore(5)
             }
         }
     }
@@ -273,11 +280,9 @@ export default class PileManager {
         }
     
         const pileIndex = foundationIdx === -1 ? this.getFoundationPileIndex(card.suit) : foundationIdx;
-    
         if (pileIndex === -1 || !this.canPlaceInFoundation(card)) {
             return false;
         }
-    
         return true;
     }
     
@@ -294,6 +299,14 @@ export default class PileManager {
         const targetX = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + pileIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX]; // Adjust base coordinates
         const targetY = FOUNDATION_COORDS_INIT.y;
     
+        this.gameManager.incrementMoves()
+        if (card.pileType == PileType.Waste) {
+            this.gameManager.incrementScore(10);
+        } 
+        else if (card.pileType == PileType.Tableau) {
+            this.gameManager.incrementScore(10);
+        }
+
         // Call the transition manager to handle the movement
         card.setFaceUp(true);
         this.cardTransitionManager.moveCardToFoundation(
@@ -635,7 +648,8 @@ export default class PileManager {
             foundationPiles: this.getFoundationPiles(),
             stockPile: this.getStockPile(),
             wastePile: this.getWastePile(),
-            flippedCounts :[]
+            flippedCounts :[],
+            score : this.gameManager.getCurrentScore()
             // Include other elements of the game state
         }
     }
@@ -786,6 +800,7 @@ export default class PileManager {
     setToGameState(state: GameState): void {
         // Clear all current piles without affecting the cards themselves
 
+        this.gameManager.setScore(state.score)
         
         this.clearPiles();
 

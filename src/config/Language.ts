@@ -3,6 +3,7 @@ export const LanguageConfig = {
     RestartGame: "RestartGame",
     NewGameTurn1: "NewGameTurn1",
     NewGameTurn3: "NewGameTurn3",
+    NewGame: "NewGame",
     HowToPlaySolitaire: "HowToPlaySolitaire",
     Statistics: "Statistics",
     AllGames: "AllGames",

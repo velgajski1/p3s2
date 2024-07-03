@@ -4,6 +4,7 @@
         <RestartGame>Restart Game</RestartGame>
         <NewGameTurn1>New Game: Turn 1</NewGameTurn1>
         <NewGameTurn3>New Game: Turn 3</NewGameTurn3>
+        <NewGame>New Game</NewGame>
         <HowToPlaySolitaire>How to Play Solitaire</HowToPlaySolitaire>
         <Statistics>Statistics</Statistics>
         <AllGames>All Games</AllGames>

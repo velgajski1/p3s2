@@ -1,6 +1,6 @@
 // Card.ts
 import Phaser from 'phaser';
-import { PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
+import { HINT_OVERLAY_DURATION, PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { GameManager } from '../managers/GameManager';
 import ControlManager from '../managers/ControlManager';
@@ -26,6 +26,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     hintBlinkCount: number;
     hintMaxBlinks: number;
     hintTimerEvent: Phaser.Time.TimerEvent;
+    outline: Phaser.GameObjects.Sprite;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -50,10 +51,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
 
         this.textures = this.scene.textures;
-        this.createInvertedFrameTexture('cards', 'cards/' + faceTexture + '.png', faceTexture+'_hint');
-        if (this.faceTexture == 'clubs_2') {
-            this.createInvertedFrameTexture('cards', 'cards/' + 'backside' + '.png', 'backside'+'_hint');
-        }
+        // this.createInvertedFrameTexture('cards', 'cards/' + faceTexture + '.png', faceTexture+'_hint');
+        // if (this.faceTexture == 'clubs_2') {
+        //     this.createInvertedFrameTexture('cards', 'cards/' + 'backside' + '.png', 'backside'+'_hint');
+        // }
         
         // setTimeout(() => {
         //     if (Math.random() < 0.55) {
@@ -120,7 +121,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     }
 
     setHintTexture(on : boolean) {
-        console.log(this.name, this.isFaceUp,on)
+        // console.log(this.name, this.isFaceUp,on)
         if (this.isFaceUp) {
             if (on) {
                 this.setTexture(this.faceTexture+'_hint')
@@ -140,21 +141,36 @@ export default class Card extends Phaser.GameObjects.Sprite {
         
     }
 
-    startHintAnim(blinks: number, duration: number) {
-        const blinkInterval = duration / (blinks * 2); // Total duration divided by double the number of blinks
+    update() {
+        if (this.outline) {
+            this.outline.x = this.x;
+            this.outline.y = this.y;
+        }
+    }
+
+    startHintAnim() {
+        if (!this.scene) return;
+        this.cancelHintAnim()
+        this.addOutline(this.scene, this, 4, 0xff0000);
+        const blinkInterval = HINT_OVERLAY_DURATION // Total duration divided by double the number of blinks
 
         this.hintTimerEvent = this.scene.time.addEvent({
             delay: blinkInterval,
-            repeat: blinks * 2 - 1,
             callback: () => {
-                this.setHintTexture(this.texture.key.includes('_hint') ? false : true);
+                this.removeOutline()
+                
             }
         });
     }
 
     cancelHintAnim() {
-        this.hintTimerEvent.destroy()
-        this.setHintTexture(false);
+        console.log("cancel hint anim")
+        if (this.hintTimerEvent) {
+            console.log("remove hint timer")
+            this.hintTimerEvent.remove()
+        }
+        
+        this.removeOutline()
     }
 
     isOnStock()
@@ -251,6 +267,22 @@ export default class Card extends Phaser.GameObjects.Sprite {
     setPile(pileType: PileType, pileIndex: number): void {
         this.pileType = pileType;
         this.pileIndex = pileIndex;
+    }
+
+    addOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, lineWidth: number, color: number) {
+        if (!scene) return;
+       this.outline = scene.add.sprite(this.x-1, this.y-1, 'reddish_glow_outline' ).setScale(this.scale)
+       scene.add.existing(this.outline)
+    //    console.log(this.x, this.y, this.outline.x, this.outline.y)
+       this.outline.setDepth(100000)
+       this.parentContainer.add(this.outline)
+
+    }
+
+    removeOutline() {
+        if (this.outline) {
+            this.outline.destroy()
+        }
     }
 
     setTexture2(frame: string) : this

@@ -48,6 +48,7 @@ export default class UndoManager {
         const foundationPiles = state.foundationPiles.map(pile => [...pile]);
         const stockPile = [...state.stockPile];
         const wastePile = [...state.wastePile];
+        const score = state.score
     
         // Calculate flippedCounts based on the number of face-up cards in each tableau pile
         const flippedCounts = tableauPiles.map(pile => 
@@ -59,7 +60,8 @@ export default class UndoManager {
             foundationPiles,
             stockPile,
             wastePile,
-            flippedCounts  // Calculated flipped counts for tableau piles
+            flippedCounts,
+            score  // Calculated flipped counts for tableau piles
         };
     }
     

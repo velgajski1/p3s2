@@ -1,6 +1,6 @@
 // CardLayoutManager.ts
 import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
-import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
+import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, HINT_OVERLAY_DURATION, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
@@ -17,11 +17,23 @@ class CardLayoutManager {
     wasteIndicator: Phaser.GameObjects.Sprite;
     tabIndicators: Phaser.GameObjects.Sprite[];
     foundIndicators: Phaser.GameObjects.Sprite[];
+    outline: Phaser.GameObjects.Sprite;
+    hintTimerEvent: any;
+    timeout: NodeJS.Timeout;
 
     init(pileManager : PileManager)
     {
         this.pileManager = pileManager;
         addEventListener('rightHandedEvent', () => {this.update()});
+
+        setTimeout(() => {
+            console.log("test hint")
+        //    this.hintStock()
+        //    this.hintWaste()
+        //    this.hintTabIdx(2)
+        //    this.hintFoundIdx(3)
+              
+        }, 5000);
     }
 
     layoutAll(pileManager : PileManager, withTween : boolean = false) 
@@ -32,6 +44,8 @@ class CardLayoutManager {
         this.layoutWastePile(pileManager.getWastePile())
         this.layoutTableauPiles(pileManager.getTableauPiles(), withTween)
         this.layoutFoundationPiles(pileManager.getFoundationPiles())
+
+
         
     }
     // Layout method for stock pile, usually a single stack
@@ -162,6 +176,47 @@ class CardLayoutManager {
         }
     }
 
+    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite) {
+        this.removeHintOutline()
+        this.outline = scene.add.sprite(sprite.x-1, sprite.y-1, 'reddish_glow_outline' ).setScale(sprite.scale)
+        scene.add.existing(this.outline)
+        this.outline.setDepth(100000)
+        sprite.parentContainer.add(this.outline)
+
+
+        if (this.timeout) {
+            clearTimeout(this.timeout)
+        }
+        this.timeout = setTimeout(() => {
+            this.removeHintOutline()
+        }, HINT_OVERLAY_DURATION);
+
+     }
+
+     removeHintOutline() {
+        if (this.outline) this.outline.destroy();
+    }
+
+    hintTabIdx(idx : number) {
+        let spr = this.tabIndicators[idx]
+        this.addHintOutline(spr.scene, spr);
+    }
+
+    hintFoundIdx(idx : number) {
+        let spr = this.foundIndicators[idx]
+        this.addHintOutline(spr.scene, spr);
+    }
+
+    hintStock() {
+        let spr = this.stockIndicator
+        this.addHintOutline(spr.scene, spr);
+    }
+
+    hintWaste() {
+        let spr = this.wasteIndicator
+        this.addHintOutline(spr.scene, spr);
+    }
+
     addTableuIndicators(scene : Phaser.Scene, cont : Phaser.GameObjects.Container) {
         this.tabIndicators = [];
         for (let i = 0; i < 7; i++) {
@@ -176,6 +231,9 @@ class CardLayoutManager {
             tabIndicator.setScale(CARD_SCALE);
             // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
             this.tabIndicators[i] = tabIndicator;
+
+
+
         }
     }
 

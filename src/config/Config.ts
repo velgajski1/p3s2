@@ -20,7 +20,7 @@ export function toggleRightHandedActive(params:boolean, skipDispatch : boolean =
 }
 
 export function toggleAutofinishActive(params:boolean) {
-    console.log("set autofinish to: " + params);
+    // console.log("set autofinish to: " + params);
     AUTOFINISH_MODE_ACTIVE=params;
 }
 

@@ -7,8 +7,11 @@ import ControlManager from './ControlManager';
 import UndoManager from './UndoManager';
 import { STOCK_COORDS } from '../config/Consts';
 import { AUTOFINISH_MODE_ACTIVE } from '../config/Config';
+import statsManager from './StatsManager';
+import StatsManager from './StatsManager';
 
 export class GameManager {
+
     private static instance: GameManager | null = null;
     private score: number = 0;
     private startTime: number;
@@ -29,6 +32,8 @@ export class GameManager {
     static gameplayContainerY: number;
     static gameplayContainerScale: number;
     gameOverFlag : boolean = false
+    wonscene: Phaser.Scenes.ScenePlugin;
+    
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
@@ -40,6 +45,8 @@ export class GameManager {
         GameManager.gameScene = gameScene;
 
         // Initialize the managers responsible for handling piles and layout
+        statsManager.startGame()
+
         this.pileManager = new PileManager(this.gameplayContainer, this);
         this.layoutManager = this.pileManager.cardLayoutManager;
         this.controlManager = new ControlManager(this.pileManager);
@@ -58,6 +65,7 @@ export class GameManager {
             delay: 10,
             callback:  () => {
                 // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
+                this.pileManager.getAllCards().forEach(c => c.update())
                 this.gameplayContainer.sort('depth');
                 // if (this.gameScene.game.loop.actualFps < 59)  
                 // if (!this.controlManager.activeCard && !this.gameScene.input.activePointer.isDown) {
@@ -82,6 +90,11 @@ export class GameManager {
 
         
         
+    }
+
+    setScore(score: number)
+    {
+        this.score = score;
     }
 
     public static getInstance(scene: Phaser.Scene, container : Phaser.GameObjects.Container): GameManager {
@@ -119,6 +132,9 @@ export class GameManager {
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
         // this.pileManager.listWasteCardsWithDepthAndName()
+        statsManager.logAllStats();
+        // console.log(this.score, this.elapsedTime)
+        statsManager.updateCurrentGame(this.score, this.elapsedTime);
         
 
 
@@ -157,13 +173,26 @@ export class GameManager {
         }
 
         if (!this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
-            this.gameScene.scene.launch("WonScene").bringToTop("WonScene");
+            this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed : this.getElapsedTime(), timebonus : this.getTimeBonus(), totalscore : this.getTotalScore() } ).bringToTop("WonScene");
+
+            
+            
+
             this.gameOverFlag = true
         }
 
     }
+    getTotalScore()
+    {
+       return this.getCurrentScore() + this.getTimeBonus();
+    }
+    getTimeBonus()
+    {
+        return  Math.floor(700000/ this.getElapsedTime());
+    }
 
     restart() {
+        statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
         GameManager.removeInstance();
         UndoManager.removeInstance()
         GameManager.instance = null;
