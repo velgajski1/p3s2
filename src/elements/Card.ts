@@ -51,17 +51,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
 
         this.textures = this.scene.textures;
-        // this.createInvertedFrameTexture('cards', 'cards/' + faceTexture + '.png', faceTexture+'_hint');
-        // if (this.faceTexture == 'clubs_2') {
-        //     this.createInvertedFrameTexture('cards', 'cards/' + 'backside' + '.png', 'backside'+'_hint');
-        // }
-        
-        // setTimeout(() => {
-        //     if (Math.random() < 0.55) {
-        //         if (this.isFaceUp) this.startHintAnim(5, 4000)
-        //     }
-              
-        // }, 1000);
 
     }
 
@@ -148,10 +137,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
         }
     }
 
-    startHintAnim() {
+    startHintAnim(cropY : number) {
         if (!this.scene) return;
         this.cancelHintAnim()
-        this.addOutline(this.scene, this, 4, 0xff0000);
+        this.addOutline(this.scene, cropY);
         const blinkInterval = HINT_OVERLAY_DURATION // Total duration divided by double the number of blinks
 
         this.hintTimerEvent = this.scene.time.addEvent({
@@ -164,9 +153,9 @@ export default class Card extends Phaser.GameObjects.Sprite {
     }
 
     cancelHintAnim() {
-        console.log("cancel hint anim")
+      
         if (this.hintTimerEvent) {
-            console.log("remove hint timer")
+           
             this.hintTimerEvent.remove()
         }
         
@@ -269,13 +258,18 @@ export default class Card extends Phaser.GameObjects.Sprite {
         this.pileIndex = pileIndex;
     }
 
-    addOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, lineWidth: number, color: number) {
+    addOutline(scene: Phaser.Scene, cropY:number): void{
         if (!scene) return;
        this.outline = scene.add.sprite(this.x-1, this.y-1, 'reddish_glow_outline' ).setScale(this.scale)
        scene.add.existing(this.outline)
-    //    console.log(this.x, this.y, this.outline.x, this.outline.y)
        this.outline.setDepth(100000)
        this.parentContainer.add(this.outline)
+
+       if (cropY > 0) {
+        this.outline.setCrop(0,0,this.outline.width, cropY/this.scale)
+       }
+
+      
 
     }
 

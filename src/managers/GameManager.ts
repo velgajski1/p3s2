@@ -197,7 +197,7 @@ export class GameManager {
         UndoManager.removeInstance()
         GameManager.instance = null;
         this.gameScene.events.emit('restartScene');
-        console.log("restart scene")
+   
 
     }
     static removeInstance()

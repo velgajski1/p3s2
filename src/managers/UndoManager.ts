@@ -1,5 +1,6 @@
 import Card from "../elements/Card";
 import { GameState } from "../utils/types";
+import HintManager from "./HintManager";
 
 export default class UndoManager {
 
@@ -39,8 +40,11 @@ export default class UndoManager {
 
         if (totalCards == 52 && (!lastState || !this.areStatesEqual(lastState, copiedState))) {
             this.states.push(copiedState);
+            HintManager.getInstance().clearHints();
             
         }
+
+        
     }
 
     private deepCopyState(state: GameState): GameState {
@@ -120,6 +124,7 @@ export default class UndoManager {
             this.states.pop();
             const prevState = this.states[this.states.length - 1];
             this.applyState(prevState);
+            HintManager.getInstance().clearHints();
             return prevState;
         }
         return null;

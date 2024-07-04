@@ -8,6 +8,7 @@ import ControlManager from "./ControlManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
 
+
     stockpile: Card[];
     wastepile: Card[];
     tableauPiles: Card[][];
@@ -184,9 +185,7 @@ class CardLayoutManager {
         sprite.parentContainer.add(this.outline)
 
 
-        if (this.timeout) {
-            clearTimeout(this.timeout)
-        }
+        this.removeHintTimer()
         this.timeout = setTimeout(() => {
             this.removeHintOutline()
         }, HINT_OVERLAY_DURATION);
@@ -195,6 +194,13 @@ class CardLayoutManager {
 
      removeHintOutline() {
         if (this.outline) this.outline.destroy();
+    }
+
+    removeHintTimer()
+    {
+        if (this.timeout) {
+            clearTimeout(this.timeout)
+        }
     }
 
     hintTabIdx(idx : number) {

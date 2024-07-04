@@ -15,6 +15,7 @@ export default class HintManager {
     hints: Hint[];
     lastHintIndex: number;
     layoutManager: CardLayoutManager;
+    secondTimer: NodeJS.Timeout;
 
 
     private constructor() {
@@ -30,6 +31,44 @@ export default class HintManager {
         }
         return HintManager.instance;
     }
+
+    isUsefulMove (card : Card, sourceIndex: number, targetIndex: number): boolean  {
+        const sourcePile = this.pileManager.getTableauPiles()[sourceIndex];
+        const targetPile = this.pileManager.getTableauPiles()[targetIndex];
+        const targetCard : Card = targetPile[targetPile.length-1];
+        const belowCard = sourcePile[sourcePile.indexOf(card)-1];
+        if (sourcePile.length < 2 || belowCard == null) {
+            if (targetPile.length == 0) return false;
+            return true;
+        } 
+        console.log("card: " + card.getName())
+        
+        console.log("belowcard: " + belowCard.getName())
+
+        // Condition a: Card below is turned/uncovered
+        if (!belowCard.isFaceUp) {
+            console.log("card below is faecup")
+            return true;
+        } 
+
+        if (this.pileManager.canMoveCardToFoundation(belowCard, -1)) {
+            return true;
+        }
+
+        // Condition b: Card below can be moved to another tableau pile or to the foundation
+        // for (let i = 0; i < 7; i++) {
+        //     if (i !== sourceIndex && this.pileManager.canMoveToTableauPile(belowCard, this.pileManager.getTableauPiles()[i])) {
+        //         if (targetCard) 
+        //         {
+        //             if (card.rank==targetCard.rank) return false;
+        //         } 
+        //         return true;
+        //     }
+        // }
+
+
+        return false;
+    };
 
     // Generate all possible hints
     generateHints(pileManager: PileManager) {
@@ -54,7 +93,7 @@ export default class HintManager {
             if (tableauTopCard && this.pileManager.canMoveCardToFoundation(tableauTopCard, -1)) {
                 // this.hints.push(`Move ${tableauTopCard.getName()} from Tableau ${i + 1} to Foundation`);
                 this.hints.push({
-                    first: () => { tableauTopCard.startHintAnim() },
+                    first: () => { this.hintTableuCard(tableauTopCard) },
                     second: () => { 
                         this.pileManager.cardLayoutManager.hintFoundIdx(this.pileManager.getFoundationPileIndex(tableauTopCard.suit))
                      }
@@ -69,10 +108,10 @@ export default class HintManager {
                 const card = tableauPile[j];
                 if (card.isFaceUp) {
                     for (let k = 0; k < 7; k++) {
-                        if (i != k && this.pileManager.canMoveToTableauPile(card, this.pileManager.getTableauPiles()[k])) {
+                        if (i != k && this.pileManager.canMoveToTableauPile(card, this.pileManager.getTableauPiles()[k]) && this.isUsefulMove(card, i, k)) {
                             // this.hints.push(`Move ${card.getName()} from Tableau ${i + 1} to Tableau ${k + 1}`);
                             this.hints.push({
-                                first: () => { card.startHintAnim() },
+                                first: () => { this.hintTableuCard(card) },
                                 second: () => { 
                                     this.hintTableu(k);
                                  }
@@ -87,7 +126,12 @@ export default class HintManager {
         if (wasteTopCard) {
             for (let i = 0; i < 7; i++) {
                 if (this.pileManager.canMoveToTableauPile(wasteTopCard, this.pileManager.getTableauPiles()[i])) {
-                    // this.hints.push(`Move ${wasteTopCard.getName()} from Waste to Tableau ${i + 1}`);
+                    this.hints.push({
+                        first: () => {this.pileManager.cardLayoutManager.hintWaste()  },
+                        second: () => { 
+                            this.hintTableu(i);
+                         }
+                    });
                 }
             }
         }
@@ -95,16 +139,46 @@ export default class HintManager {
         // Priority 4: Move from Stock to Waste
         const stockTopCard = this.pileManager.getTopStockCard();
         if (stockTopCard) {
-            // this.hints.push(`Move ${stockTopCard.getName()} from Stock to Waste`);
+            this.hints.push({
+                first: () => {this.pileManager.cardLayoutManager.hintStock()  },
+                second: () => { 
+                    this.pileManager.cardLayoutManager.hintWaste()  
+                 }
+            });
+        }
+    
+        if (!stockTopCard) {
+            this.hints.push({
+                first: () => {this.pileManager.cardLayoutManager.hintStock()  },
+                second: () => { 
+                    // this.pileManager.cardLayoutManager.hintWaste()  
+                 }
+            });
         }
 
         // If no hints available, add a default message
-        if (this.hints.length === 0) {
+        if (this.hints.length == 0) {
             // this.hints.push('No hints available');
         }
+        this.hints= this.hints.reverse()
 
         // Log generated hints to console
-        console.log('Generated Hints:', this.hints);
+        // console.log('Generated Hints:', this.hints);
+    }
+    hintTableuCard(tableauTopCard: Card)
+    {
+        let substack : Card[] = this.pileManager.getSubstack(tableauTopCard);
+        substack.forEach((c,i) => {
+            c.startHintAnim(0)
+
+            if (i < substack.length - 1) {
+                let cNextY : number = substack[i+1].y;
+                let yDelta = cNextY-c.y
+       
+                c.startHintAnim(yDelta)
+            }
+        })
+        
     }
     hintTableu(k: number)
     {
@@ -115,8 +189,27 @@ export default class HintManager {
         } 
         else 
         {
-            this.pileManager.getTopCardFromTableau(k)?.startHintAnim()
+            this.pileManager.getTopCardFromTableau(k)?.startHintAnim(0)
         }
+    }
+
+    clearHints() {
+
+        this.hints = [];
+        this.lastHintIndex = 0;
+        if (this.pileManager){
+            this.pileManager.getAllCards().forEach(c => c.cancelHintAnim())
+            this.layoutManager = this.pileManager.cardLayoutManager
+        }  
+        if (this.layoutManager) {
+            this.layoutManager.removeHintTimer()
+            this.layoutManager.removeHintOutline()
+            
+        }
+        if (this.secondTimer) {
+            clearTimeout(this.secondTimer)
+        }
+
     }
 
     // Provide hints to the player
@@ -127,23 +220,20 @@ export default class HintManager {
         }
 
         // Cycle through hints
+        if (this.hints.length == 0) return;
         this.lastHintIndex = (this.lastHintIndex + 1) % this.hints.length;
         const hint = this.hints[this.lastHintIndex];
         hint.first()
 
         const blinkInterval = HINT_NEXT_OVERLAY_DELTA // Total duration divided by double the number of blinks
         
-        setTimeout(() => {
+        this.secondTimer=  setTimeout(() => {
             hint.second()
         }, blinkInterval);
 
-        // this.pileManager.scene.time.addEvent({
-        //     delay: blinkInterval,
-        //     callback: () => {
-        //         hint.second()
-                
-        //     }
-        // });
+
     
     }
 }
+
+
