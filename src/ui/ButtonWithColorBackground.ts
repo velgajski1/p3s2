@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SoundManager } from '../managers/SoundManager';
 
 export class ButtonWithColorBackground extends Phaser.GameObjects.Container {
     constructor(scene: Phaser.Scene, x: number, y: number, text: string, onClick: () => void, options?: {
@@ -47,7 +48,8 @@ export class ButtonWithColorBackground extends Phaser.GameObjects.Container {
         // Make the container interactive
         this.setSize(width, height);
         this.setInteractive({ useHandCursor: true })
-            .on('pointerdown', onClick);
+            .on('pointerdown', onClick)
+            .on('pointerdown', () => {  SoundManager.instance.click.play()})
 
         // Optional: change style on hover
         if (onHover) {

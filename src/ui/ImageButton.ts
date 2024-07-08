@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SoundManager } from '../managers/SoundManager';
 
 export class ImageButton extends Phaser.GameObjects.Container {
     private normalImage: Phaser.GameObjects.Image;
@@ -8,6 +9,8 @@ export class ImageButton extends Phaser.GameObjects.Container {
     private orY : number = 0.5;
     private originDeltaX: number = 0;
     private originDeltaY: number = 0;
+
+    public skipClickSound : boolean = false;
 
     constructor(scene: Phaser.Scene, x: number, y: number, normalTexture: string, hoverTexture: string, onClick: () => void, options?: {
         parentContainer?: Phaser.GameObjects.Container
@@ -28,6 +31,7 @@ export class ImageButton extends Phaser.GameObjects.Container {
         this.setSize(this.normalImage.width, this.normalImage.height);
         this.setInteractive({ useHandCursor: true })
             .on('pointerdown', onClick)
+            .on('pointerdown', () => { if (this.skipClickSound) return; SoundManager.instance.click.play() })
             .on('pointerover', () => this.switchToHoverImage())
             .on('pointerout', () => this.switchToNormalImage());
 

@@ -10,6 +10,7 @@ import UndoManager from "./UndoManager";
 import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 import ControlManager from "./ControlManager";
 import statsManager from "./StatsManager";
+import { SoundManager } from "./SoundManager";
 
 
 export default class PileManager {
@@ -82,7 +83,7 @@ export default class PileManager {
                     this.cardLayoutManager.init(this)
 
                     this.gameManager.incrementScore(5)
-                    this.gameManager.incrementMoves()
+                    // this.gameManager.incrementMoves()
                    
                     this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
                     this.addCardToTableuPile(topWasteCard, i);
@@ -205,7 +206,7 @@ export default class PileManager {
             if (this.moveCardToFoundationIfPossible(card, -1, true))
             {
                 this.gameManager.incrementScore(10)
-                this.gameManager.incrementMoves()
+                // this.gameManager.incrementMoves()
                 this.uncoverTableuPile(pileIndex);
                 this.fixTableuYDelta(card.pileIndex)
                 UndoManager.getInstance().saveState(this.getState())
@@ -231,6 +232,7 @@ export default class PileManager {
     }
 
     moveAllCardsFromWasteToStock() {
+        // this.gameManager.incrementMoves()
         this.cardTransitionManager.moveAllCardsFromWasteToStock(this.stockPile, this.wastePile, this.gameplayContainer);
         UndoManager.getInstance().saveState(this.getState())
     }
@@ -261,6 +263,7 @@ export default class PileManager {
             }
         }
         UndoManager.getInstance().saveState(this.getState())
+        // this.gameManager.incrementMoves()
 
 
        
@@ -299,7 +302,7 @@ export default class PileManager {
         const targetX = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + pileIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX]; // Adjust base coordinates
         const targetY = FOUNDATION_COORDS_INIT.y;
     
-        this.gameManager.incrementMoves()
+        // this.gameManager.incrementMoves()
         if (card.pileType == PileType.Waste) {
             this.gameManager.incrementScore(10);
         } 
@@ -688,6 +691,8 @@ export default class PileManager {
 
     public addCardToFoundationPile(card: Card, foundationIndex: number) {
         
+
+
         // Retrieve the target foundation pile using the provided index
         let targetPile : Card[] = this.foundationPiles[foundationIndex];
 

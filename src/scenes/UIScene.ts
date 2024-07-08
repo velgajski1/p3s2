@@ -10,6 +10,7 @@ import { STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config
 import CardLayoutManager from '../managers/CardLayoutManager';
 import UndoManager from '../managers/UndoManager';
 import { MainMenu } from './MainMenu';
+import HintManager from '../managers/HintManager';
 
 export class UIScene extends Phaser.Scene {
     textContainer: Phaser.GameObjects.Container;
@@ -67,9 +68,10 @@ export class UIScene extends Phaser.Scene {
                 // console.log(`Next state: ${nextState}`);
                 // You can add more logic here to handle the toggle action
                 toggleThreeModeActive(nextState);
-                this.gameManager = this.registry.get('gameManager');
-                this.gameManager.layoutManager.layoutWastePile(this.gameManager.pileManager.getWastePile())
-                console.log(STOCK_THREE_MODE_ACTIVE)
+                var gamemanager : GameManager = this.registry.get("gameManager")
+                gamemanager.restart()
+                // this.remove()
+
             },
             STOCK_THREE_MODE_ACTIVE
         );
@@ -101,8 +103,11 @@ export class UIScene extends Phaser.Scene {
 
          this.hintBut = new ImageButton(this, 280+deltaX, 0, 'hint', 'hint', () => {
             if (!this.inputEnabled) return;
+            let gamemanager : GameManager = this.registry.get('gameManager')
+            HintManager.getInstance().getHint(gamemanager.pileManager)
             
          })
+         this.hintBut.skipClickSound = true;
          this.elementsContainer.add(this.hintBut)
          this.hintBut.setOrigin(0, 0);
 
@@ -113,6 +118,7 @@ export class UIScene extends Phaser.Scene {
          })
          this.elementsContainer.add(this.undoBut)
          this.undoBut.setOrigin(0, 0);
+         this.undoBut.skipClickSound = true
     }
 
     update(time: number, delta: number): void

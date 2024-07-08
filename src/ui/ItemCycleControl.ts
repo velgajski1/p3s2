@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SoundManager } from '../managers/SoundManager';
 
 interface ControlOptions {
     parentContainer?: Phaser.GameObjects.Container;
@@ -65,6 +66,8 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
     }
 
     private cycleItem(direction: number) {
+        console.log("play sound")
+        SoundManager.instance.click.play()
         this.currentItemIndex += direction;
         if (this.currentItemIndex >= this.items.length) {
             this.currentItemIndex = 0; // Wrap to first

@@ -5,10 +5,12 @@ import Card from '../elements/Card';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { PileType } from '../config/Consts';
 import BaseScene from './BaseScene';
+import { SoundManager } from '../managers/SoundManager';
 
 export class GameplayScene extends BaseScene {
     private gameplayContainer!: Phaser.GameObjects.Container;
     gameManager: GameManager;
+    soundManager: SoundManager;
 
     constructor() {
         super('GameplayScene');
@@ -41,6 +43,9 @@ export class GameplayScene extends BaseScene {
             // Listen for the custom event
         this.events.once('restartScene', this.restartScene, this);
         this.resize(this.scale.gameSize as unknown as Phaser.Structs.Size);
+
+
+        SoundManager.init(this);
 
     }
 

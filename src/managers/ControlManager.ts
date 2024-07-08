@@ -5,6 +5,7 @@ import getRankValue, { Rank } from "./CardNameManager";
 import { GameManager } from "./GameManager";
 import HintManager from "./HintManager";
 import PileManager from "./PileManager";
+import { SoundManager } from "./SoundManager";
 import UndoManager from "./UndoManager";
 
 class ControlManager {
@@ -49,6 +50,7 @@ class ControlManager {
         card.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
 
             if (!this.enabled) return;
+            
 
             let wastepile = this.pileManager.getWastePile()
             if (wastepile.length > 0 && card.pileType == PileType.Waste) {
@@ -59,6 +61,8 @@ class ControlManager {
             
 
             if (this.activeCard == card) return;
+
+          
  
             if (card.inTransition)
             {
@@ -169,6 +173,7 @@ class ControlManager {
 
                 if (movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE ) {
                     
+                    SoundManager.instance.grabCard.play()
                     this.dragging = true;
                     this.activeCard.setDepth(this.activeCard.depth + 10000);
                     this.substack.forEach(s => {
@@ -178,6 +183,7 @@ class ControlManager {
                 }
                 else
                 {
+                    
                     return
                 }
             }
@@ -226,6 +232,7 @@ class ControlManager {
 
                 } else if (this.activeCard && this.isClickEnabled) {
                     this.handleClick(this.activeCard);
+                    SoundManager.instance.grabCard.play()
                 }
 
                 // this.pileManager.applyFoldingIfNotInTransition()
@@ -322,6 +329,7 @@ class ControlManager {
             }
             else if (card.pileType == PileType.Foundation)
             {
+                
                 this.pileManager.gameManager.incrementScore(10)
                 let foundIndex = this.pileManager.getFoundationPileIndexFromCard(card)
                 if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
@@ -340,7 +348,7 @@ class ControlManager {
                 // Valid drop on an empty tableau pile (Kings only)
                 if (activeCard.pileType == PileType.Waste) {
                     this.pileManager.gameManager.incrementScore(5)
-                    this.pileManager.gameManager.incrementMoves();
+                    // this.pileManager.gameManager.incrementMoves();
                 }
                 this.placeCardOnTableau(activeCard, tableauIndex);
                 this.substack.forEach(c => {
@@ -350,7 +358,7 @@ class ControlManager {
             } else if (foundationIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundationIndex)) {
                 // Valid drop on a foundation pile
                 if (this.activeCard?.pileType != PileType.Foundation) {
-                    this.pileManager.gameManager.incrementMoves()
+                    // this.pileManager.gameManager.incrementMoves()
                     this.pileManager.gameManager.incrementScore(10);
                 }
                 this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
@@ -367,7 +375,7 @@ class ControlManager {
 
     resetDraggedCards(activeCard: Card, substack : Card[])
     {
-        
+        SoundManager.instance.invalid.play()
         this.resetCardDragState(activeCard);
         this.substack.forEach(card => {
             if (card === activeCard) return;
@@ -656,10 +664,12 @@ class ControlManager {
         let disableClickDuration = DISABLE_CLICK_DURATION_NORMAL;
         let ret = false
 
+       
         switch (card.pileType) {
             case PileType.Tableau:
                 if (card.isFaceUp || card.isBeingFlipped)  {
                     ret = this.pileManager.handleTableauClicked(card);
+                    
                 }
                 break;
 

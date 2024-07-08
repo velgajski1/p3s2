@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SoundManager } from '../managers/SoundManager';
 
 export class ToggleSwitch extends Phaser.GameObjects.Container {
     icon1: Phaser.GameObjects.Image;
@@ -65,12 +66,15 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         (icon as any).state = state;
 
         let newState: boolean;
+      
 
         // When one icon is turned on, the other is turned off
         if (icon === this.icon1) {
             this.icon2.setTexture((this.icon2 as any).offTexture);
             (this.icon2 as any).state = false;
             newState = false;
+            console.log("play sound")
+            
         } else {
             this.icon1.setTexture((this.icon1 as any).offTexture);
             (this.icon1 as any).state = false;
@@ -80,6 +84,7 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         // Call the callback function with the current state
         if (!skipCallback) {
             this.onToggleCallback(newState);
+              SoundManager.instance.click.play()
         }
         
     }

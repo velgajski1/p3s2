@@ -26,7 +26,7 @@ export class BaseMenuScene extends Phaser.Scene {
 
     private createModalBackground(): void {
         console.log("createModalBackground")
-        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.05 } });
+        this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.5 } });
         this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
         this.modalBackground.setInteractive({useHandCursor: false, hitArea : new Phaser.Geom.Rectangle(0,0,this.scale.width, this.scale.height), hitAreaCallback:Phaser.Geom.Rectangle.Contains})
     }

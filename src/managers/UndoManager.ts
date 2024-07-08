@@ -1,50 +1,59 @@
 import Card from "../elements/Card";
 import { GameState } from "../utils/types";
+import { GameManager } from "./GameManager";
 import HintManager from "./HintManager";
+import { SoundManager } from "./SoundManager";
 
 export default class UndoManager {
-
-
-    private static instance: UndoManager | null ;
+    private static instance: UndoManager | null = null;
     private states: GameState[] = [];
     public enabled = true;
+    private static scene: Phaser.Scene;
+    static gameManager: GameManager;
 
     private constructor() {}
 
-    public static getInstance(): UndoManager {
+    public static init(scene: Phaser.Scene, gameManager : GameManager) : void {
         if (!UndoManager.instance) {
             UndoManager.instance = new UndoManager();
+            UndoManager.scene = scene;
+            SoundManager.init(scene);
+            UndoManager.gameManager = gameManager;
+        }
+    }
+
+    public static getInstance(): UndoManager {
+        if (!UndoManager.instance) {
+            throw new Error("UndoManager is not initialized. Call UndoManager.init(scene) first.");
         }
         return UndoManager.instance;
     }
-    static removeInstance()
-    {
+
+    static removeInstance() {
         this.instance = null;
     }
 
-
-    disableUndo()
-    {
+    disableUndo() {
         this.enabled = false;
     }
 
-    enableUndo()
-    {
+    enableUndo() {
         this.enabled = true;
     }
 
-    public saveState(state: GameState) {
+    public saveState(state: GameState): void {
         const copiedState = this.deepCopyState(state);
         const lastState = this.states[this.states.length - 1];
         const totalCards = this.countTotalCards(copiedState);
 
-        if (totalCards == 52 && (!lastState || !this.areStatesEqual(lastState, copiedState))) {
+        if (totalCards === 52 && (!lastState || !this.areStatesEqual(lastState, copiedState))) {
             this.states.push(copiedState);
             HintManager.getInstance().clearHints();
+            if (this.states.length > 1) {
+                UndoManager.gameManager.incrementMoves()
+            }
             
         }
-
-        
     }
 
     private deepCopyState(state: GameState): GameState {
@@ -52,24 +61,21 @@ export default class UndoManager {
         const foundationPiles = state.foundationPiles.map(pile => [...pile]);
         const stockPile = [...state.stockPile];
         const wastePile = [...state.wastePile];
-        const score = state.score
-    
-        // Calculate flippedCounts based on the number of face-up cards in each tableau pile
+        const score = state.score;
+
         const flippedCounts = tableauPiles.map(pile => 
             pile.reduce((count, card) => count + (card.isFaceUp ? 1 : 0), 0)
         );
-    
+
         return {
             tableauPiles,
             foundationPiles,
             stockPile,
             wastePile,
             flippedCounts,
-            score  // Calculated flipped counts for tableau piles
+            score
         };
     }
-    
-    
 
     private countTotalCards(state: GameState): number {
         return state.tableauPiles.flat().length +
@@ -79,60 +85,55 @@ export default class UndoManager {
     }
 
     private areStatesEqual(state1: GameState, state2: GameState): boolean {
-        // Check if the counts of cards in each pile type match
         if (state1.tableauPiles.length !== state2.tableauPiles.length ||
             state1.foundationPiles.length !== state2.foundationPiles.length ||
             state1.stockPile.length !== state2.stockPile.length ||
             state1.wastePile.length !== state2.wastePile.length) {
             return false;
         }
-    
-        // Function to compare two card piles
+
         const comparePiles = (pile1: Card[], pile2: Card[]) => {
             return pile1.length === pile2.length && pile1.every((card, index) => 
                 card.suit === pile2[index].suit && 
                 card.rank === pile2[index].rank && 
-                card.isFaceUp === pile2[index].isFaceUp);
+                card.isFaceUp === pile2[index].isFaceUp
+            );
         };
-    
-        // Compare each tableau pile
+
         for (let i = 0; i < state1.tableauPiles.length; i++) {
             if (!comparePiles(state1.tableauPiles[i], state2.tableauPiles[i])) {
                 return false;
             }
         }
-    
-        // Compare each foundation pile
+
         for (let i = 0; i < state1.foundationPiles.length; i++) {
             if (!comparePiles(state1.foundationPiles[i], state2.foundationPiles[i])) {
                 return false;
             }
         }
-    
-        // Compare stock and waste piles
+
         if (!comparePiles(state1.stockPile, state2.stockPile) || !comparePiles(state1.wastePile, state2.wastePile)) {
             return false;
         }
-    
+
         return true;
     }
-    
+
     public undo(): GameState | null {
-        
         if (!this.enabled) return null;
         if (this.states.length > 1) {
             this.states.pop();
             const prevState = this.states[this.states.length - 1];
-            this.applyState(prevState);
             HintManager.getInstance().clearHints();
+            SoundManager.instance.undo.play();
+            UndoManager.gameManager.incrementMoves()
             return prevState;
         }
         return null;
     }
 
-    private applyState(state: GameState) {
-        // Implement logic to apply the saved state, including flipping cards back
-        // This function would typically involve iterating over the game elements and setting them to match the state
-        
+    undoFully(): GameState | null {
+        HintManager.getInstance().clearHints();
+        return this.states[0];
     }
 }

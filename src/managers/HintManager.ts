@@ -3,6 +3,7 @@ import Card from '../elements/Card';
 import { HINT_NEXT_OVERLAY_DELTA, PileType } from '../config/Consts';
 import { Rank, Suit } from './CardNameManager';
 import CardLayoutManager from './CardLayoutManager';
+import { SoundManager } from './SoundManager';
 
 type Hint = {
     first: () => void;
@@ -224,6 +225,8 @@ export default class HintManager {
         this.lastHintIndex = (this.lastHintIndex + 1) % this.hints.length;
         const hint = this.hints[this.lastHintIndex];
         hint.first()
+
+        SoundManager.instance.hint.play();
 
         const blinkInterval = HINT_NEXT_OVERLAY_DELTA // Total duration divided by double the number of blinks
         

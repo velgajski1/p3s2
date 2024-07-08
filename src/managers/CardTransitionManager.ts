@@ -2,6 +2,7 @@ import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from '../config/Config
 import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 import { getTweensForObject } from '../utils/Utils';
+import { SoundManager } from './SoundManager';
 
 class CardTransitionManager {
 
@@ -12,7 +13,8 @@ class CardTransitionManager {
 
     moveAllCardsFromWasteToStock(stockPile: Card[], wastePile: Card[], gameplayContainer: Phaser.GameObjects.Container)
     {
-       
+        
+       SoundManager.instance.flipBackToStock.play()
         while(stockPile.length > 0) {
             const card = stockPile.pop()
             if (card) {
@@ -44,7 +46,7 @@ class CardTransitionManager {
     moveCardToTableau( tab_deltaY : number, tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
         card.setInteractive(false); // Temporarily disable interaction during the movement
         getTweensForObject(card.scene, card).forEach(x => x.complete());
-        
+        SoundManager.instance.valid.play() 
     
         // Calculate the correct y position for the card based on the pile state
         let yPosition = TABLEU_COORDS_INIT.y;
@@ -112,6 +114,8 @@ class CardTransitionManager {
         card.setInteractive(false);
         // getTweensForObject(card.scene, card).forEach(x => x.complete());
 
+        console.log("play foundation sound")
+        SoundManager.instance.cardToFoundation.play()
         // Create a tween to move the card visually to the foundation pile
         card.scene.tweens.add({
             targets: card,
@@ -130,6 +134,8 @@ class CardTransitionManager {
                 // Re-enable interaction
                 card.setInteractive(true);
                 card.setFaceUp(true)
+
+
             }
         });
         card.setDepth (12000);
@@ -140,6 +146,7 @@ class CardTransitionManager {
     moveTopCardStockToWaste(card: Card, index : number, stockPile: any[], wastePile: any[], gameplayContainer: Phaser.GameObjects.Container, onComplete?: () => void) 
     {
 
+        SoundManager.instance.valid.play()
         getTweensForObject(card.scene, card).forEach(x => x.remove());
         if (card) {
 

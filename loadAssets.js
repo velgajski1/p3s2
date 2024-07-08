@@ -36,6 +36,9 @@ const printOutFile = async (val, extension, folderPartial) => {
     let valWithoutExt = val.split('.').slice(0, -1).join('.')
     // console.log(val, extension, folderPartial)
     let assetname = valWithoutExt.replace( new RegExp('-', 'g'), '_');
+
+    
+
     if (extension === ".png" || extension === ".jpg")
     {
         str = "this.load.image('"+assetname+ "', '" +folderPartial+val+"');";
@@ -46,7 +49,7 @@ const printOutFile = async (val, extension, folderPartial) => {
     }
     else if (extension === ".mp3")
     {
-        str = "this.load.audio('"+assetname+ "', '" +folderPartial+val+"');";
+        str = "this.load.audio('"+assetname+ "', '" +folderPartial+'/'+val+"');";
     }
 
     console.log(str)

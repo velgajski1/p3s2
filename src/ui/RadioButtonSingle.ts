@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { SoundManager } from '../managers/SoundManager';
 
 interface ButtonOptions {
     parentContainer?: Phaser.GameObjects.Container;
@@ -57,7 +58,8 @@ export class RadioButtonSingle extends Phaser.GameObjects.Container {
        
         this.isOn = !this.isOn;
         this.radioOn.setVisible(this.isOn);
-        this.radioOff.setVisible(!this.isOn);
+        this.radioOff.setVisible(!this.isOn);              
+        SoundManager.instance.click.play()
 
         dispatchEvent(new Event('radioToggle'));
     }
