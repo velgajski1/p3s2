@@ -6,6 +6,7 @@ import { LanguageConfig } from '../config/Language';
 import { BaseMenuScene } from './BaseMenuScene';
 import statsManager from '../managers/StatsManager';
 import { SoundManager } from '../managers/SoundManager';
+import { SOUND_ACTIVE } from '../config/Config';
 
 export class WonScene extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
@@ -39,7 +40,7 @@ export class WonScene extends BaseMenuScene {
         // Listen for resize events
         this.scale.on('resize', this.scaleMenuContainer, this);
         statsManager.updateStatsAfterGame(true, this.totalScore, this.timePlayed);
-        SoundManager.instance.won.play()
+        SOUND_ACTIVE && SoundManager.instance.won.play()
     }
 
 

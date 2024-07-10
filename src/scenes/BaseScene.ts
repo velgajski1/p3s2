@@ -55,6 +55,8 @@ export default class BaseScene extends Phaser.Scene {
                    this.sys.game.device.os.iOS;
         }
 
+        
+
     private enterFullscreen(): void {
         
         if (!this.scale.isFullscreen && this.isMobile()) {
@@ -68,3 +70,5 @@ export default class BaseScene extends Phaser.Scene {
     }
 
 }
+
+

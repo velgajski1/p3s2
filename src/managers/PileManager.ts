@@ -7,7 +7,7 @@ import getRankValue, { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
 import { GameManager } from "./GameManager";
 import UndoManager from "./UndoManager";
-import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { RIGHT_HANDED_MODE_IDX, SOUND_ACTIVE, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 import ControlManager from "./ControlManager";
 import statsManager from "./StatsManager";
 import { SoundManager } from "./SoundManager";
@@ -242,17 +242,16 @@ export default class PileManager {
         if (STOCK_THREE_MODE_ACTIVE) {
             
             const cards : Card[] = this.getTopStockCards(3)
+            cards.reverse()
             cards.forEach( (card, index) => {
                 this._addCardToWaste(card);
-                // this.cardTransitionManager.moveTopCardStockToWaste(card, index, this.stockPile, this.wastePile, this.gameplayContainer, () => {
-                //     this._addCardToWaste(card);
-                // });
-                setTimeout(() => {
-                    this.cardLayoutManager.layoutWastePile(this.getWastePile()) 
-                }, 50);
-                
+                SOUND_ACTIVE && SoundManager.instance.valid.play()
+                // this.cardTransitionManager.moveTopCardStockToWaste(card, index, this.stockPile, this.wastePile, this.gameplayContainer, () => this._addCardToWaste(card));
                 card.setFaceUp(true);
             })
+            // setTimeout(() => {
+                this.cardLayoutManager.layoutWastePile(this.getWastePile(), false) 
+            // }, 1);
         } else {
             const card = this.getTopStockCard();
             if (card) {

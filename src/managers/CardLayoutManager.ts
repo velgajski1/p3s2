@@ -61,29 +61,51 @@ class CardLayoutManager {
     }
 
     // Layout method for waste pile, which might have slight overlap
-    layoutWastePile(cards: Card[]) {
+    layoutWastePile(cards: Card[], skipAnim:boolean = true) {
         
         cards.forEach((card, index) => {
             // 
+            let wDeltaX : number = WASTE_DELTA_X[RIGHT_HANDED_MODE_IDX]
             card.finishTweens()
             card.wasteDeltaX = 0;
             if (cards.length > 2) {
-                if (index == cards.length-3) card.wasteDeltaX = WASTE_DELTA_X * 0
-                if (index == cards.length-2) card.wasteDeltaX = WASTE_DELTA_X * 1
-                if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 2
+                if (index == cards.length-3) card.wasteDeltaX = wDeltaX * 0
+                if (index == cards.length-2) card.wasteDeltaX = wDeltaX * 1
+                if (index == cards.length-1) card.wasteDeltaX = wDeltaX * 2
             }else if (cards.length == 2) {
-                if (index == cards.length-2) card.wasteDeltaX = WASTE_DELTA_X * 0
-                if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 1 
+                if (index == cards.length-2) card.wasteDeltaX = wDeltaX * 0
+                if (index == cards.length-1) card.wasteDeltaX = wDeltaX * 1 
             }else {
-                if (index == cards.length-1) card.wasteDeltaX = WASTE_DELTA_X * 0 
+                if (index == cards.length-1) card.wasteDeltaX = wDeltaX * 0 
             }
 
             if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
             
-            
-            card.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX] + WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX] + index * WASTE_OVERLAP + card.wasteDeltaX; // Overlapping horizontally for each card
-            card.y = STOCK_COORDS.y;
-            card.setDepth(index); // Correct stacking order for waste pile
+            let targetX = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX] + WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX] + index * WASTE_OVERLAP + card.wasteDeltaX;
+            let targetY =  STOCK_COORDS.y
+            if (skipAnim) {
+                card.x = targetX // Overlapping horizontally for each card
+                card.y = targetY;
+                card.setDepth(index);
+            }
+            else 
+            {
+                card.setDepth (11000);
+                card.scene.tweens.add({
+                    targets: card,
+                    x:targetX,
+                    y:targetY,
+                    duration: 100,
+                    onComplete: ()=> {
+                        card.setDepth(index);
+                    }
+                });
+            }
+
+
+
+
+             // Correct stacking order for waste pile
 
         });
     }
@@ -177,12 +199,14 @@ class CardLayoutManager {
         }
     }
 
-    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite) {
+    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0) {
         this.removeHintOutline()
         this.outline = scene.add.sprite(sprite.x-1, sprite.y-1, 'reddish_glow_outline' ).setScale(sprite.scale)
         scene.add.existing(this.outline)
         this.outline.setDepth(100000)
         sprite.parentContainer.add(this.outline)
+        this.outline.x+=deltaX
+        this.outline.y+=deltaY
 
 
         this.removeHintTimer()
@@ -210,17 +234,24 @@ class CardLayoutManager {
 
     hintFoundIdx(idx : number) {
         let spr = this.foundIndicators[idx]
-        this.addHintOutline(spr.scene, spr);
+        this.addHintOutline(spr.scene, spr, 1, 1);
     }
 
     hintStock() {
         let spr = this.stockIndicator
-        this.addHintOutline(spr.scene, spr);
+        this.addHintOutline(spr.scene, spr, 1, 1);
     }
 
     hintWaste() {
         let spr = this.wasteIndicator
-        this.addHintOutline(spr.scene, spr);
+        
+        let wastePileLen = this.pileManager.getWastePile().length;
+        if (wastePileLen==0) {
+            this.addHintOutline(spr.scene, spr, 1, 1);
+        }
+        else {
+            this.pileManager.getTopCardFromWaste()?.startHintAnim(0)
+        }
     }
 
     addTableuIndicators(scene : Phaser.Scene, cont : Phaser.GameObjects.Container) {

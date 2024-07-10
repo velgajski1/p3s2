@@ -3,7 +3,7 @@ import Button from '../ui/ButtonWithColorBackground';
 import { translate } from '../utils/Language';
 import { LanguageConfig } from '../config/Language';
 import { GameManager } from '../managers/GameManager';
-import { toggleThreeModeActive } from '../config/Config';
+import { SOUND_ACTIVE, toggleThreeModeActive } from '../config/Config';
 import { BaseMenuScene } from './BaseMenuScene';
 import UndoManager from '../managers/UndoManager';
 import { SoundManager } from '../managers/SoundManager';
@@ -83,7 +83,7 @@ export class MainMenu extends BaseMenuScene {
 
             menuItem.on('pointerdown', () => {
                 menuActions[index]();
-                SoundManager.instance.click.play()
+                SOUND_ACTIVE && SoundManager.instance.click.play()
             });
 
             menuItem.on('pointerover', () => {

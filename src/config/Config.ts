@@ -5,31 +5,65 @@ export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
 export var BG_INDEX : number = 0;
 
-export function toggleThreeModeActive(params:boolean) {
-    // console.log("set to: " + params);
-    STOCK_THREE_MODE_ACTIVE=params;
+// Load saved settings from localStorage
+export function loadSettings() {
+    const stockThreeMode = localStorage.getItem('STOCK_THREE_MODE_ACTIVE');
+    if (stockThreeMode !== null) {
+        STOCK_THREE_MODE_ACTIVE = JSON.parse(stockThreeMode);
+    }
+
+    const rightHandedMode = localStorage.getItem('RIGHT_HANDED_MODE_ACTIVE');
+    if (rightHandedMode !== null) {
+        RIGHT_HANDED_MODE_ACTIVE = JSON.parse(rightHandedMode);
+    }
+
+    const rightHandedModeIdx = localStorage.getItem('RIGHT_HANDED_MODE_IDX');
+    if (rightHandedModeIdx !== null) {
+        RIGHT_HANDED_MODE_IDX = JSON.parse(rightHandedModeIdx);
+    }
+
+    const autofinishMode = localStorage.getItem('AUTOFINISH_MODE_ACTIVE');
+    if (autofinishMode !== null) {
+        AUTOFINISH_MODE_ACTIVE = JSON.parse(autofinishMode);
+    }
+
+    const soundActive = localStorage.getItem('SOUND_ACTIVE');
+    if (soundActive !== null) {
+        SOUND_ACTIVE = JSON.parse(soundActive);
+    }
+
+    const bgIndex = localStorage.getItem('BG_INDEX');
+    if (bgIndex !== null) {
+        BG_INDEX = JSON.parse(bgIndex);
+    }
 }
 
-export function toggleRightHandedActive(params:boolean, skipDispatch : boolean = false) {
-    // console.log("set to: " + params);
-    RIGHT_HANDED_MODE_ACTIVE=params;
-    RIGHT_HANDED_MODE_IDX = 0;
-    if (params) RIGHT_HANDED_MODE_IDX = 1;
-
-
+export function toggleThreeModeActive(params: boolean) {
+    STOCK_THREE_MODE_ACTIVE = params;
+    localStorage.setItem('STOCK_THREE_MODE_ACTIVE', JSON.stringify(params));
 }
 
-export function toggleAutofinishActive(params:boolean) {
-    // console.log("set autofinish to: " + params);
-    AUTOFINISH_MODE_ACTIVE=params;
+export function toggleRightHandedActive(params: boolean, skipDispatch: boolean = false) {
+    RIGHT_HANDED_MODE_ACTIVE = params;
+    RIGHT_HANDED_MODE_IDX = params ? 1 : 0;
+    localStorage.setItem('RIGHT_HANDED_MODE_ACTIVE', JSON.stringify(params));
+    localStorage.setItem('RIGHT_HANDED_MODE_IDX', JSON.stringify(RIGHT_HANDED_MODE_IDX));
 }
 
-export function toggleSoundActive(params:boolean) {
-    // console.log("set to: " + params);
-    SOUND_ACTIVE=params;
+export function toggleAutofinishActive(params: boolean) {
+    AUTOFINISH_MODE_ACTIVE = params;
+    localStorage.setItem('AUTOFINISH_MODE_ACTIVE', JSON.stringify(params));
 }
 
-export function setBgIdx(params:number) {
-    // console.log("set to: " + params);
-    BG_INDEX=params;
+export function toggleSoundActive(params: boolean) {
+    SOUND_ACTIVE = params;
+    localStorage.setItem('SOUND_ACTIVE', JSON.stringify(params));
 }
+
+export function setBgIdx(params: number) {
+    BG_INDEX = params;
+    localStorage.setItem('BG_INDEX', JSON.stringify(params));
+}
+
+// Call this function during initialization to load saved settings
+// loadSettings();

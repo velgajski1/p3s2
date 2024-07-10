@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { CardNameManager } from '../managers/CardNameManager';
+import { loadSettings } from '../config/Config';
 
 export class Preloader extends Scene {
     cardManager: CardNameManager;
@@ -77,7 +78,8 @@ export class Preloader extends Scene {
         this.load.image('settings', 'settings.png');
         this.load.image('undo', 'undo.png');
         this.load.image('undo_na', 'undo_na.png');
-        this.load.image('reddish_glow_outline', 'red_image_30_alpha.png');
+        this.load.image('reddish_glow_outline', 'red_image_30_alpha_rounded_10px.png');
+        this.load.image('backside', 'backside.png');
 
         this.load.json('cardData', 'assets.json');
 
@@ -110,6 +112,7 @@ export class Preloader extends Scene {
         // For example, you can define global animations here, so we can use them in other scenes.
 
         // Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        loadSettings()
         const cardData = this.cache.json.get('cardData');
 
         const frames = cardData.textures[0].frames;

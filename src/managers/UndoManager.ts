@@ -1,3 +1,4 @@
+import { SOUND_ACTIVE } from "../config/Config";
 import Card from "../elements/Card";
 import { GameState } from "../utils/types";
 import { GameManager } from "./GameManager";
@@ -125,7 +126,7 @@ export default class UndoManager {
             this.states.pop();
             const prevState = this.states[this.states.length - 1];
             HintManager.getInstance().clearHints();
-            SoundManager.instance.undo.play();
+            SOUND_ACTIVE && SoundManager.instance.undo.play();
             UndoManager.gameManager.incrementMoves()
             return prevState;
         }

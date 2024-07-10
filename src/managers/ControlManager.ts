@@ -1,4 +1,4 @@
-import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX } from "../config/Config";
+import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, SOUND_ACTIVE } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import getRankValue, { Rank } from "./CardNameManager";
@@ -173,7 +173,7 @@ class ControlManager {
 
                 if (movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE ) {
                     
-                    SoundManager.instance.grabCard.play()
+                    SOUND_ACTIVE && SoundManager.instance.grabCard.play()
                     this.dragging = true;
                     this.activeCard.setDepth(this.activeCard.depth + 10000);
                     this.substack.forEach(s => {
@@ -232,7 +232,7 @@ class ControlManager {
 
                 } else if (this.activeCard && this.isClickEnabled) {
                     this.handleClick(this.activeCard);
-                    SoundManager.instance.grabCard.play()
+                    SOUND_ACTIVE && SoundManager.instance.grabCard.play()
                 }
 
                 // this.pileManager.applyFoldingIfNotInTransition()
@@ -375,7 +375,7 @@ class ControlManager {
 
     resetDraggedCards(activeCard: Card, substack : Card[])
     {
-        SoundManager.instance.invalid.play()
+        SOUND_ACTIVE && SoundManager.instance.invalid.play()
         this.resetCardDragState(activeCard);
         this.substack.forEach(card => {
             if (card === activeCard) return;

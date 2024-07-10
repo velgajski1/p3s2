@@ -54,6 +54,13 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     }
 
+    private isMobile() {
+        const userAgent = navigator.userAgent
+        console.log(this.scene.sys.game.device.os.android,this.scene.sys.game.device.os.iOS,this.scene.sys.game.device.os.windows)
+        return this.scene.sys.game.device.os.android || 
+               this.scene.sys.game.device.os.iOS;
+    }
+
     createInvertedFrameTexture(spritesheetKey: string, frameIndex: string, newTextureKey: string) {
 
         // console.log(newTextureKey)

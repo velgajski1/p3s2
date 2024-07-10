@@ -6,7 +6,7 @@ import { Rank, Suit } from './CardNameManager';
 import ControlManager from './ControlManager';
 import UndoManager from './UndoManager';
 import { STOCK_COORDS } from '../config/Consts';
-import { AUTOFINISH_MODE_ACTIVE } from '../config/Config';
+import { AUTOFINISH_MODE_ACTIVE, loadSettings } from '../config/Config';
 import statsManager from './StatsManager';
 import StatsManager from './StatsManager';
 
@@ -37,6 +37,7 @@ export class GameManager {
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
+    
         GameManager.instance = this;
         UndoManager.init(gameScene, this)
         UndoManager.getInstance().enableUndo()
