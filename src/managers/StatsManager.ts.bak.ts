@@ -1,5 +1,3 @@
-import { loadSettings, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
-
 class StatsManager {
     private static instance: StatsManager;
     private _gamesPlayed: number;
@@ -14,7 +12,21 @@ class StatsManager {
     private _currentTimePlayed: number; // Stored in seconds
 
     private constructor() {
-        this.loadStats();
+        this._gamesPlayed = this._getStatFromLocalStorage('gamesPlayed', 0);
+        this._gamesWon = this._getStatFromLocalStorage('gamesWon', 0);
+        this._winsInARow = this._getStatFromLocalStorage('winsInARow', 0);
+        this._topScore = this._getStatFromLocalStorage('topScore', 0);
+        this._bestTime = this._getStatFromLocalStorage('bestTime', 0); // Stored in seconds
+        this._currentWinStreak = this._getStatFromLocalStorage('currentWinStreak', 0);
+        this._longestWinStreak = this._getStatFromLocalStorage('longestWinStreak', 0);
+        this._isGameActive = this._getStatFromLocalStorage('isGameActive', false);
+        this._currentScore = this._getStatFromLocalStorage('currentScore', 0);
+        this._currentTimePlayed = this._getStatFromLocalStorage('currentTimePlayed', 0);
+
+        if (this._isGameActive) {
+            // If a game was active, mark it as a loss due to refresh
+            this.updateStatsAfterGame(false, this._currentScore, this._currentTimePlayed);
+        }
     }
 
     public static getInstance(): StatsManager {
@@ -24,33 +36,6 @@ class StatsManager {
         return StatsManager.instance;
     }
 
-    public loadStats(skipUpdate : boolean = false) {
-        const modePrefix = this.getModePrefix();
-        this._gamesPlayed = this._getStatFromLocalStorage(`${modePrefix}gamesPlayed`, 0);
-        this._gamesWon = this._getStatFromLocalStorage(`${modePrefix}gamesWon`, 0);
-        this._winsInARow = this._getStatFromLocalStorage(`${modePrefix}winsInARow`, 0);
-        this._topScore = this._getStatFromLocalStorage(`${modePrefix}topScore`, 0);
-        this._bestTime = this._getStatFromLocalStorage(`${modePrefix}bestTime`, 0); // Stored in seconds
-        this._currentWinStreak = this._getStatFromLocalStorage(`${modePrefix}currentWinStreak`, 0);
-        this._longestWinStreak = this._getStatFromLocalStorage(`${modePrefix}longestWinStreak`, 0);
-        this._isGameActive = this._getStatFromLocalStorage(`${modePrefix}isGameActive`, false);
-        this._currentScore = this._getStatFromLocalStorage(`${modePrefix}currentScore`, 0);
-        this._currentTimePlayed = this._getStatFromLocalStorage(`${modePrefix}currentTimePlayed`, 0);
-
-        console.log(modePrefix, "skip: " + skipUpdate)
-        console.log(`${modePrefix}isGameActive`,this._getStatFromLocalStorage(`${modePrefix}isGameActive`, false))
-       
-        if (this._isGameActive && !skipUpdate) {
-            // If a game was active, mark it as a loss due to refresh
-            console.log(modePrefix)
-            this.updateStatsAfterGame(false, this._currentScore, this._currentTimePlayed);
-        }
-    }
-
-    private getModePrefix(): string {
-        return STOCK_THREE_MODE_ACTIVE ? 'three_' : 'one_';
-    }
-
     // Getter and Setter for games played
     get gamesPlayed(): number {
         return this._gamesPlayed;
@@ -58,7 +43,7 @@ class StatsManager {
 
     set gamesPlayed(value: number) {
         this._gamesPlayed = value;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}gamesPlayed`, value);
+        this._saveStatToLocalStorage('gamesPlayed', value);
     }
 
     // Getter and Setter for games won
@@ -68,7 +53,7 @@ class StatsManager {
 
     set gamesWon(value: number) {
         this._gamesWon = value;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}gamesWon`, value);
+        this._saveStatToLocalStorage('gamesWon', value);
     }
 
     // Getter and Setter for wins in a row
@@ -78,7 +63,7 @@ class StatsManager {
 
     set winsInARow(value: number) {
         this._winsInARow = value;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}winsInARow`, value);
+        this._saveStatToLocalStorage('winsInARow', value);
     }
 
     // Getter and Setter for top score
@@ -88,7 +73,7 @@ class StatsManager {
 
     set topScore(value: number) {
         this._topScore = value;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}topScore`, value);
+        this._saveStatToLocalStorage('topScore', value);
     }
 
     // Getter and Setter for best time in seconds
@@ -99,7 +84,7 @@ class StatsManager {
     set bestTime(value: number) {
         const timeInSeconds = value;
         this._bestTime = timeInSeconds;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}bestTime`, timeInSeconds);
+        this._saveStatToLocalStorage('bestTime', timeInSeconds);
     }
 
     // Getter for current win streak
@@ -109,7 +94,7 @@ class StatsManager {
 
     set currentWinStreak(value: number) {
         this._currentWinStreak = value;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}currentWinStreak`, value);
+        this._saveStatToLocalStorage('currentWinStreak', value);
     }
 
     // Getter for longest win streak
@@ -129,7 +114,6 @@ class StatsManager {
     }
 
     private _saveStatToLocalStorage(key: string, value: any): void {
-        console.log(key, value)
         localStorage.setItem(key, JSON.stringify(value));
     }
 
@@ -154,7 +138,6 @@ class StatsManager {
 
     // Methods to update statistics based on game outcomes
     public updateStatsAfterGame(isWin: boolean, score: number, time: number): void {
-        this.loadStats(true)
         this.gamesPlayed += 1;
 
         if (isWin) {
@@ -163,7 +146,7 @@ class StatsManager {
 
             if (this._currentWinStreak > this._longestWinStreak) {
                 this._longestWinStreak = this._currentWinStreak;
-                this._saveStatToLocalStorage(`${this.getModePrefix()}longestWinStreak`, this._longestWinStreak);
+                this._saveStatToLocalStorage('longestWinStreak', this._longestWinStreak);
             }
 
             const timeInSeconds = time;
@@ -182,14 +165,13 @@ class StatsManager {
         this._isGameActive = false;
         this._currentScore = 0;
         this._currentTimePlayed = 0;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}isGameActive`, this._isGameActive);
-        this._saveStatToLocalStorage(`${this.getModePrefix()}currentScore`, this._currentScore);
-        this._saveStatToLocalStorage(`${this.getModePrefix()}currentTimePlayed`, this._currentTimePlayed);
+        this._saveStatToLocalStorage('isGameActive', this._isGameActive);
+        this._saveStatToLocalStorage('currentScore', this._currentScore);
+        this._saveStatToLocalStorage('currentTimePlayed', this._currentTimePlayed);
     }
 
     // Method to reset all stats
     public resetStats(): void {
-        const modePrefix = this.getModePrefix();
         this.gamesPlayed = 0;
         this.gamesWon = 0;
         this.winsInARow = 0;
@@ -202,16 +184,16 @@ class StatsManager {
         this._currentTimePlayed = 0;
 
         // Clear local storage
-        localStorage.removeItem(`${modePrefix}gamesPlayed`);
-        localStorage.removeItem(`${modePrefix}gamesWon`);
-        localStorage.removeItem(`${modePrefix}winsInARow`);
-        localStorage.removeItem(`${modePrefix}topScore`);
-        localStorage.removeItem(`${modePrefix}bestTime`);
-        localStorage.removeItem(`${modePrefix}currentWinStreak`);
-        localStorage.removeItem(`${modePrefix}longestWinStreak`);
-        localStorage.removeItem(`${modePrefix}isGameActive`);
-        localStorage.removeItem(`${modePrefix}currentScore`);
-        localStorage.removeItem(`${modePrefix}currentTimePlayed`);
+        localStorage.removeItem('gamesPlayed');
+        localStorage.removeItem('gamesWon');
+        localStorage.removeItem('winsInARow');
+        localStorage.removeItem('topScore');
+        localStorage.removeItem('bestTime');
+        localStorage.removeItem('currentWinStreak');
+        localStorage.removeItem('longestWinStreak');
+        localStorage.removeItem('isGameActive');
+        localStorage.removeItem('currentScore');
+        localStorage.removeItem('currentTimePlayed');
     }
 
     // Method to start a game
@@ -219,9 +201,9 @@ class StatsManager {
         this._isGameActive = true;
         this._currentScore = 0;
         this._currentTimePlayed = 0;
-        this._saveStatToLocalStorage(`${this.getModePrefix()}isGameActive`, this._isGameActive);
-        this._saveStatToLocalStorage(`${this.getModePrefix()}currentScore`, this._currentScore);
-        this._saveStatToLocalStorage(`${this.getModePrefix()}currentTimePlayed`, this._currentTimePlayed);
+        this._saveStatToLocalStorage('isGameActive', this._isGameActive);
+        this._saveStatToLocalStorage('currentScore', this._currentScore);
+        this._saveStatToLocalStorage('currentTimePlayed', this._currentTimePlayed);
     }
 
     // Method to update the current game score and time played
@@ -229,27 +211,26 @@ class StatsManager {
         if (this._isGameActive) {
             this._currentScore = score;
             this._currentTimePlayed = timePlayed;
-            this._saveStatToLocalStorage(`${this.getModePrefix()}currentScore`, this._currentScore);
-            this._saveStatToLocalStorage(`${this.getModePrefix()}currentTimePlayed`, this._currentTimePlayed);
+            this._saveStatToLocalStorage('currentScore', this._currentScore);
+            this._saveStatToLocalStorage('currentTimePlayed', this._currentTimePlayed);
         }
     }
 
     // Method to log all stats to the console
     public logAllStats(): void {
-        console.log('Games Played:', this.gamesPlayed);
-        console.log('Games Won:', this.gamesWon);
-        console.log('Win Percentage:', this.winPercentage.toFixed(2) + '%');
-        console.log('Top Score:', this.topScore);
-        console.log('Best Time:', this.bestTime);
-        console.log('Current Win Streak:', this.currentWinStreak);
-        console.log('Longest Win Streak:', this.longestWinStreak);
-        console.log('Is Game Active:', this._isGameActive);
-        console.log('Current Score:', this._currentScore);
-        console.log('Current Time Played:', this._formatTime(this._currentTimePlayed));
+        // console.log('Games Played:', this.gamesPlayed);
+        // console.log('Games Won:', this.gamesWon);
+        // console.log('Win Percentage:', this.winPercentage.toFixed(2) + '%');
+        // console.log('Top Score:', this.topScore);
+        // console.log('Best Time:', this.bestTime);
+        // console.log('Current Win Streak:', this.currentWinStreak);
+        // console.log('Longest Win Streak:', this.longestWinStreak);
+        // console.log('Is Game Active:', this._isGameActive);
+        // console.log('Current Score:', this._currentScore);
+        // console.log('Current Time Played:', this._formatTime(this._currentTimePlayed));
     }
 }
 
 // Export a singleton instance
-loadSettings()
 const statsManager = StatsManager.getInstance();
 export default statsManager;

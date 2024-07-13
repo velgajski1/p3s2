@@ -13,7 +13,7 @@ export class MainMenu extends BaseMenuScene {
     whiteBg: Phaser.GameObjects.Graphics;
     titleTxt: Phaser.GameObjects.Text;
     cancelButton: Button;
-    prompt_close: Phaser.GameObjects.Image;
+    prompt_close: Phaser.GameObjects.Image; //..gggdd
 
     constructor() {
         super('MainMenu');

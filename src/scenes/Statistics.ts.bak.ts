@@ -1,11 +1,10 @@
 import Phaser from 'phaser';
 import Button, { ButtonWithColorBackground } from '../ui/ButtonWithColorBackground';
 import { STAT_LABELS } from '../config/Consts';
-import { Language, translate } from '../utils/Language';
+import { Language } from '../utils/Language';
 import { LanguageConfig } from '../config/Language';
 import { BaseMenuScene } from './BaseMenuScene';
 import statsManager from '../managers/StatsManager';
-import { STOCK_THREE_MODE_ACTIVE } from '../config/Config';
 
 export class Statistics extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
@@ -19,7 +18,6 @@ export class Statistics extends BaseMenuScene {
     }
 
     create(): void {
-        statsManager.loadStats(true)
         super.create();
         this.createMenuContainer();
         this.createWhiteBackground();
@@ -42,9 +40,7 @@ export class Statistics extends BaseMenuScene {
     }
 
     private createTitleText(): void {
-        let statTitle = translate(LanguageConfig.Stats1);
-        if (STOCK_THREE_MODE_ACTIVE) statTitle = translate(LanguageConfig.Stats3);
-        this.titleTxt = this.add.text(-130, -190, statTitle, {
+        this.titleTxt = this.add.text(-130, -190, Language.getTranslation(LanguageConfig.Statistics), {
             fontFamily: 'Open Sans',
             fontSize: '30px',
             color: '#000000',

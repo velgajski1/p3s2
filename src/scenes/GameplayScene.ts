@@ -81,7 +81,7 @@ export class GameplayScene extends BaseScene {
         const adjustedStartX = (width / 2) + -554 * scale;
         Registry.uiTextStartX = adjustedStartX
         // Registry.uiElemStartX = adjustedStartX + 1500
-        Registry.uiElemStartX = width/2 +550*scale; 
+        Registry.uiElemStartX = width/2 +552*scale; 
     }
 
 

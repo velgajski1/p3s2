@@ -4,6 +4,7 @@ import { GameState } from "../utils/types";
 import { GameManager } from "./GameManager";
 import HintManager from "./HintManager";
 import { SoundManager } from "./SoundManager";
+import statsManager from "./StatsManager";
 
 export default class UndoManager {
     private static instance: UndoManager | null = null;
@@ -135,6 +136,7 @@ export default class UndoManager {
 
     undoFully(): GameState | null {
         HintManager.getInstance().clearHints();
+        statsManager.updateStatsAfterGame(false, UndoManager.gameManager.getCurrentScore(), UndoManager.gameManager.getElapsedTime())
         return this.states[0];
     }
 }

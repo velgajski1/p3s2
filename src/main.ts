@@ -11,6 +11,7 @@ import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
 import InversePipelinePlugin from 'phaser3-rex-plugins/plugins/inversepipeline-plugin.js';
+import { loadSettings } from './config/Config';
 
 //  Find out more information about the Game Config at:dd
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
@@ -47,5 +48,6 @@ const config: Types.Core.GameConfig = {
         GameOver
     ]
 };
+
 
 export default new Game(config);

@@ -34,7 +34,9 @@ export class BaseMenuScene extends Phaser.Scene {
     restartGame = () => {
         console.log("restart game called")
         var gamemanager : GameManager = this.registry.get("gameManager")
+        gamemanager.updateStats()
         gamemanager.restart()
+        
         this.remove()
     }  
 

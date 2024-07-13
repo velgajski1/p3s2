@@ -134,7 +134,7 @@ export class GameManager {
     updateTimer(): void {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
         // this.pileManager.listWasteCardsWithDepthAndName()
-        statsManager.logAllStats();
+        // statsManager.logAllStats();
         // console.log(this.score, this.elapsedTime)
         statsManager.updateCurrentGame(this.score, this.elapsedTime);
         
@@ -194,14 +194,17 @@ export class GameManager {
     }
 
     restart() {
-        statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
+        
         GameManager.removeInstance();
         UndoManager.removeInstance()
         GameManager.instance = null;
         this.gameScene.events.emit('restartScene');
-   
-
     }
+
+    updateStats() {
+        statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
+    }
+
     static removeInstance()
     {    
         this.instance = null 

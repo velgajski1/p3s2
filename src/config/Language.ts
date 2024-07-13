@@ -6,6 +6,8 @@ export const LanguageConfig = {
     NewGame: "NewGame",
     HowToPlaySolitaire: "HowToPlaySolitaire",
     Statistics: "Statistics",
+    Stats3: "Stats3",
+    Stats1: "Stats1",
     AllGames: "AllGames",
     Cancel: "Cancel",
     GamesPlayed: "GamesPlayed",

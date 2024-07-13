@@ -7,6 +7,7 @@ export var BG_INDEX : number = 0;
 
 // Load saved settings from localStorage
 export function loadSettings() {
+    console.log("load settings from localStorage")
     const stockThreeMode = localStorage.getItem('STOCK_THREE_MODE_ACTIVE');
     if (stockThreeMode !== null) {
         STOCK_THREE_MODE_ACTIVE = JSON.parse(stockThreeMode);

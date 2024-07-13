@@ -36,9 +36,9 @@ export class UIScene extends Phaser.Scene {
         this.textContainer = this.add.container(0, 0);
         this.elementsContainer = this.add.container(0, 0);
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = { 
-            fontSize: '19px', 
+            fontSize: '18px', 
             color: '#FFFFFF', 
-            fontFamily: 'Open Sans'
+            fontFamily: 'Open Sans',
         };
 
         this.createTextElements();
@@ -55,20 +55,22 @@ export class UIScene extends Phaser.Scene {
         let deltaX = -440
         const toggleSwitch = new ToggleSwitch(
             this,
-            -10 + deltaX,
+            -2+deltaX,
             0,
             'klondike_1_turn', // 1-card pull off texture
             'klondike_1_turn_selected', // 1-card pull on texture
             'klondike_3_turn', // 3-card pull off texture
             'klondike_3_turn_selected', // 3-card pull on texture
-            80, 
+            81, 
             0,
             (nextState: boolean) => {
                 if (!this.inputEnabled) return;
                 // console.log(`Next state: ${nextState}`);
                 // You can add more logic here to handle the toggle action
-                toggleThreeModeActive(nextState);
+                
                 var gamemanager : GameManager = this.registry.get("gameManager")
+                gamemanager.updateStats()
+                toggleThreeModeActive(nextState);
                 gamemanager.restart()
                 // this.remove()
 
@@ -142,13 +144,13 @@ export class UIScene extends Phaser.Scene {
         };
 
         // Score text
-        this.scoreText = this.add.text(-350+350, 0, '', textStyle);
+        this.scoreText = this.add.text(-350+350, 7, '', textStyle);
 
         // Time text
-        this.timeText = this.add.text(-275+350, 0, '', textStyle);       
+        this.timeText = this.add.text(-275+350, 7, '', textStyle);       
         
         // Time text
-        this.movesText = this.add.text(-150+350, 0, '', textStyle);
+        this.movesText = this.add.text(-150+350, 7, '', textStyle);
 
         this.textContainer.add(this.scoreText)
         this.textContainer.add(this.timeText)
@@ -165,7 +167,7 @@ export class UIScene extends Phaser.Scene {
         this.textContainer.setPosition(textStartX, 0);
         this.elementsContainer.setPosition(elementsStartX, 0);
         let scale = Math.min(1, Math.min(width / 1600, height / 900));
-        let fontsize = Math.max(12, Math.ceil(22 * Math.sqrt(scale))); 
+        let fontsize = Math.max(12, Math.ceil(20 * Math.sqrt(scale))); 
         this.elementsContainer.x = elementsStartX;
         this.elementsContainer.setScale(scale)
 
@@ -219,7 +221,7 @@ export class UIScene extends Phaser.Scene {
         this.textContainer.y = topUI*this.scale.height
 
         
-        this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.5)
+        this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
         if (this.registry.get("isFullscreen")) {
             this.elementsContainer.y = this.scale.height *0.95

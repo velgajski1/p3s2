@@ -1,5 +1,5 @@
 // CardLayoutManager.ts
-import { RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, HINT_OVERLAY_DURATION, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
@@ -28,7 +28,7 @@ class CardLayoutManager {
         addEventListener('rightHandedEvent', () => {this.update()});
 
         setTimeout(() => {
-            console.log("test hint")
+            // console.log("test hint")
         //    this.hintStock()
         //    this.hintWaste()
         //    this.hintTabIdx(2)
@@ -81,6 +81,11 @@ class CardLayoutManager {
 
             if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
             
+            let rightHandeWasteDelta = 0;
+            if (RIGHT_HANDED_MODE_ACTIVE) {
+                rightHandeWasteDelta =-60;
+            }
+            card.wasteDeltaX += rightHandeWasteDelta;
             let targetX = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX] + WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX] + index * WASTE_OVERLAP + card.wasteDeltaX;
             let targetY =  STOCK_COORDS.y
             if (skipAnim) {
@@ -136,10 +141,13 @@ class CardLayoutManager {
                else
                {
                    y += TABLEU_COORDS_DELTA.y;
+                  
+                  
                }
                
            } else {
                y += TABLEU_COORDS_DELTA.y_covered; // Use smaller vertical offset for face-down cards
+               console.log("y pos: " + y);
            }
 
            if (card.inTransition) {
@@ -152,6 +160,7 @@ class CardLayoutManager {
            }
 
 
+           
            card.scale = CARD_SCALE;
        });
    

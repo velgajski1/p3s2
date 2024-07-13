@@ -6,6 +6,7 @@ export class Preloader extends Scene {
     cardManager: CardNameManager;
 
     constructor() {
+        
         super('Preloader');
     }
 
@@ -112,7 +113,7 @@ export class Preloader extends Scene {
         // For example, you can define global animations here, so we can use them in other scenes.
 
         // Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        loadSettings()
+       
         const cardData = this.cache.json.get('cardData');
 
         const frames = cardData.textures[0].frames;
