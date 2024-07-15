@@ -34,7 +34,7 @@ export class WonScene extends BaseMenuScene {
         this.createWhiteBackground();
         this.createTextElements();
         this.createNewGameButton();
-        this.createCloseButton();
+        // this.createCloseButton();
         this.scaleMenuContainer();
 
         // Listen for resize events
@@ -50,13 +50,13 @@ export class WonScene extends BaseMenuScene {
 
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-150, -125, 300, 300, 8);
+        this.whiteBg.fillRoundedRect(-200, -180, 400, 360, 8);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTextElements(): void {
         // Title
-        const title = this.add.text(-125, -110, 'You Won :)', {
+        const title = this.add.text(-170, -154, 'You Won :)', {
             fontFamily: 'Open Sans', 
             fontSize: '32px', 
             color: '#000000', 
@@ -89,9 +89,9 @@ export class WonScene extends BaseMenuScene {
         };
     
         labels.forEach((label, index) => {
-            let deltaY = 36;
-            const labelElement = this.add.text(-125, -60 + index * deltaY, label, labelStyle).setOrigin(0);
-            const valueElement = this.add.text(-125 + this.measureTextWidth(label, labelStyle)+10, -60 + index * deltaY, values[index].toString(), valueStyle).setOrigin(0);
+            let deltaY = 44;
+            const labelElement = this.add.text(-170, -100 + index * deltaY, label, labelStyle).setOrigin(0);
+            const valueElement = this.add.text(-170 + this.measureTextWidth(label, labelStyle)+4, -100 + index * deltaY, values[index].toString(), valueStyle).setOrigin(0);
             this.menuContainer.add([labelElement, valueElement]);
         });
     
@@ -112,14 +112,13 @@ export class WonScene extends BaseMenuScene {
             this.restartGame()
             // New game logic
         }, {
-            color: 0x6CA4A8, 
+            color: 0x668b9e, 
             textColor: '#ffffff', 
-            width: 250,
-            height: 45,
-            fontSize: '25px',
+            width: 338,
+            height: 62,
+            fontSize: '26px',
             fontStyle: "bold",
-            parentContainer: this.menuContainer,
-            cornerRadius : 6,
+            parentContainer: this.menuContainer
         });
         this.menuContainer.add(this.newGameButton);
     }

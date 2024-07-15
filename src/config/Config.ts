@@ -4,6 +4,7 @@ export var RIGHT_HANDED_MODE_IDX : number = 0;
 export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
 export var BG_INDEX : number = 0;
+export var DRAG_ACTIVE : boolean = true;
 
 // Load saved settings from localStorage
 export function loadSettings() {
@@ -64,6 +65,10 @@ export function toggleSoundActive(params: boolean) {
 export function setBgIdx(params: number) {
     BG_INDEX = params;
     localStorage.setItem('BG_INDEX', JSON.stringify(params));
+}
+
+export function setDragActive(val:boolean) {
+    DRAG_ACTIVE = val;
 }
 
 // Call this function during initialization to load saved settings

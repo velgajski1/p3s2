@@ -6,7 +6,7 @@ import { Rank, Suit } from './CardNameManager';
 import ControlManager from './ControlManager';
 import UndoManager from './UndoManager';
 import { STOCK_COORDS } from '../config/Consts';
-import { AUTOFINISH_MODE_ACTIVE, loadSettings } from '../config/Config';
+import { AUTOFINISH_MODE_ACTIVE, loadSettings, setDragActive } from '../config/Config';
 import statsManager from './StatsManager';
 import StatsManager from './StatsManager';
 
@@ -59,7 +59,18 @@ export class GameManager {
             callback: this.updateTimer,
             callbackScope: this,
             loop: true
-        });
+        });      
+        
+        // this.gameScene.time.addEvent({
+        //     delay: 1000,
+        //     callback: () => {
+        //         this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed : this.getElapsedTime(), timebonus : this.getTimeBonus(), totalscore : this.getTotalScore() } ).bringToTop("WonScene");
+        //     },
+        //     callbackScope: this,
+        //     loop: false
+        // });
+
+
 
         this.addQuickTimeEvent()
 
@@ -69,6 +80,7 @@ export class GameManager {
                 // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
                 this.pileManager.getAllCards().forEach(c => c.update())
                 this.gameplayContainer.sort('depth');
+                setDragActive(this.controlManager.dragging);
                 // if (this.gameScene.game.loop.actualFps < 59)  
                 // if (!this.controlManager.activeCard && !this.gameScene.input.activePointer.isDown) {
                     
@@ -174,7 +186,7 @@ export class GameManager {
 
         }
 
-        if (!this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
+        if ( !this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
             this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed : this.getElapsedTime(), timebonus : this.getTimeBonus(), totalscore : this.getTotalScore() } ).bringToTop("WonScene");
 
             

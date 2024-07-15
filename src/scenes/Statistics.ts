@@ -13,6 +13,8 @@ export class Statistics extends BaseMenuScene {
     private titleTxt!: Phaser.GameObjects.Text;
     private closeButton: Button;
     private resetButton: Button;
+    prompt_close: Phaser.GameObjects.Image;
+    totalOffsetY: number;
 
     constructor() {
         super('Statistics');
@@ -27,6 +29,7 @@ export class Statistics extends BaseMenuScene {
         this.createStatsTextItems();
         this.createButtons();
         this.scaleMenuContainer();
+        this.createXButton();
 
         this.scale.on('resize', this.scaleMenuContainer, this);
     }
@@ -37,14 +40,14 @@ export class Statistics extends BaseMenuScene {
 
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-150, -200, 300, 400, 8);
+        this.whiteBg.fillRoundedRect(-200, -250, 400, 470+12, 8);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTitleText(): void {
         let statTitle = translate(LanguageConfig.Stats1);
         if (STOCK_THREE_MODE_ACTIVE) statTitle = translate(LanguageConfig.Stats3);
-        this.titleTxt = this.add.text(-130, -190, statTitle, {
+        this.titleTxt = this.add.text(-165, -230, statTitle, {
             fontFamily: 'Open Sans',
             fontSize: '30px',
             color: '#000000',
@@ -71,16 +74,18 @@ export class Statistics extends BaseMenuScene {
             element.label = Language.getTranslation(element.lang);
         });
 
-        let offsetY = -140;
-        const labelStyle = { fontFamily: 'Open Sans', fontSize: '20px', color: '#000000' };
+        let offsetY = -185+10;
+        const labelStyle = { fontFamily: 'Open Sans', fontSize: '25px', color: '#000000' };
         const valueStyle = { ...labelStyle, fontStyle: 'bold' };
 
         statsData.forEach(stat => {
-            const label = this.add.text(-130, offsetY, `${stat.label}: `, labelStyle).setOrigin(0);
-            const value = this.add.text(-130 + this.measureTextWidth(stat.label, labelStyle) + 40, offsetY, `${stat.value}`, valueStyle).setOrigin(0);
+            const label = this.add.text(-165, offsetY, `${stat.label}: `, labelStyle).setOrigin(0);
+            const value = this.add.text(-165 + this.measureTextWidth(stat.label, labelStyle) + 14, offsetY, `${stat.value}`, valueStyle).setOrigin(0);
             this.menuContainer.add([label, value]);
-            offsetY += 33; // Adjust vertical spacing as needed
+            offsetY += 44; // Adjust vertical spacing as needed
         });
+
+        this.totalOffsetY = offsetY
     }
 
     private measureTextWidth(text: string, style: Phaser.Types.GameObjects.Text.TextStyle): number {
@@ -90,46 +95,44 @@ export class Statistics extends BaseMenuScene {
         return width;
     }
 
-    private createButtons(): void {
-        this.closeButton = new ButtonWithColorBackground(this, 0, 120, Language.getTranslation(LanguageConfig.Close), () => {
-            this.scene.stop('Statistics');
-        }, {
-            color: 0x6CA4A8, 
-            textColor: '#ffffff', 
-            width: 250,
-            height: 40,
-            fontSize: '22px',
-            fontStyle: "bold",
-            parentContainer: this.menuContainer,
-            cornerRadius : 6,
-        });
+    createXButton()
+    {
+        this.prompt_close = this.add.image(175, -225, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
+        this.prompt_close.on('pointerdown', () => {
+            this.remove()
+        })
+        this.menuContainer.add(this.prompt_close)
+    }
 
-        this.resetButton = new ButtonWithColorBackground(this, 0, 170, Language.getTranslation(LanguageConfig.ResetStats), () => {
+    private createButtons(): void {
+        // this.closeButton = new ButtonWithColorBackground(this, 0, 125, Language.getTranslation(LanguageConfig.Close), () => {
+        //     this.scene.stop('Statistics');
+        // }, {
+        //     color: 0x668b9e, 
+        //     textColor: '#ffffff', 
+        //     width: 338,
+        //     height: 62,
+        //     fontSize: '26px',
+        //     fontStyle: "bold",
+        //     parentContainer: this.menuContainer
+        // });
+
+        // this.resetButton = new ButtonWithColorBackground(this, 0, 205, Language.getTranslation(LanguageConfig.ResetStats), () => {
+        // this.resetButton = new ButtonWithColorBackground(this, 0, 190, Language.getTranslation(LanguageConfig.ResetStats), () => {
+        this.resetButton = new ButtonWithColorBackground(this, 0, this.totalOffsetY+37, Language.getTranslation(LanguageConfig.ResetStats), () => {
             statsManager.resetStats()
             this.scene.restart()
         }, {
-            color: 0x6CA4A8, 
+            color: 0x668b9e, 
             textColor: '#ffffff', 
-            width: 250,
-            height: 40,
-            fontSize: '22px',
+            width: 338,
+            height: 62,
+            fontSize: '26px',
             fontStyle: "bold",
-            parentContainer: this.menuContainer,
-            cornerRadius : 6,
+            parentContainer: this.menuContainer
         });
     }
 
-    // private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
-    //     const { width, height } = gameSize || this.scale;
-    //     this.menuContainer.setPosition(width / 2, height / 2);
-
-    //     const scaleX = width / 800; // Example base width
-    //     const scaleY = height / 800; // Example base height
-    //     const scale = Math.min(scaleX, scaleY);
-
-    //     this.menuContainer.setScale(scale);
-    //     this.modalBackground.clear().fillRect(0, 0, width, height);
-    // }
 
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
         // Use provided gameSize or current game size

@@ -17,16 +17,16 @@ export class ButtonWithColorBackground extends Phaser.GameObjects.Container {
     }) {
         super(scene, x, y);
 
-        // Default options
+        // Default option
         const {
             width = 200,
             height = 50,
             color = 0x0000ff,
             textColor = '#ffffff',
             fontSize = '32px',
-            fontFamily = 'Arial',
+            fontFamily = 'Open Sans',
             fontStyle = 'regular',
-            cornerRadius = 15,
+            cornerRadius = 10,
             onHover,
             parentContainer
         } = options || {};

@@ -1,4 +1,4 @@
-import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, SOUND_ACTIVE } from "../config/Config";
+import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import getRankValue, { Rank } from "./CardNameManager";
@@ -121,6 +121,7 @@ class ControlManager {
             card.setData('dragOffsetX', localPoint.x - card.x);
             card.setData('dragOffsetY', localPoint.y - card.y);
             this.dragging = false;  // Start dragging
+            setDragActive(this.dragging)
             this.holdTimeoutFlag = true
 
             if (this.substack.length > 0) {
@@ -175,11 +176,13 @@ class ControlManager {
                     
                     SOUND_ACTIVE && SoundManager.instance.grabCard.play()
                     this.dragging = true;
+                    setDragActive(this.dragging)
                     this.activeCard.setDepth(this.activeCard.depth + 10000);
                     this.substack.forEach(s => {
                         if (s == this.activeCard) return;
                         s.setDepth(s.depth + 10000);
                     });
+                    console.log(this.activeCard.parentContainer)
                 }
                 else
                 {
@@ -227,6 +230,7 @@ class ControlManager {
 
                     this.activeCard = undefined;  // Clear the active card reference
                     this.dragging = false;
+                    setDragActive(this.dragging)
                     this.holdTimeoutFlag = false;
                     this.addSubstackClearTimeout()
 
@@ -533,6 +537,7 @@ class ControlManager {
 
     private resetCardDragState(card: Card): void {
         this.dragging = false;
+        setDragActive(this.dragging)
         card.x = this.initialPosition.x;
         if (card.getData("substackoffsetY") ) {
             card.y = this.initialPosition.y+card.getData("substackoffsetY") 

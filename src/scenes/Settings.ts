@@ -17,6 +17,8 @@ export class Settings extends BaseMenuScene {
     rightHAndedButton: RadioButtonSingle;
     bgSelector: ItemCycleControl;
 
+    deltaX = 15;
+
     constructor() {
         super('Settings');
     }
@@ -50,7 +52,7 @@ export class Settings extends BaseMenuScene {
 
     createXButton()
     {
-        this.prompt_close = this.add.image(150, -180, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
+        this.prompt_close = this.add.image(170, -180, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
         this.prompt_close.on('pointerdown', () => {
             this.remove()
         })
@@ -64,17 +66,17 @@ export class Settings extends BaseMenuScene {
 
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-180, -210, 360, 440, 12);
+        this.whiteBg.fillRoundedRect(-200, -210, 400, 452, 12);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTitle(): void {
-        const titleTxt = this.add.text(-150, -190, Language.getTranslation(LanguageConfig.GameSettings), {
+        const titleTxt = this.add.text(-150-this.deltaX, -190, Language.getTranslation(LanguageConfig.GameSettings), {
             fontFamily: 'Open Sans', fontSize: '32px', color: '#000000', align: 'center'
         }).setOrigin(0).setFontStyle("bold");
         this.menuContainer.add(titleTxt);
 
-        const titleTxt2 = this.add.text(-150, 40,  Language.getTranslation(LanguageConfig.VisualSettings), {
+        const titleTxt2 = this.add.text(-150-this.deltaX, 40,  Language.getTranslation(LanguageConfig.VisualSettings), {
             fontFamily: 'Open Sans', fontSize: '32px', color: '#000000', align: 'center'
         }).setOrigin(0).setFontStyle("bold");
         this.menuContainer.add(titleTxt2);
@@ -82,17 +84,17 @@ export class Settings extends BaseMenuScene {
 
     private createRadioButtons(): void {
         // Example positions and initial states are placeholders
-        this.soundButton = new RadioButtonSingle(this, -130, -120,  Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
+        this.soundButton = new RadioButtonSingle(this, -134-this.deltaX, -120,  Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
 
-        this.autofinishButton = new RadioButtonSingle(this, -130, -60,  Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
+        this.autofinishButton = new RadioButtonSingle(this, -134-this.deltaX, -60,  Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
 
-        this.rightHAndedButton = new RadioButtonSingle(this, -130, 0,  Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
+        this.rightHAndedButton = new RadioButtonSingle(this, -134-this.deltaX, 0,  Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
             // Additional RadioButtonSingle configuration here
         });
@@ -107,7 +109,7 @@ export class Settings extends BaseMenuScene {
     private createBackgroundSelector(): void {
       
 
-        this.bgSelector = new ItemCycleControl(this, -35, 110,  Language.getTranslation(LanguageConfig.Background), BACKGROUND_COLORS, (selectedItem) => {
+        this.bgSelector = new ItemCycleControl(this, -35-this.deltaX, 110,  Language.getTranslation(LanguageConfig.Background), BACKGROUND_COLORS, (selectedItem) => {
             
             const backgroundScene = this.scene.get('BackgroundScene') as any; // Use 'as any' if TypeScript complains about missing methods
             
@@ -132,11 +134,11 @@ export class Settings extends BaseMenuScene {
         new Button(this, 0, 180,  Language.getTranslation(LanguageConfig.SaveExit), () => {
            this.remove();
         }, {
-            color: 0x6CA4A8, 
+            color: 0x668b9e, 
             textColor: '#ffffff', 
-            width: 320,
-            height: 60,
-            fontSize: '25px',
+            width: 338,
+            height: 62,
+            fontSize: '26px',
             fontStyle: "bold",
             parentContainer: this.menuContainer
         });

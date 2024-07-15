@@ -7,8 +7,8 @@
         <NewGame>New Game</NewGame>
         <HowToPlaySolitaire>How to Play Solitaire</HowToPlaySolitaire>
         <Statistics>Statistics</Statistics>
-        <Stats3>Stats 3 card draw</Stats3>
-        <Stats1>Stats 1 card draw</Stats1>
+        <Stats3>Statistics (draw 3)</Stats3>
+        <Stats1>Statistics (draw 1)</Stats1>
         <AllGames>All Games</AllGames>
         <Cancel>Cancel</Cancel>
         <GamesPlayed>Games Played</GamesPlayed>
@@ -24,7 +24,7 @@
         <AutoFinish>Auto Finish</AutoFinish>
         <RightHanded>Right Handed</RightHanded>
         <Background>Background</Background>
-        <SaveExit>Save and Exit</SaveExit>
+        <SaveExit>Save &amp; Exit</SaveExit>
         <Statistics>Statistics</Statistics>
         <ResetStats>Reset Stats</ResetStats>
         <Close>Close</Close>

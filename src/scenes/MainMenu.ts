@@ -26,16 +26,16 @@ export class MainMenu extends BaseMenuScene {
         this.menuContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
 
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-200, -250, 400, 500, 12);
-        // Add the modal background to the container
+        this.whiteBg.fillRoundedRect(-200, -250, 400, 477, 12);
+        // Add the modal background to the containe
         this.menuContainer.add(this.whiteBg);
 
-        this.titleTxt = this.add.text(0, -200, translate(LanguageConfig.Menu), {
+        this.titleTxt = this.add.text(-162, -200, translate(LanguageConfig.Menu), {
             fontFamily: 'Open Sans',
             fontSize: '32px',
             color: '#000000',
             align: 'left'
-        }).setOrigin(0.5);
+        }).setOrigin(0, 0.5);
         this.titleTxt.setFontStyle("bold");
         this.menuContainer.add(this.titleTxt);
 
@@ -66,7 +66,8 @@ export class MainMenu extends BaseMenuScene {
 
         // Add menu items to the container
         menuItems.forEach((item, index) => {
-            const menuItem = this.add.text(-150, (index - 3) * 50, item, {
+            let startY = (index - 3) * 50 - 15-2;
+            const menuItem = this.add.text(-162, startY, item, {
                 fontFamily: 'Open Sans',
                 fontSize: '25px',
                 color: '#000000',
@@ -75,8 +76,8 @@ export class MainMenu extends BaseMenuScene {
 
             const underline = this.add.graphics();
             underline.lineStyle(2, 0x000000, 1);
-            underline.moveTo(-150, (index - 3) * 50 + 30); // Adjust position as needed
-            underline.lineTo(-150+menuItem.width, (index - 3) * 50 + 30); // Adjust width as needed
+            underline.moveTo(-162, startY + 30); // Adjust position as needed
+            underline.lineTo(-162+menuItem.width, startY + 30); // Adjust width as needed
             underline.strokePath();
             underline.setVisible(false);
 
@@ -98,14 +99,14 @@ export class MainMenu extends BaseMenuScene {
             this.menuContainer.add(underline);
         });
 
-        this.cancelButton = new Button(this, 0, 180, translate(LanguageConfig.Cancel), () => {
+        this.cancelButton = new Button(this, 0, 180-15, translate(LanguageConfig.Cancel), () => {
             this.remove();
         }, {
-            color: 0x6CA4A8,
+            color: 0x668b9e,
             textColor: '#ffffff',
-            width: 320,
-            height: 60,
-            fontSize: '25px',
+            width: 338,
+            height: 62,
+            fontSize: '26px',
             fontStyle: "bold",
             parentContainer: this.menuContainer
         });
@@ -176,5 +177,8 @@ export class MainMenu extends BaseMenuScene {
 
     allGames = () => {
         // Add logic for all games
+        window.open('/all-games', '_blank');
+
+
     }
 }

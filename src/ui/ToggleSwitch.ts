@@ -47,6 +47,7 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         
     }
 
+
     createIcon(offTexture: string | Phaser.Textures.Texture, onTexture: any, xOffset = 0, yOffset = 0) {
         // Create both "on" and "off" states for an icon
         let icon = this.scene.add.image(xOffset, yOffset, offTexture).setInteractive({ useHandCursor: true });

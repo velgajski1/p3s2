@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { GameObjects } from 'phaser';
 import { LanguageConfig } from '../config/Language';
 import { GameManager } from '../managers/GameManager';
 import { translate } from '../utils/Language';
@@ -6,11 +6,12 @@ import { formatTime } from '../utils/Utils';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
-import { STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
+import { DRAG_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
 import CardLayoutManager from '../managers/CardLayoutManager';
 import UndoManager from '../managers/UndoManager';
 import { MainMenu } from './MainMenu';
 import HintManager from '../managers/HintManager';
+import ControlManager from '../managers/ControlManager';
 
 export class UIScene extends Phaser.Scene {
     textContainer: Phaser.GameObjects.Container;
@@ -24,6 +25,8 @@ export class UIScene extends Phaser.Scene {
     hintBut: ImageButton;
     undoBut: ImageButton;
     inputEnabled: boolean =  true;
+    allInteractive : [ImageButton];
+    toggleSwitch: ToggleSwitch;
 
     constructor() {
         super('UIScene');
@@ -40,6 +43,7 @@ export class UIScene extends Phaser.Scene {
             color: '#FFFFFF', 
             fontFamily: 'Open Sans',
         };
+  
 
         this.createTextElements();
         this.createUIElements()
@@ -53,7 +57,7 @@ export class UIScene extends Phaser.Scene {
     {
               // Instantiate the ToggleSwitch
         let deltaX = -440
-        const toggleSwitch = new ToggleSwitch(
+        this.toggleSwitch = new ToggleSwitch(
             this,
             -2+deltaX,
             0,
@@ -78,7 +82,8 @@ export class UIScene extends Phaser.Scene {
             STOCK_THREE_MODE_ACTIVE
         );
 
-         this.elementsContainer.add(toggleSwitch);
+         this.elementsContainer.add(this.toggleSwitch);
+     
 
          this.menuBut = new ImageButton(this, 160+deltaX, 0, 'menu', 'menu', () => {
             if (!this.inputEnabled) return;
@@ -100,6 +105,7 @@ export class UIScene extends Phaser.Scene {
             this.scene.launch("Settings").bringToTop("Settings");
             this.input.setDefaultCursor('default');
          })
+         this.settingsBut.setDepth(50000)
          this.elementsContainer.add(this.settingsBut)
          this.settingsBut.setOrigin(0, 0);
 
@@ -121,6 +127,9 @@ export class UIScene extends Phaser.Scene {
          this.elementsContainer.add(this.undoBut)
          this.undoBut.setOrigin(0, 0);
          this.undoBut.skipClickSound = true
+
+
+         
     }
 
     update(time: number, delta: number): void
@@ -132,6 +141,23 @@ export class UIScene extends Phaser.Scene {
         this.updateTextPos()
 
         this.inputEnabled = true
+
+        if (DRAG_ACTIVE) {
+            this.hintBut.disableInteractive()
+            this.menuBut.disableInteractive()
+            this.undoBut.disableInteractive()
+            this.settingsBut.disableInteractive()
+            this.toggleSwitch.icon1.disableInteractive()
+            this.toggleSwitch.icon2.disableInteractive()
+        } else {
+            this.hintBut.setInteractive()
+            this.menuBut.setInteractive()
+            this.undoBut.setInteractive()
+            this.settingsBut.setInteractive()
+            this.toggleSwitch.icon1.setInteractive()
+            this.toggleSwitch.icon2.setInteractive()
+        }
+        
         if (this.scene.isActive("Settings")||this.scene.isActive("MainMenu")||this.scene.isActive("Statistics")||this.scene.isActive("WonScene")) this.inputEnabled = false
     }
 

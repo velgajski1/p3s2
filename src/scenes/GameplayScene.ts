@@ -35,6 +35,8 @@ export class GameplayScene extends BaseScene {
         
 
         this.scene.launch("UIScene");
+        this.scene.bringToTop("UIScene");
+
 
         this.game.canvas.addEventListener('contextmenu', function (event) {
             event.preventDefault();

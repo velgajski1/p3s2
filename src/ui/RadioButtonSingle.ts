@@ -36,8 +36,8 @@ export class RadioButtonSingle extends Phaser.GameObjects.Container {
         this.add([this.radioOff, this.radioOn]);
 
         // Create and add the text label
-        this.label = scene.add.text(40, 0, text, {
-            fontFamily: 'Arial',
+        this.label = scene.add.text(30, 0, text, {
+            fontFamily: 'Open Sans',
             fontSize: '24px',
             color: '#000'
         }).setOrigin(0, 0.5);

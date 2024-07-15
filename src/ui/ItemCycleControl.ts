@@ -35,13 +35,13 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
         const titleTextOptions = {
             fontSize: '24px',
             color: '#000',
-            fontFamily: 'Arial',
+            fontFamily: 'Open Sans',
             fontStyle: '',
             ...options?.titleTextOptions // Override defaults with provided options
         };
 
         // Title Text
-        this.titleText = scene.add.text(0, 0, title, titleTextOptions).setOrigin(0);
+        this.titleText = scene.add.text(-24, 0, title, titleTextOptions).setOrigin(0);
         this.titleText.y -= this.titleText.height / 2;
 
         // Left Button
@@ -49,7 +49,7 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
         btnLeft.on('pointerdown', () => this.cycleItem(-1));
 
         // Right Button
-        const btnRight = scene.add.image(-40, 0, 'prompt_btn_right').setInteractive();
+        const btnRight = scene.add.image(-54, 0, 'prompt_btn_right').setInteractive();
         btnRight.on('pointerdown', () => this.cycleItem(1));
 
         // Add all components to the container
