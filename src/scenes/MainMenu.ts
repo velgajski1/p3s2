@@ -146,7 +146,9 @@ export class MainMenu extends BaseMenuScene {
 
     restartThisGame = () => {
         const state = UndoManager.getInstance().undoFully();
-        const gManager = this.registry.get('gameManager');
+        
+        const gManager : GameManager = this.registry.get('gameManager');
+        gManager.reset()
         // const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
         if (state) {
             gManager.pileManager.setToGameState(state);
@@ -165,7 +167,7 @@ export class MainMenu extends BaseMenuScene {
     }
 
     howToPlay = () => {
-        // Add logic for how to play
+        window.open('/how-to-play-solitaire', '_blank');
     }
 
     statistics = () => {

@@ -79,7 +79,7 @@ export class Preloader extends Scene {
         this.load.image('settings', 'settings.png');
         this.load.image('undo', 'undo.png');
         this.load.image('undo_na', 'undo_na.png');
-        this.load.image('reddish_glow_outline', 'red_image_30_alpha_rounded_10px.png');
+        this.load.image('reddish_glow_outline', 'hint-overlay.png');
         this.load.image('backside', 'backside.png');
 
         this.load.json('cardData', 'assets.json');

@@ -48,7 +48,7 @@ class StatsManager {
     }
 
     private getModePrefix(): string {
-        return STOCK_THREE_MODE_ACTIVE ? 'three_' : 'one_';
+        return STOCK_THREE_MODE_ACTIVE ? 'p3s1_three_' : 'p3s1_one_';
     }
 
     // Getter and Setter for games played

@@ -8,6 +8,9 @@ import ControlManager from "./ControlManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
 
+    private static readonly HINT_OVERLAY_DURATION: number = 5000; // Example duration
+    private static readonly TEXTURE_KEY: string = 'generated_outline';
+    private static textureGenerated: boolean = false;
 
     stockpile: Card[];
     wastepile: Card[];
@@ -62,7 +65,7 @@ class CardLayoutManager {
 
     // Layout method for waste pile, which might have slight overlap
     layoutWastePile(cards: Card[], skipAnim:boolean = true) {
-        
+        // console.log("layoutWastePile")
         cards.forEach((card, index) => {
             // 
             let wDeltaX : number = WASTE_DELTA_X[RIGHT_HANDED_MODE_IDX]
@@ -82,10 +85,12 @@ class CardLayoutManager {
             if (STOCK_THREE_MODE_ACTIVE == false) card.wasteDeltaX = 0;
             
             let rightHandeWasteDelta = 0;
-            if (RIGHT_HANDED_MODE_ACTIVE) {
+            if (RIGHT_HANDED_MODE_ACTIVE && STOCK_THREE_MODE_ACTIVE) {
                 rightHandeWasteDelta =-60;
             }
+
             card.wasteDeltaX += rightHandeWasteDelta;
+            // console.log(card.wasteDeltaX)
             let targetX = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX] + WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX] + index * WASTE_OVERLAP + card.wasteDeltaX;
             let targetY =  STOCK_COORDS.y
             if (skipAnim) {
@@ -147,7 +152,7 @@ class CardLayoutManager {
                
            } else {
                y += TABLEU_COORDS_DELTA.y_covered; // Use smaller vertical offset for face-down cards
-               console.log("y pos: " + y);
+            //    console.log("y pos: " + y);
            }
 
            if (card.inTransition) {
@@ -208,14 +213,16 @@ class CardLayoutManager {
         }
     }
 
-    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0) {
+    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = 0.2, width = 178, height = 251) {
+        console.log("Add new hint outline")
         this.removeHintOutline()
-        this.outline = scene.add.sprite(sprite.x-1, sprite.y-1, 'reddish_glow_outline' ).setScale(sprite.scale)
+        this.outline = scene.add.sprite(sprite.x, sprite.y, 'reddish_glow_outline' ).setScale(sprite.scale)
         scene.add.existing(this.outline)
         this.outline.setDepth(100000)
         sprite.parentContainer.add(this.outline)
         this.outline.x+=deltaX
         this.outline.y+=deltaY
+        this.outline.alpha = alpha;
 
 
         this.removeHintTimer()
@@ -224,6 +231,50 @@ class CardLayoutManager {
         }, HINT_OVERLAY_DURATION);
 
      }
+
+    // addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX: number = 0, deltaY: number = 0, alpha = 0.2, width = 178, height = 251) {
+    //     this.removeHintOutline();
+    
+    //     // console.log("add outline: " + alpha)
+    //     // Generate the texture only if it hasn't been generated yet
+    //     if (!CardLayoutManager.textureGenerated) {
+    //         // Create a graphics object
+    //         const graphics = scene.add.graphics();
+    //         graphics.fillStyle(0xff0000, alpha);  // Set the fill style (color, alpha)
+    //         graphics.lineStyle(10, 0xff0000, alpha);  // Set the line style (color, alpha)
+            
+    //         // Calculate the position and size of the rectangle
+    //         const rectX = -1;
+    //         const rectY = -1;
+    //         const rectWidth = width;
+    //         const rectHeight = height;
+        
+    //         // Draw the filled rounded rectangle
+    //         graphics.fillRoundedRect(rectX, rectY, rectWidth, rectHeight, 10);
+        
+    //         // Create a texture from the graphics object
+    //         graphics.generateTexture(CardLayoutManager.TEXTURE_KEY, rectWidth, rectHeight);
+    //         graphics.destroy();  // Destroy the graphics object after generating the texture
+
+    //         CardLayoutManager.textureGenerated = true;  // Mark the texture as generated
+    //     }
+    
+    //     // Add the generated texture as a sprite
+    //     this.outline = scene.add.sprite(sprite.x + deltaX, sprite.y + deltaY, CardLayoutManager.TEXTURE_KEY).setScale(sprite.scale);
+    //     this.outline.setDepth(100000);
+    //     sprite.parentContainer.add(this.outline);
+    //     this.outline.width = 180;
+    //     this.outline.width = 253;
+    //     // this.outline.x = 0;
+    //     // this.outline.y = 0;
+    
+    //     this.removeHintTimer();
+    //     this.timeout = setTimeout(() => {
+    //         this.removeHintOutline();
+    //     }, HINT_OVERLAY_DURATION);
+    // }
+    
+    
 
      removeHintOutline() {
         if (this.outline) this.outline.destroy();
@@ -242,13 +293,16 @@ class CardLayoutManager {
     }
 
     hintFoundIdx(idx : number) {
-        let spr = this.foundIndicators[idx]
-        this.addHintOutline(spr.scene, spr, 1, 1);
-    }
 
-    hintStock() {
-        let spr = this.stockIndicator
-        this.addHintOutline(spr.scene, spr, 1, 1);
+        let fPile = this.pileManager.getFoundationPiles()[idx];
+        if (fPile.length > 0) {
+            fPile[0].startHintAnim(0)
+        } else {
+            let spr = this.foundIndicators[idx]
+            this.addHintOutline(spr.scene, spr, 0, 0, 0.2, 181, 254);
+        }
+
+
     }
 
     hintWaste() {
@@ -256,12 +310,29 @@ class CardLayoutManager {
         
         let wastePileLen = this.pileManager.getWastePile().length;
         if (wastePileLen==0) {
-            this.addHintOutline(spr.scene, spr, 1, 1);
+            this.addHintOutline(spr.scene, spr, 0, 0, 0.2, 181, 254);
+            // this.addHintOutline(spr.scene, spr, 1, 1);
         }
         else {
             this.pileManager.getTopCardFromWaste()?.startHintAnim(0)
         }
     }
+
+    hintStock() {
+        let spr = this.stockIndicator
+
+        let stockPileLen = this.pileManager.getStockPile().length
+
+        if (stockPileLen > 0) {
+            
+            this.addHintOutline(spr.scene, spr, 0, 0, 0.3);
+        } else {
+            this.addHintOutline(spr.scene, spr, 0,0, 0.2);
+        }
+        
+    }
+
+
 
     addTableuIndicators(scene : Phaser.Scene, cont : Phaser.GameObjects.Container) {
         this.tabIndicators = [];

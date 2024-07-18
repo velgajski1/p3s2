@@ -56,7 +56,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     private isMobile() {
         const userAgent = navigator.userAgent
-        console.log(this.scene.sys.game.device.os.android,this.scene.sys.game.device.os.iOS,this.scene.sys.game.device.os.windows)
+        // console.log(this.scene.sys.game.device.os.android,this.scene.sys.game.device.os.iOS,this.scene.sys.game.device.os.windows)
         return this.scene.sys.game.device.os.android || 
                this.scene.sys.game.device.os.iOS;
     }
@@ -175,9 +175,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
     }
     renewWasteCoords(cManager : ControlManager): void
     {
+        console.log("renew waste coords")
         if (cManager)
         { 
-
+            console.log("renew waste coords cmanager")
             this.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX]+this.wasteDeltaX;
             this.y = STOCK_COORDS.y;
 
@@ -250,6 +251,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     setFaceUp(isFaceUp: boolean)
     {
+       if (!this.scene) return
         if (isFaceUp) {
             
             this.setTexture2(this.faceTexture);
@@ -271,6 +273,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
        scene.add.existing(this.outline)
        this.outline.setDepth(100000)
        this.parentContainer.add(this.outline)
+       this.outline.alpha = 0.3
 
        if (cropY > 0) {
         this.outline.setCrop(0,0,this.outline.width, cropY/this.scale)

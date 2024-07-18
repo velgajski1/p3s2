@@ -234,6 +234,11 @@ export class GameManager {
         return this.moves;
     }
 
+    reset() {
+        this.moves = this.score = this.elapsedTime = 0;
+        this.startTime = Date.now()
+    }
+
     // Create and shuffle the deck
     // Update the createAndShuffleDeck method to use the Suit and Rank enums
     private createAndShuffleDeck() {

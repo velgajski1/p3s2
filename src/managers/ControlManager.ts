@@ -1,6 +1,7 @@
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
+import CardLayoutManager from "./CardLayoutManager";
 import getRankValue, { Rank } from "./CardNameManager";
 import { GameManager } from "./GameManager";
 import HintManager from "./HintManager";
@@ -182,7 +183,7 @@ class ControlManager {
                         if (s == this.activeCard) return;
                         s.setDepth(s.depth + 10000);
                     });
-                    console.log(this.activeCard.parentContainer)
+                    // console.log(this.activeCard.parentContainer)
                 }
                 else
                 {
@@ -374,6 +375,8 @@ class ControlManager {
                     
                 } 
             }
+            this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile())
+            
         }
     }
 
@@ -538,6 +541,7 @@ class ControlManager {
     private resetCardDragState(card: Card): void {
         this.dragging = false;
         setDragActive(this.dragging)
+        // console.log("reset drag state: " + card.getName())
         card.x = this.initialPosition.x;
         if (card.getData("substackoffsetY") ) {
             card.y = this.initialPosition.y+card.getData("substackoffsetY") 
@@ -547,7 +551,10 @@ class ControlManager {
         
         
         card.setData("substackoffsetY",0);
-        if (card.pileType == PileType.Waste) card.renewWasteCoords(this)
+        if (card.pileType == PileType.Waste) {
+            // card.renewWasteCoords(this)
+            this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile())
+        } 
         this.isClickEnabled = true;
 
     }
