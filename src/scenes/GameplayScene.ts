@@ -75,6 +75,12 @@ export class GameplayScene extends BaseScene {
             this.gameplayContainer.setScale(scale);
             this.scene.launch("UIScene");
             this.registry.set("isFullscreen", true);
+        } else {
+            this.registry.set("isFullscreen", false);
+
+            if (this.scale.isFullscreen) {
+                this.scale.stopFullscreen()
+            }
         }
 
         this.gameplayContainer.setPosition(width / 2, top);

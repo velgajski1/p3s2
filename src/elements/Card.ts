@@ -11,6 +11,7 @@ import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX } from '../config/Confi
 export default class Card extends Phaser.GameObjects.Sprite {
 
 
+
     private faceTexture: string; // Path to the face texture
     private backTexture: string; // Path to the back texture
     public isFaceUp: boolean; // Card's state
@@ -27,6 +28,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     hintMaxBlinks: number;
     hintTimerEvent: Phaser.Time.TimerEvent;
     outline: Phaser.GameObjects.Sprite;
+    isClickEnabled: boolean = true;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -56,16 +58,24 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     private isMobile() {
         const userAgent = navigator.userAgent
-        // console.log(this.scene.sys.game.device.os.android,this.scene.sys.game.device.os.iOS,this.scene.sys.game.device.os.windows)
+        // 
         return this.scene.sys.game.device.os.android || 
                this.scene.sys.game.device.os.iOS;
     }
 
+    disbleInteractiveTemporarily(arg0: number)
+    {
+         this.isClickEnabled = false;
+        setTimeout(() => {
+            this.isClickEnabled = true;
+        }, arg0);
+    }
+
     createInvertedFrameTexture(spritesheetKey: string, frameIndex: string, newTextureKey: string) {
 
-        // console.log(newTextureKey)
+        // 
         if (this.textures.checkKey(newTextureKey)) {
-            // console.log('createInvertedFrameTexture')
+            // 
             return;
         } 
         const frame = this.textures.getFrame(spritesheetKey, frameIndex);
@@ -117,7 +127,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     }
 
     setHintTexture(on : boolean) {
-        // console.log(this.name, this.isFaceUp,on)
+        // 
         if (this.isFaceUp) {
             if (on) {
                 this.setTexture(this.faceTexture+'_hint')
@@ -175,10 +185,10 @@ export default class Card extends Phaser.GameObjects.Sprite {
     }
     renewWasteCoords(cManager : ControlManager): void
     {
-        console.log("renew waste coords")
+        
         if (cManager)
         { 
-            console.log("renew waste coords cmanager")
+            
             this.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX]+this.wasteDeltaX;
             this.y = STOCK_COORDS.y;
 
@@ -271,13 +281,35 @@ export default class Card extends Phaser.GameObjects.Sprite {
         if (!scene) return;
        this.outline = scene.add.sprite(this.x-1, this.y-1, 'reddish_glow_outline' ).setScale(this.scale)
        scene.add.existing(this.outline)
-       this.outline.setDepth(100000)
+       if (this.pileType == PileType.Tableau) {
+        this.outline.setDepth(this.depth)
+       }
+       else {
+        this.outline.setDepth(15000)
+       }
+       
        this.parentContainer.add(this.outline)
        this.outline.alpha = 0.3
 
-       if (cropY > 0) {
-        this.outline.setCrop(0,0,this.outline.width, cropY/this.scale)
-       }
+    //    if (cropY > 0) {
+    //     this.outline.setCrop(0,0,this.outline.width, cropY/this.scale)
+    //    }
+
+        // // Create a graphics object for the rounded rectangle mask
+        // const maskGraphics = scene.make.graphics({ x: 0, y: 0} ,false );
+
+        // // Set the fill style and draw the rounded rectangle
+        // maskGraphics.fillStyle(0xffffff, 1);
+        // maskGraphics.fillRoundedRect(0, 0, this.outline.width, cropY / this.scale, 10);
+
+        // // Create a mask from the graphics object
+        // const mask = maskGraphics.createGeometryMask();
+
+        // // Apply the mask to the sprite
+        // this.outline.setMask(mask);
+
+        // // Position the mask
+        // maskGraphics.setPosition(this.x - 1, this.y - 1);
 
       
 

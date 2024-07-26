@@ -126,15 +126,18 @@ export class MainMenu extends BaseMenuScene {
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
 
+        let scaleXDivider = 600;
+        let scaleYDivider = 600;
+
         // Calculate scale based on a 1600x900 design, trying to fill as much as possible
-        const scaleX = width / 600;
-        const scaleY = height / 600;
+        const scaleX = width / scaleXDivider;
+        const scaleY = height / scaleYDivider;
         // Use the larger scale factor that maintains aspect ratio without exceeding screen dimensions
         const scale = Math.min(1, Math.max(scaleX, scaleY));
 
         // Check if scaling exceeds screen dimensions and adjust if necessary
-        const effectiveWidth = 600 * scale;
-        const effectiveHeight = 600 * scale;
+        const effectiveWidth = scaleXDivider * scale;
+        const effectiveHeight = scaleYDivider * scale;
         if (effectiveWidth > width || effectiveHeight > height) {
             // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
             this.menuContainer.setScale(Math.min(scaleX, scaleY));

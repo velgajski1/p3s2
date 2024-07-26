@@ -376,11 +376,11 @@ export default class PileManager {
             const card = deck.shift(); // Take the top card from the deck
             if (!card) continue; // If by some reason there's no card, continue to the next iteration
     
-            if ((card.rank === Rank.King) && this.stockPile.length < 8) {
+            if ((card.rank === Rank.King || card.rank == Rank.Queen) && this.stockPile.length < 8) {
                 // Place Kings and Queens in the stock pile
                 // card.setFaceUp(false);  // Kings and Queens should be facedown in the stock
                 this._addCardToStock(card)
-            } else if (card.rank <= Rank.Queen) {
+            } else if (card.rank <= Rank.Jack) {
                 // Check if the card can be placed in the foundation (i.e., is the next card in sequence)
                 this._addCardToFoundation(card, card.suit)
             }

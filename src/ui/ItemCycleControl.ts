@@ -67,7 +67,7 @@ export class ItemCycleControl extends Phaser.GameObjects.Container {
     }
 
     private cycleItem(direction: number) {
-        console.log("play sound")
+        
         SOUND_ACTIVE && SoundManager.instance.click.play()
         this.currentItemIndex += direction;
         if (this.currentItemIndex >= this.items.length) {

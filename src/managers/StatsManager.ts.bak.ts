@@ -218,16 +218,16 @@ class StatsManager {
 
     // Method to log all stats to the console
     public logAllStats(): void {
-        // console.log('Games Played:', this.gamesPlayed);
-        // console.log('Games Won:', this.gamesWon);
-        // console.log('Win Percentage:', this.winPercentage.toFixed(2) + '%');
-        // console.log('Top Score:', this.topScore);
-        // console.log('Best Time:', this.bestTime);
-        // console.log('Current Win Streak:', this.currentWinStreak);
-        // console.log('Longest Win Streak:', this.longestWinStreak);
-        // console.log('Is Game Active:', this._isGameActive);
-        // console.log('Current Score:', this._currentScore);
-        // console.log('Current Time Played:', this._formatTime(this._currentTimePlayed));
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
+        // 
     }
 }
 

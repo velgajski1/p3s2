@@ -37,12 +37,12 @@ class StatsManager {
         this._currentScore = this._getStatFromLocalStorage(`${modePrefix}currentScore`, 0);
         this._currentTimePlayed = this._getStatFromLocalStorage(`${modePrefix}currentTimePlayed`, 0);
 
-        console.log(modePrefix, "skip: " + skipUpdate)
-        console.log(`${modePrefix}isGameActive`,this._getStatFromLocalStorage(`${modePrefix}isGameActive`, false))
+        
+        
        
         if (this._isGameActive && !skipUpdate) {
             // If a game was active, mark it as a loss due to refresh
-            console.log(modePrefix)
+            
             this.updateStatsAfterGame(false, this._currentScore, this._currentTimePlayed);
         }
     }
@@ -129,7 +129,7 @@ class StatsManager {
     }
 
     private _saveStatToLocalStorage(key: string, value: any): void {
-        console.log(key, value)
+        // 
         localStorage.setItem(key, JSON.stringify(value));
     }
 
@@ -154,6 +154,7 @@ class StatsManager {
 
     // Methods to update statistics based on game outcomes
     public updateStatsAfterGame(isWin: boolean, score: number, time: number): void {
+        console.log(isWin, score, time);
         this.loadStats(true)
         this.gamesPlayed += 1;
 
@@ -171,6 +172,7 @@ class StatsManager {
                 this.bestTime = timeInSeconds;
             }
         } else {
+            
             this.currentWinStreak = 0;
         }
 
@@ -189,6 +191,7 @@ class StatsManager {
 
     // Method to reset all stats
     public resetStats(): void {
+        
         const modePrefix = this.getModePrefix();
         this.gamesPlayed = 0;
         this.gamesWon = 0;
@@ -236,16 +239,16 @@ class StatsManager {
 
     // Method to log all stats to the console
     public logAllStats(): void {
-        console.log('Games Played:', this.gamesPlayed);
-        console.log('Games Won:', this.gamesWon);
-        console.log('Win Percentage:', this.winPercentage.toFixed(2) + '%');
-        console.log('Top Score:', this.topScore);
-        console.log('Best Time:', this.bestTime);
-        console.log('Current Win Streak:', this.currentWinStreak);
-        console.log('Longest Win Streak:', this.longestWinStreak);
-        console.log('Is Game Active:', this._isGameActive);
-        console.log('Current Score:', this._currentScore);
-        console.log('Current Time Played:', this._formatTime(this._currentTimePlayed));
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 }
 

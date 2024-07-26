@@ -114,7 +114,7 @@ class CardTransitionManager {
         card.setInteractive(false);
         // getTweensForObject(card.scene, card).forEach(x => x.complete());
 
-        console.log("play foundation sound")
+        
         SOUND_ACTIVE && SoundManager.instance.cardToFoundation.play()
         // Create a tween to move the card visually to the foundation pile
         card.scene.tweens.add({

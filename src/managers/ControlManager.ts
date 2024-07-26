@@ -1,5 +1,5 @@
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
-import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK } from "../config/Consts";
+import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK, CARD_MOVE_BEFORE_DRAG_AND_DROP } from "../config/Consts";
 import Card from "../elements/Card";
 import CardLayoutManager from "./CardLayoutManager";
 import getRankValue, { Rank } from "./CardNameManager";
@@ -29,6 +29,7 @@ class ControlManager {
     holdTimeoutFlag: boolean = false;
     public enabled: boolean = true;
     keyH: any;
+    dragAndDrop: boolean = false;
 
     constructor(pileManager: PileManager) {
         this.pileManager = pileManager;
@@ -50,6 +51,7 @@ class ControlManager {
 
         card.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
 
+            this.pileManager.gameManager.firstClickDone = true;
             if (!this.enabled) return;
             
 
@@ -162,8 +164,9 @@ class ControlManager {
 
         input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
             this.lastKnownPointerPosition = { x: pointer.x, y: pointer.y };
+            
 
-            if (!this.dragging && this.activeCard) {
+            if (!this.dragAndDrop && this.activeCard) {
                 const localPoint = this.pileManager.gameplayContainer.getLocalPoint(pointer.x, pointer.y);
                 const movedDistance = Phaser.Math.Distance.Between(
                     this.activeCard.getData('startX'),
@@ -172,8 +175,13 @@ class ControlManager {
                     localPoint.y - this.activeCard.getData('dragOffsetY')
                 );
 
+                
+                if (this.dragAndDrop == false && movedDistance > CARD_MOVE_BEFORE_DRAG_AND_DROP) {
+                    this.dragAndDrop = true;
+                    
+                }
 
-                if (movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE ) {
+                if (this.dragging == false && movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE ) {
                     
                     SOUND_ACTIVE && SoundManager.instance.grabCard.play()
                     this.dragging = true;
@@ -183,16 +191,19 @@ class ControlManager {
                         if (s == this.activeCard) return;
                         s.setDepth(s.depth + 10000);
                     });
-                    // console.log(this.activeCard.parentContainer)
+                    
+
+
                 }
                 else
                 {
                     
-                    return
+                    // return
                 }
             }
 
             if (this.dragging && this.activeCard) {
+                
                 const localPoint = this.pileManager.gameplayContainer.getLocalPoint(pointer.x, pointer.y);
                 const newX = localPoint.x - this.activeCard.getData('dragOffsetX');
                 const newY = localPoint.y - this.activeCard.getData('dragOffsetY');
@@ -209,6 +220,7 @@ class ControlManager {
 
         input.on('pointerup', () => {
             clearTimeout(this.holdTimeout);
+            
             if (this.activeCard) {
                 
                 if (this.dragging) {
@@ -218,8 +230,9 @@ class ControlManager {
                         s.setDepth(s.depth - 10000);
                     });
 
+                    
                     //foundation doesnt use click at all, so it always goes to drop
-                    if (this.holdTimeoutFlag && this.activeCard.pileType != PileType.Foundation) { 
+                    if (!this.dragAndDrop && this.holdTimeoutFlag && this.activeCard.pileType != PileType.Foundation) { 
                         this.handleClick(this.activeCard)
                     }
                     else
@@ -231,6 +244,7 @@ class ControlManager {
 
                     this.activeCard = undefined;  // Clear the active card reference
                     this.dragging = false;
+                    this.dragAndDrop = false;
                     setDragActive(this.dragging)
                     this.holdTimeoutFlag = false;
                     this.addSubstackClearTimeout()
@@ -294,6 +308,7 @@ class ControlManager {
 
     handleCardDrop(activeCard: Card): void {
         
+        
         const overlappedCards = this.findDropTargets(activeCard);
         
     
@@ -340,6 +355,7 @@ class ControlManager {
                 if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
                     // Valid drop on a foundation pile
                     this.pileManager.addCardToFoundationPile(activeCard, foundIndex);
+                    UndoManager.getInstance().saveState(this.pileManager.getState());
                     placed = true;
                     break; // Stop after successful placement
                 }          
@@ -360,11 +376,18 @@ class ControlManager {
                     if (c === activeCard) return;
                     this.placeCardOnTableau(c, tableauIndex);
                 });
+               
+                this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles())
+                UndoManager.getInstance().saveState(this.pileManager.getState());
             } else if (foundationIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundationIndex)) {
                 // Valid drop on a foundation pile
                 if (this.activeCard?.pileType != PileType.Foundation) {
                     // this.pileManager.gameManager.incrementMoves()
                     this.pileManager.gameManager.incrementScore(10);
+                    setTimeout(() => {
+                        UndoManager.getInstance().saveState(this.pileManager.getState());
+                    }, 200);
+                    
                 }
                 this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
             } else {
@@ -375,9 +398,10 @@ class ControlManager {
                     
                 } 
             }
-            this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile())
+            
             
         }
+        this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile())
     }
 
     resetDraggedCards(activeCard: Card, substack : Card[])
@@ -419,8 +443,8 @@ class ControlManager {
     
     
     getFoundationIndexFromCoordinates(x: number, y: number, cardWidth: number): number {
-        const verticalStart = FOUNDATION_COORDS_INIT.y - 50; // Some vertical tolerance
-        const verticalEnd = FOUNDATION_COORDS_INIT.y + 50;   // Some vertical tolerance
+        const verticalStart = FOUNDATION_COORDS_INIT.y - 150; // Some vertical tolerance
+        const verticalEnd = FOUNDATION_COORDS_INIT.y + 190;   // Some vertical tolerance
     
         if (y >= verticalStart && y <= verticalEnd) {
             let maxOverlap = 0;
@@ -541,7 +565,7 @@ class ControlManager {
     private resetCardDragState(card: Card): void {
         this.dragging = false;
         setDragActive(this.dragging)
-        // console.log("reset drag state: " + card.getName())
+        // 
         card.x = this.initialPosition.x;
         if (card.getData("substackoffsetY") ) {
             card.y = this.initialPosition.y+card.getData("substackoffsetY") 
@@ -610,16 +634,21 @@ class ControlManager {
     }
     handleHKey(arg0: string, handleHKey: any, arg2: this)
     {
+        if (!this.enabled) return;
+        if (this.activeCard) return;
         HintManager.getInstance().getHint(this.pileManager)
     }
     handleRKey(arg0: string, handleRKey: any, arg2: this)
     {
+        if (!this.enabled) return;
+        if (this.activeCard) return;
         GameManager.removeInstance();
         GameManager.gameScene.events.emit('restartScene');
         // this.events.emit
     }
     
     handleDKey() {
+        if (this.activeCard) return;
         if (!this.enabled) return;
         if (this.isClickEnabled) {
             if (this.pileManager.getTopStockCard() === undefined) {
@@ -634,6 +663,7 @@ class ControlManager {
     }
     
     handleUKey() {
+        if (this.activeCard) return;
         if (!this.enabled) return;
         if (this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens()) )){
             setTimeout(() => {
@@ -656,6 +686,7 @@ class ControlManager {
     }
     
     handleCtrlZKey() {
+        if (this.activeCard) return;
         if (this.keyCtrl?.isDown) {
             this.handleUKey();
         }
@@ -670,6 +701,10 @@ class ControlManager {
         // Prevent additional clicks if a card click was already processed
         if (!this.isClickEnabled) {
             
+            return false;
+        }
+
+        if (!card.isClickEnabled) {
             return false;
         }
 
@@ -711,6 +746,7 @@ class ControlManager {
                 break;
         }
         // Disable clicks for the cooldown period
+        card.disbleInteractiveTemporarily(240);
         this.disableCardClicksTemporarily(disableClickDuration);
         return ret
         

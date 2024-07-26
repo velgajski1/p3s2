@@ -43,13 +43,13 @@ export default class HintManager {
             if (targetPile.length == 0) return false;
             return true;
         } 
-        console.log("card: " + card.getName())
         
-        console.log("belowcard: " + belowCard.getName())
+        
+        
 
         // Condition a: Card below is turned/uncovered
         if (!belowCard.isFaceUp) {
-            console.log("card below is faecup")
+            
             return true;
         } 
 
@@ -165,7 +165,7 @@ export default class HintManager {
         this.hints= this.hints.reverse()
 
         // Log generated hints to console
-        // console.log('Generated Hints:', this.hints);
+        // 
     }
     hintTableuCard(tableauTopCard: Card)
     {

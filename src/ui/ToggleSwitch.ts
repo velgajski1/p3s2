@@ -75,7 +75,7 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
             this.icon2.setTexture((this.icon2 as any).offTexture);
             (this.icon2 as any).state = false;
             newState = false;
-            console.log("play sound")
+            
             
         } else {
             this.icon1.setTexture((this.icon1 as any).offTexture);

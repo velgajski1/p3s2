@@ -33,6 +33,7 @@ export class GameManager {
     static gameplayContainerScale: number;
     gameOverFlag : boolean = false
     wonscene: Phaser.Scenes.ScenePlugin;
+    firstClickDone: boolean = false;
     
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
@@ -144,10 +145,11 @@ export class GameManager {
     }
 
     updateTimer(): void {
+        if (this.gameOverFlag || !this.firstClickDone) {
+            if (!this.firstClickDone) { this.startTime = Date.now() }
+            return;
+        } 
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
-        // this.pileManager.listWasteCardsWithDepthAndName()
-        // statsManager.logAllStats();
-        // console.log(this.score, this.elapsedTime)
         statsManager.updateCurrentGame(this.score, this.elapsedTime);
         
 
@@ -189,9 +191,6 @@ export class GameManager {
         if ( !this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
             this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed : this.getElapsedTime(), timebonus : this.getTimeBonus(), totalscore : this.getTotalScore() } ).bringToTop("WonScene");
 
-            
-            
-
             this.gameOverFlag = true
         }
 
@@ -214,6 +213,7 @@ export class GameManager {
     }
 
     updateStats() {
+        console.log("update stats called")
         statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
     }
 
@@ -237,6 +237,8 @@ export class GameManager {
     reset() {
         this.moves = this.score = this.elapsedTime = 0;
         this.startTime = Date.now()
+        this.gameOverFlag = false;
+        this.firstClickDone = false;
     }
 
     // Create and shuffle the deck

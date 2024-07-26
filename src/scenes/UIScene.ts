@@ -69,9 +69,9 @@ export class UIScene extends Phaser.Scene {
             0,
             (nextState: boolean) => {
                 if (!this.inputEnabled) return;
-                // console.log(`Next state: ${nextState}`);
+                // 
                 // You can add more logic here to handle the toggle action
-                
+                console.log("toglle swithc called")
                 var gamemanager : GameManager = this.registry.get("gameManager")
                 gamemanager.updateStats()
                 toggleThreeModeActive(nextState);
@@ -209,7 +209,36 @@ export class UIScene extends Phaser.Scene {
         this.calculateContainerHeightPercentage(height)
         this.updateTextPos()
         
-
+        console.log("resize called")
+        if (this.game.device.os.android || this.game.device.os.iOS) {
+            if (innerWidth > innerHeight) {
+                this.handleMobileLandscape()
+            } else {
+                this.handleMobilePortrait()
+            }
+        }
+        
+    }
+    handleMobileLandscape()
+    {
+        if(this.scale.isFullscreen) {
+            this.elementsContainer.scale *= 2
+            this.textContainer.scale *= 1.2
+            console.log(this.elementsContainer.x)
+            this.elementsContainer.x = window.innerWidth
+            this.textContainer.x = 10
+        }
+        
+    }
+    handleMobilePortrait()
+    {
+        
+            console.log("elem width: " + this.elementsContainer.width)
+            this.elementsContainer.scale *= 3.5;
+            // this.textContainer.scale *= 1.2
+            console.log(this.elementsContainer.x)
+            this.elementsContainer.x = window.innerWidth
+            this.elementsContainer.y = window.innerHeight
         
     }
 
@@ -235,23 +264,39 @@ export class UIScene extends Phaser.Scene {
         this.registry.set('topUiWidthPercentage', 1.5*heightPercentage/100)
     }
     updateTextPos(){
+        console.log("update text pos")
         this.timeText.x = this.scoreText.x + this.scoreText.width
         this.movesText.x = this.timeText.x + this.timeText.width
 
         let topUI = this.registry.get("topUiWidthPercentage");
         if (topUI==undefined) topUI = 0.01;
 
+        // if (!this.game.device.os.windows)
         
         
         this.elementsContainer.y = topUI*this.scale.height
         this.textContainer.y = topUI*this.scale.height
 
         
+
+        
         this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
         if (this.registry.get("isFullscreen")) {
-            this.elementsContainer.y = this.scale.height *0.95
-            this.textContainer.y = this.scale.height * 0.95
+            this.elementsContainer.y = this.scale.height *0.925
+            this.textContainer.y = this.scale.height * 0.925
+
+            if (this.game.device.os.android || this.game.device.os.iOS) {
+                this.elementsContainer.y = this.scale.height *0.9
+                this.textContainer.y = this.scale.height * 0.9 
+            }
+        }
+        else {
+            this.textContainer.y = topUI*this.scale.height
+            console.log(topUI, this.scale.height, this.textContainer.y)
+            if (this.game.device.os.android || this.game.device.os.iOS) {
+                this.elementsContainer.y = this.scale.height *0.8
+            }
         }
 
     }

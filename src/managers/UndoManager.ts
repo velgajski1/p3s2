@@ -45,13 +45,17 @@ export default class UndoManager {
     }
 
     public saveState(state: GameState): void {
+
         const copiedState = this.deepCopyState(state);
         const lastState = this.states[this.states.length - 1];
         const totalCards = this.countTotalCards(copiedState);
 
-        if (totalCards === 52 && (!lastState || !this.areStatesEqual(lastState, copiedState))) {
+
+        
+        if (totalCards == 52 && (!lastState || !this.areStatesEqual(lastState, copiedState))) {
             this.states.push(copiedState);
             HintManager.getInstance().clearHints();
+            
             if (this.states.length > 1) {
                 UndoManager.gameManager.incrementMoves()
             }
@@ -60,11 +64,16 @@ export default class UndoManager {
     }
 
     private deepCopyState(state: GameState): GameState {
+        
+        
+        
         const tableauPiles = state.tableauPiles.map(pile => [...pile]);
         const foundationPiles = state.foundationPiles.map(pile => [...pile]);
         const stockPile = [...state.stockPile];
         const wastePile = [...state.wastePile];
         const score = state.score;
+
+
 
         const flippedCounts = tableauPiles.map(pile => 
             pile.reduce((count, card) => count + (card.isFaceUp ? 1 : 0), 0)
@@ -88,10 +97,12 @@ export default class UndoManager {
     }
 
     private areStatesEqual(state1: GameState, state2: GameState): boolean {
+        
         if (state1.tableauPiles.length !== state2.tableauPiles.length ||
             state1.foundationPiles.length !== state2.foundationPiles.length ||
             state1.stockPile.length !== state2.stockPile.length ||
             state1.wastePile.length !== state2.wastePile.length) {
+            
             return false;
         }
 
@@ -110,6 +121,7 @@ export default class UndoManager {
         }
 
         for (let i = 0; i < state1.foundationPiles.length; i++) {
+            
             if (!comparePiles(state1.foundationPiles[i], state2.foundationPiles[i])) {
                 return false;
             }

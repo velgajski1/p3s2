@@ -25,16 +25,17 @@ export class BaseMenuScene extends Phaser.Scene {
     }
 
     private createModalBackground(): void {
-        console.log("createModalBackground")
+        
         this.modalBackground = this.add.graphics({ fillStyle: { color: 0x000000, alpha: 0.5 } });
-        this.modalBackground.fillRect(0, 0, this.scale.width, this.scale.height);
-        this.modalBackground.setInteractive({useHandCursor: false, hitArea : new Phaser.Geom.Rectangle(0,0,this.scale.width, this.scale.height), hitAreaCallback:Phaser.Geom.Rectangle.Contains})
+        this.modalBackground.fillRect(0, 0, this.scale.width*4, this.scale.height*4);
+        this.modalBackground.setInteractive({useHandCursor: false, hitArea : new Phaser.Geom.Rectangle(0,0,this.scale.width*4, this.scale.height*4), hitAreaCallback:Phaser.Geom.Rectangle.Contains})
     }
 
-    restartGame = () => {
+    restartGame = (skipStats : boolean = false) => {
+        
         console.log("restart game called")
         var gamemanager : GameManager = this.registry.get("gameManager")
-        gamemanager.updateStats()
+        if (!skipStats) gamemanager.updateStats()
         gamemanager.restart()
         
         this.remove()

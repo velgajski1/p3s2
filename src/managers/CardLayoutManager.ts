@@ -31,7 +31,7 @@ class CardLayoutManager {
         addEventListener('rightHandedEvent', () => {this.update()});
 
         setTimeout(() => {
-            // console.log("test hint")
+            // 
         //    this.hintStock()
         //    this.hintWaste()
         //    this.hintTabIdx(2)
@@ -65,7 +65,8 @@ class CardLayoutManager {
 
     // Layout method for waste pile, which might have slight overlap
     layoutWastePile(cards: Card[], skipAnim:boolean = true) {
-        // console.log("layoutWastePile")
+        
+        // 
         cards.forEach((card, index) => {
             // 
             let wDeltaX : number = WASTE_DELTA_X[RIGHT_HANDED_MODE_IDX]
@@ -90,7 +91,7 @@ class CardLayoutManager {
             }
 
             card.wasteDeltaX += rightHandeWasteDelta;
-            // console.log(card.wasteDeltaX)
+            // 
             let targetX = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX] + WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX] + index * WASTE_OVERLAP + card.wasteDeltaX;
             let targetY =  STOCK_COORDS.y
             if (skipAnim) {
@@ -152,7 +153,7 @@ class CardLayoutManager {
                
            } else {
                y += TABLEU_COORDS_DELTA.y_covered; // Use smaller vertical offset for face-down cards
-            //    console.log("y pos: " + y);
+            //    
            }
 
            if (card.inTransition) {
@@ -214,7 +215,7 @@ class CardLayoutManager {
     }
 
     addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = 0.2, width = 178, height = 251) {
-        console.log("Add new hint outline")
+        
         this.removeHintOutline()
         this.outline = scene.add.sprite(sprite.x, sprite.y, 'reddish_glow_outline' ).setScale(sprite.scale)
         scene.add.existing(this.outline)
@@ -235,7 +236,7 @@ class CardLayoutManager {
     // addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX: number = 0, deltaY: number = 0, alpha = 0.2, width = 178, height = 251) {
     //     this.removeHintOutline();
     
-    //     // console.log("add outline: " + alpha)
+    //     // 
     //     // Generate the texture only if it hasn't been generated yet
     //     if (!CardLayoutManager.textureGenerated) {
     //         // Create a graphics object
@@ -362,6 +363,7 @@ class CardLayoutManager {
         this.wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
         this.wasteIndicator.setScale(CARD_SCALE);
         cont.add(this.wasteIndicator);
+        this.wasteIndicator.visible = false;
     }    
     // Add a visual indicator for the stock pile
     addStockIndicator(pileManager: PileManager, scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {

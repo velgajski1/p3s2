@@ -50,7 +50,7 @@ export default class BaseScene extends Phaser.Scene {
         }
         private isMobile() {
             const userAgent = navigator.userAgent
-            // console.log(this.sys.game.device.os.android,this.sys.game.device.os.iOS,this.sys.game.device.os.windows)
+            // 
             return this.sys.game.device.os.android || 
                    this.sys.game.device.os.iOS;
         }
@@ -63,7 +63,7 @@ export default class BaseScene extends Phaser.Scene {
             try {
                 this.scale.startFullscreen();
             } catch (e) {
-                console.log(e)
+                
             }
             
         }
