@@ -213,7 +213,7 @@ export class GameManager {
     }
 
     updateStats() {
-        console.log("update stats called")
+      
         statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
     }
 

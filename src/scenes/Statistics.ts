@@ -61,11 +61,13 @@ export class Statistics extends BaseMenuScene {
         const statsData = [
             { lang: LanguageConfig.GamesPlayed, label: STAT_LABELS.GamesPlayed, value: statsManager.gamesPlayed },
             { lang: LanguageConfig.GamesWon, label: STAT_LABELS.GamesWon, value: statsManager.gamesWon },
+            { lang: LanguageConfig.GamesLost, label: STAT_LABELS.GamesLost, value: statsManager.gamesLost },
             { lang: LanguageConfig.WinPercentage, label: STAT_LABELS.WinPercentage, value: statsManager.winPercentage + "%" },
-            { lang: LanguageConfig.CurrentWinStreak, label: STAT_LABELS.CurrentWinStreak, value: statsManager.currentWinStreak },
-            { lang: LanguageConfig.LongestWinStreak, label: STAT_LABELS.LongestWinStreak, value: statsManager.longestWinStreak },
+            // { lang: LanguageConfig.CurrentWinStreak, label: STAT_LABELS.CurrentWinStreak, value: statsManager.currentWinStreak },
+            // { lang: LanguageConfig.LongestWinStreak, label: STAT_LABELS.LongestWinStreak, value: statsManager.longestWinStreak },
             { lang: LanguageConfig.TopScore, label: STAT_LABELS.TopScore, value: statsManager.topScore },
             { lang: LanguageConfig.BestTime, label: STAT_LABELS.BestTime, value: statsManager._formatTime(statsManager.bestTime) },
+            { lang: LanguageConfig.AvgTime, label: STAT_LABELS.AverageTime, value: statsManager._formatTime(statsManager.avgTimePlayed) },
         ];
 
         statsData.forEach(element => {

@@ -9,9 +9,11 @@ export const BACKGROUND_COLORS = [
 export const STAT_LABELS = {
     GamesPlayed: 'Games Played',
     GamesWon: 'Games Won',
+    GamesLost: 'Games Lost',
     WinPercentage: 'Win Percentage',
     CurrentWinStreak: 'Current Win Streak',
     LongestWinStreak: 'Longest Win Streak',
+    AverageTime: 'Avg. Time/Game',
     TopScore: 'Top Score',
     BestTime: 'Best Time',
 };

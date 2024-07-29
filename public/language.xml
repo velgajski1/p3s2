@@ -13,11 +13,13 @@
         <Cancel>Cancel</Cancel>
         <GamesPlayed>Games Played</GamesPlayed>
         <GamesWon>Games Won</GamesWon>
+        <GamesLost>Games Lost</GamesLost>
         <WinPercentage>Win Percentage</WinPercentage>
         <CurrentWinStreak>Current Win Streak</CurrentWinStreak>
         <LongestWinStreak>Longest Win Streak</LongestWinStreak>
         <TopScore>Top Score</TopScore>
         <BestTime>Best Time</BestTime>
+        <AvgTime>Avg. Time/Game</AvgTime>
         <GameSettings>Game Settings</GameSettings>
         <VisualSettings>Visual Settings</VisualSettings>
         <SoundOnOff>Sound On/Off</SoundOnOff>

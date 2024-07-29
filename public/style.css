@@ -73,13 +73,7 @@ body {
 
 
 @media (max-width: 750px) {
-    .game-link:not(:last-child)::after {
-        content: ''; /* Hide separators */
-    }
 
-    .game-link:not(:last-child) {
-        display: none; /* Hide all links except 'All Games' */
-    }
 
     .game-link:last-child {
         display: inline; /* Ensure 'All Games' is always shown */

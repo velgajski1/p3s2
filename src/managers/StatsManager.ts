@@ -12,6 +12,7 @@ class StatsManager {
     private _isGameActive: boolean;
     private _currentScore: number;
     private _currentTimePlayed: number; // Stored in seconds
+    private _totalTimePlayed: number;
 
     private constructor() {
         this.loadStats();
@@ -36,6 +37,7 @@ class StatsManager {
         this._isGameActive = this._getStatFromLocalStorage(`${modePrefix}isGameActive`, false);
         this._currentScore = this._getStatFromLocalStorage(`${modePrefix}currentScore`, 0);
         this._currentTimePlayed = this._getStatFromLocalStorage(`${modePrefix}currentTimePlayed`, 0);
+        this._totalTimePlayed = this._getStatFromLocalStorage(`${modePrefix}totalTimePlayed`,0);
 
         
         
@@ -60,6 +62,19 @@ class StatsManager {
         this._gamesPlayed = value;
         this._saveStatToLocalStorage(`${this.getModePrefix()}gamesPlayed`, value);
     }
+
+    get totalTimePlayed() : number {
+        return this._totalTimePlayed;
+    }
+
+    get avgTimePlayed() : number {
+        return this.totalTimePlayed / this.gamesWon;
+    }
+
+    set totalTimePlayed(val : number) {
+        this._totalTimePlayed = val;
+        this._saveStatToLocalStorage(`${this.getModePrefix()}totalTimePlayed`, val);
+    } 
 
     // Getter and Setter for games won
     get gamesWon(): number {
@@ -122,6 +137,10 @@ class StatsManager {
         return this._gamesPlayed > 0 ? parseFloat(((this._gamesWon / this._gamesPlayed) * 100).toFixed(1)) : 0;
     }
 
+    get gamesLost() : number {
+        return this._gamesPlayed - this.gamesWon;
+    }
+
     // Utility methods
     private _getStatFromLocalStorage<T>(key: string, defaultValue: T): T {
         const value = localStorage.getItem(key);
@@ -138,6 +157,8 @@ class StatsManager {
     }
 
     public _formatTime(seconds: number): string {
+        if (seconds <= 0) return "00:00:00"
+        if (isNaN(seconds)) return "00:00:00"
         const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
         const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
         const s = String(seconds % 60).padStart(2, '0');
@@ -154,13 +175,15 @@ class StatsManager {
 
     // Methods to update statistics based on game outcomes
     public updateStatsAfterGame(isWin: boolean, score: number, time: number): void {
-        console.log(isWin, score, time);
+  
         this.loadStats(true)
         this.gamesPlayed += 1;
+        // this.totalTimePlayed = time + this.totalTimePlayed;
 
         if (isWin) {
             this.gamesWon += 1;
             this.currentWinStreak += 1;
+            this.totalTimePlayed = time + this.totalTimePlayed;
 
             if (this._currentWinStreak > this._longestWinStreak) {
                 this._longestWinStreak = this._currentWinStreak;
@@ -203,6 +226,7 @@ class StatsManager {
         this._isGameActive = false;
         this._currentScore = 0;
         this._currentTimePlayed = 0;
+        this._totalTimePlayed = 0;
 
         // Clear local storage
         localStorage.removeItem(`${modePrefix}gamesPlayed`);
@@ -215,6 +239,7 @@ class StatsManager {
         localStorage.removeItem(`${modePrefix}isGameActive`);
         localStorage.removeItem(`${modePrefix}currentScore`);
         localStorage.removeItem(`${modePrefix}currentTimePlayed`);
+        localStorage.removeItem(`${modePrefix}totalTimePlayed`);
     }
 
     // Method to start a game

@@ -293,9 +293,14 @@ export class UIScene extends Phaser.Scene {
         }
         else {
             this.textContainer.y = topUI*this.scale.height
-            console.log(topUI, this.scale.height, this.textContainer.y)
+            
             if (this.game.device.os.android || this.game.device.os.iOS) {
-                this.elementsContainer.y = this.scale.height *0.8
+                if (!this.game.device.os.iPad) {
+                    this.elementsContainer.y = this.scale.height *0.8
+                } else if (this.game.device.os.iPad && innerHeight > innerWidth) {
+                    this.elementsContainer.y = this.scale.height *0.8
+                }
+                
             }
         }
 
