@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { CardNameManager } from '../managers/CardNameManager';
 import { loadSettings } from '../config/Config';
+import { GameManager } from '../managers/GameManager';
 
 export class Preloader extends Scene {
     cardManager: CardNameManager;
@@ -84,8 +85,9 @@ export class Preloader extends Scene {
 
         this.load.json('cardData', 'assets.json');
 
-        const isMobile = this.isMobile();
+        const isMobile = this.game.device.os.android || this.game.device.os.iOS;
 
+        GameManager.isMobile = isMobile;
         // Load the appropriate multiatlas
         if (isMobile) {
             this.load.multiatlas('cards', 'assets_mobile.json', 'assets');

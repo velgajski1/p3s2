@@ -1,10 +1,11 @@
 // CardLayoutManager.ts
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
-import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, HINT_OVERLAY_DURATION, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
+import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
 import ControlManager from "./ControlManager";
+import { GameManager } from "./GameManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
 
@@ -70,6 +71,7 @@ class CardLayoutManager {
         cards.forEach((card, index) => {
             // 
             let wDeltaX : number = WASTE_DELTA_X[RIGHT_HANDED_MODE_IDX]
+            if (GameManager.isMobile) wDeltaX*=1.5
             card.finishTweens()
             card.wasteDeltaX = 0;
             if (cards.length > 2) {
@@ -146,7 +148,10 @@ class CardLayoutManager {
                }
                else
                {
-                   y += TABLEU_COORDS_DELTA.y;
+                   let tabCoordsDeltaY = TABLEU_COORDS_DELTA.y;
+                   if (GameManager.isMobile) tabCoordsDeltaY+=TAB_DELTA_Y_MOBILE_EXTRA
+                   y += tabCoordsDeltaY;
+                   
                   
                   
                }

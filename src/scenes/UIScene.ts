@@ -27,6 +27,8 @@ export class UIScene extends Phaser.Scene {
     inputEnabled: boolean =  true;
     allInteractive : [ImageButton];
     toggleSwitch: ToggleSwitch;
+    elementsContainer2: GameObjects.Container;
+    elementsContainer3: GameObjects.Container;
 
     constructor() {
         super('UIScene');
@@ -38,6 +40,8 @@ export class UIScene extends Phaser.Scene {
         // Create UI elements here
         this.textContainer = this.add.container(0, 0);
         this.elementsContainer = this.add.container(0, 0);
+        this.elementsContainer2 = this.add.container(0, 0);
+        this.elementsContainer3 = this.add.container(0, 0);
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = { 
             fontSize: '18px', 
             color: '#FFFFFF', 
@@ -47,6 +51,7 @@ export class UIScene extends Phaser.Scene {
 
         this.createTextElements();
         this.createUIElements()
+        this.createUIElementsMobile()
         this.gameManager = this.registry.get('gameManager');
 
 
@@ -132,8 +137,86 @@ export class UIScene extends Phaser.Scene {
          
     }
 
+    createUIElementsMobile() {
+        let deltaX = -80
+        let deltaXLeft = 20;
+        this.toggleSwitch = new ToggleSwitch(
+            this,
+            deltaX,
+            0,
+            'klondike_1_turn', // 1-card pull off texture
+            'klondike_1_turn_selected', // 1-card pull on texture
+            'klondike_3_turn', // 3-card pull off texture
+            'klondike_3_turn_selected', // 3-card pull on texture
+            0, 
+            55,
+            (nextState: boolean) => {
+                if (!this.inputEnabled) return;
+
+                console.log("toglle swithc called")
+                var gamemanager : GameManager = this.registry.get("gameManager")
+                gamemanager.updateStats()
+                toggleThreeModeActive(nextState);
+                gamemanager.restart()
+
+            },
+            STOCK_THREE_MODE_ACTIVE
+        );
+
+         this.elementsContainer2.add(this.toggleSwitch);
+     
+
+         this.menuBut = new ImageButton(this, deltaXLeft, 0, 'menu', 'menu', () => {
+            if (!this.inputEnabled) return;
+            if (this.scene.getIndex('MainMenu')>-1) {
+                this.scene.launch("MainMenu").bringToTop("MainMenu");
+            }
+            else if (this.scene) {
+                this.scene.start("MainMenu").bringToTop("MainMenu");
+            } 
+
+            this.input.setDefaultCursor('default');
+            
+         })
+         this.elementsContainer3.add(this.menuBut)
+         this.menuBut.setOrigin(0, 0);
+
+         this.settingsBut = new ImageButton(this, deltaXLeft, 55, 'settings', 'settings', () => {
+            if (!this.inputEnabled) return;
+            this.scene.launch("Settings").bringToTop("Settings");
+            this.input.setDefaultCursor('default');
+         })
+         this.settingsBut.setDepth(50000)
+         this.elementsContainer3.add(this.settingsBut)
+         this.settingsBut.setOrigin(0, 0);
+
+         this.hintBut = new ImageButton(this, deltaX, 114+50, 'hint', 'hint', () => {
+            if (!this.inputEnabled) return;
+            let gamemanager : GameManager = this.registry.get('gameManager')
+            HintManager.getInstance().getHint(gamemanager.pileManager)
+            
+         })
+         this.hintBut.skipClickSound = true;
+         this.elementsContainer2.add(this.hintBut)
+         this.hintBut.setOrigin(0, 0);
+
+         this.undoBut = new ImageButton(this, deltaX, 169+50, 'undo', 'undo', () => {
+            if (!this.inputEnabled) return;
+            this.gameManager = this.registry.get("gameManager")
+            this.gameManager.controlManager.handleUKey()
+         })
+         this.elementsContainer2.add(this.undoBut)
+         this.undoBut.setOrigin(0, 0);
+         this.undoBut.skipClickSound = true
+
+         this.elementsContainer2.visible = this.elementsContainer3.visible = false
+
+    }
+
     update(time: number, delta: number): void
     {
+        this.elementsContainer3.visible = this.elementsContainer2.visible
+        this.elementsContainer3.setScale(this.elementsContainer2.scale)
         // 
         this.scoreText.text = ""+translate(LanguageConfig.Score)+this.gameManager.getCurrentScore()
         this.timeText.text = " | "+translate(LanguageConfig.Time) + formatTime(this.gameManager.getElapsedTime())
@@ -197,6 +280,10 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer.x = elementsStartX;
         this.elementsContainer.setScale(scale)
 
+        this.elementsContainer2.setPosition(elementsStartX, 0)
+        this.elementsContainer2.x = elementsStartX;
+        this.elementsContainer2.setScale(scale)
+
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
             fontSize: fontsize+'px',
             color: '#FFFFFF',
@@ -223,22 +310,41 @@ export class UIScene extends Phaser.Scene {
     {
         if(this.scale.isFullscreen) {
             this.elementsContainer.scale *= 2
+            this.elementsContainer2.scale *= 2
             this.textContainer.scale *= 1.2
             console.log(this.elementsContainer.x)
             this.elementsContainer.x = window.innerWidth
+            this.elementsContainer2.x = window.innerWidth
             this.textContainer.x = 10
+            this.movesText.setFontSize(19)
+            this.scoreText.setFontSize(19)
+            this.timeText.setFontSize(19)
+            this.movesText.visible = false;
+
+            this.elementsContainer.visible = false;
+            this.elementsContainer2.visible = true;
+            this.elementsContainer3.visible = this.elementsContainer2.visible
+        } else {
+            this.elementsContainer.visible = true;
+            this.elementsContainer2.visible = false;
         }
         
     }
     handleMobilePortrait()
     {
         
+            this.elementsContainer2.visible = false;
+            this.elementsContainer.visible = true;
             console.log("elem width: " + this.elementsContainer.width)
             this.elementsContainer.scale *= 3.5;
-            // this.textContainer.scale *= 1.2
+            // this.textContainer.scale *= 1.3
+            this.movesText.setFontSize(22)
+            this.scoreText.setFontSize(22)
+            this.timeText.setFontSize(22)
             console.log(this.elementsContainer.x)
             this.elementsContainer.x = window.innerWidth
             this.elementsContainer.y = window.innerHeight
+            this.movesText.visible = false;
         
     }
 
@@ -275,6 +381,8 @@ export class UIScene extends Phaser.Scene {
         
         
         this.elementsContainer.y = topUI*this.scale.height
+        this.elementsContainer2.y = topUI*this.scale.height
+        this.elementsContainer3.y = topUI*this.scale.height
         this.textContainer.y = topUI*this.scale.height
 
         
@@ -284,10 +392,14 @@ export class UIScene extends Phaser.Scene {
 
         if (this.registry.get("isFullscreen")) {
             this.elementsContainer.y = this.scale.height *0.925
+            this.elementsContainer2.y = this.scale.height *0.925
+            this.elementsContainer2.y = this.scale.height *0.025
             this.textContainer.y = this.scale.height * 0.925
 
             if (this.game.device.os.android || this.game.device.os.iOS) {
                 this.elementsContainer.y = this.scale.height *0.9
+                this.elementsContainer2.y = this.scale.height *0.07
+                this.elementsContainer3.y = this.scale.height *0.07
                 this.textContainer.y = this.scale.height * 0.9 
             }
         }
@@ -295,11 +407,13 @@ export class UIScene extends Phaser.Scene {
             this.textContainer.y = topUI*this.scale.height
             
             if (this.game.device.os.android || this.game.device.os.iOS) {
+                console.log("port")
                 if (!this.game.device.os.iPad) {
-                    this.elementsContainer.y = this.scale.height *0.8
+                    this.elementsContainer.y = this.scale.height *0.86
                 } else if (this.game.device.os.iPad && innerHeight > innerWidth) {
-                    this.elementsContainer.y = this.scale.height *0.8
+                    this.elementsContainer.y = this.scale.height *0.86
                 }
+                
                 
             }
         }

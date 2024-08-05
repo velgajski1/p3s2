@@ -149,7 +149,7 @@ export default class HintManager {
             });
         }
     
-        if (!stockTopCard) {
+        if (!stockTopCard && this.pileManager.getWastePile().length > 0) {
             this.hints.push({
                 first: () => {this.pileManager.cardLayoutManager.hintStock()  },
                 second: () => { 
@@ -222,7 +222,11 @@ export default class HintManager {
         }
 
         // Cycle through hints
-        if (this.hints.length == 0) return;
+        if (this.hints.length == 0){
+            SoundManager.instance.noHint.play();
+            return;
+
+        } 
         this.lastHintIndex = (this.lastHintIndex + 1) % this.hints.length;
         const hint = this.hints[this.lastHintIndex];
         hint.first()

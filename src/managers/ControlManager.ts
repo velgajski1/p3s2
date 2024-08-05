@@ -31,7 +31,10 @@ class ControlManager {
     keyH: any;
     dragAndDrop: boolean = false;
 
+    cardsDragged : number = 0;
+
     constructor(pileManager: PileManager) {
+        this.enableControls()
         this.pileManager = pileManager;
         this.pileManager.gameplayContainer.setInteractive()
         this.setupGlobalListeners();  // Setup global listeners for move and up events
@@ -40,6 +43,10 @@ class ControlManager {
     disableControls()
     {
         this.enabled = false;
+    }
+
+    enableControls() {
+        this.enabled = true
     }
 
     public getActiveCard(): Card | undefined { return this.activeCard; }
@@ -186,10 +193,11 @@ class ControlManager {
                     SOUND_ACTIVE && SoundManager.instance.grabCard.play()
                     this.dragging = true;
                     setDragActive(this.dragging)
-                    this.activeCard.setDepth(this.activeCard.depth + 10000);
+                    let delta = 100000 + this.cardsDragged++;
+                    this.activeCard.setDepth(this.activeCard.depth + delta);
                     this.substack.forEach(s => {
                         if (s == this.activeCard) return;
-                        s.setDepth(s.depth + 10000);
+                        s.setDepth(s.depth + delta);
                     });
                     
 
@@ -224,10 +232,10 @@ class ControlManager {
             if (this.activeCard) {
                 
                 if (this.dragging) {
-                    this.activeCard.setDepth(this.activeCard.depth - 10000);
+                    this.activeCard.setDepth(this.activeCard.depth - 100000);
                     this.substack.forEach(s => {
                         if (s == this.activeCard) return;
-                        s.setDepth(s.depth - 10000);
+                        s.setDepth(s.depth - 100000);
                     });
 
                     
@@ -307,102 +315,260 @@ class ControlManager {
     }
 
     handleCardDrop(activeCard: Card): void {
-        
-        
         const overlappedCards = this.findDropTargets(activeCard);
-        
     
         const tableauIndex = this.getTableauIndexFromCoordinates(activeCard.x, activeCard.y, 140);
-        const foundationIndex = this.getFoundationIndexFromCoordinates(activeCard.x, activeCard.y, 140);
-        
+        const foundationIndexes = this.getFoundationIndexFromCoordinates(activeCard.x, activeCard.y, 140);
+        console.log(foundationIndexes);
     
         let placed = false;
     
-        // Attempt to place the card on each overlapped card until one is successful
-        for (let card of overlappedCards) {
-            if (card.pileType == PileType.Tableau) {
-                if (this.canPlaceCardOnTableau(activeCard, card)) {
-                    let dropIdx = this.pileManager.getTableuPileIndexFromCard(card);
-                    if (dropIdx >= 0) {
-                        
-                        if (activeCard.pileType == PileType.Foundation) {
-                            this.pileManager.gameManager.incrementScore(-15)
-                        } else  if (activeCard.pileType == PileType.Waste) {
-                            this.pileManager.gameManager.incrementScore(5)
-                        }
-
-
-                        this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack])
-                        this.pileManager.cardLayoutManager.init(this.pileManager)
-                        this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true)
-                        this.placeCardOnTableau(activeCard, dropIdx);
-                        this.substack.forEach(c => {
-                            if (c === activeCard) return;
-                            this.placeCardOnTableau(c, dropIdx);
-                        });
-                        placed = true;
-                        this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles())
-                        UndoManager.getInstance().saveState(this.pileManager.getState());
-                        break; // Stop after successful placement
-                    }
-                }
-            }
-            else if (card.pileType == PileType.Foundation)
-            {
-                
-                this.pileManager.gameManager.incrementScore(10)
-                let foundIndex = this.pileManager.getFoundationPileIndexFromCard(card)
-                if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
-                    // Valid drop on a foundation pile
-                    this.pileManager.addCardToFoundationPile(activeCard, foundIndex);
-                    UndoManager.getInstance().saveState(this.pileManager.getState());
-                    placed = true;
-                    break; // Stop after successful placement
-                }          
-            }
-
-
-        }
+        // Attempt to place the card on each foundation pile first
+        for (let i = 0; i < foundationIndexes.length; i++) {
+            const foundationIndex = foundationIndexes[i];
     
-        if (!placed) {
-            if (tableauIndex !== -1 && this.pileManager.getTableauPiles()[tableauIndex].length === 0 && activeCard.rank === Rank.King) {
-                // Valid drop on an empty tableau pile (Kings only)
-                if (activeCard.pileType == PileType.Waste) {
-                    this.pileManager.gameManager.incrementScore(5)
-                    // this.pileManager.gameManager.incrementMoves();
-                }
-                this.placeCardOnTableau(activeCard, tableauIndex);
-                this.substack.forEach(c => {
-                    if (c === activeCard) return;
-                    this.placeCardOnTableau(c, tableauIndex);
-                });
-               
-                this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles())
-                UndoManager.getInstance().saveState(this.pileManager.getState());
-            } else if (foundationIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundationIndex)) {
+            if (this.canPlaceCardOnFoundation(activeCard, foundationIndex)) {
                 // Valid drop on a foundation pile
                 if (this.activeCard?.pileType != PileType.Foundation) {
-                    // this.pileManager.gameManager.incrementMoves()
                     this.pileManager.gameManager.incrementScore(10);
                     setTimeout(() => {
                         UndoManager.getInstance().saveState(this.pileManager.getState());
                     }, 200);
-                    
                 }
+    
                 this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
-            } else {
-                // Invalid drop, reset the card and any substack to original position
-                if (this.activeCard){
-                    this.resetDraggedCards(this.activeCard, this.substack);
-                    if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this)
-                    
-                } 
+                placed = true;
+                break;
             }
-            
-            
         }
-        this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile())
+    
+        // If not placed on foundation, attempt tableau piles
+        if (!placed) {
+            // First, try placing on foundation piles
+            for (let card of overlappedCards) {
+                if (card.pileType == PileType.Foundation) {
+                    let foundIndex = this.pileManager.getFoundationPileIndexFromCard(card);
+                    if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
+                        // Valid drop on a foundation pile
+                        if (activeCard.pileType != PileType.Foundation) {
+                            this.pileManager.gameManager.incrementScore(10);
+                            setTimeout(() => {
+                                UndoManager.getInstance().saveState(this.pileManager.getState());
+                            }, 200);
+                        }
+                        this.pileManager.addCardToFoundationPile(activeCard, foundIndex);
+                        placed = true;
+                        break; // Stop after successful placement
+                    }
+                }
+            }
+        
+            // If not placed on foundation, try tableau piles
+            if (!placed) {
+                for (let card of overlappedCards) {
+                    if (card.pileType == PileType.Tableau) {
+                        if (this.canPlaceCardOnTableau(activeCard, card)) {
+                            let dropIdx = this.pileManager.getTableuPileIndexFromCard(card);
+                            if (dropIdx >= 0) {
+                                if (activeCard.pileType == PileType.Foundation) {
+                                    this.pileManager.gameManager.incrementScore(-15);
+                                } else if (activeCard.pileType == PileType.Waste) {
+                                    this.pileManager.gameManager.incrementScore(5);
+                                }
+        
+                                this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack]);
+                                this.pileManager.cardLayoutManager.init(this.pileManager);
+                                this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true);
+                                this.placeCardOnTableau(activeCard, dropIdx);
+                                this.substack.forEach(c => {
+                                    if (c === activeCard) return;
+                                    this.placeCardOnTableau(c, dropIdx);
+                                });
+                                placed = true;
+                                this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
+                                UndoManager.getInstance().saveState(this.pileManager.getState());
+                                break; // Stop after successful placement
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+    
+        // If not placed, check for special case with Kings on empty tableau piles
+        // if (!placed) {
+        //     // console.log(tableauIndex, this.pileManager.getTableauPiles()[tableauIndex].length, activeCard.rank)
+        //     if (tableauIndex !== -1 && this.pileManager.getTableauPiles()[tableauIndex].length === 0 && activeCard.rank === Rank.King) {
+        //         // Valid drop on an empty tableau pile (Kings only)
+        //         if (activeCard.pileType == PileType.Waste) {
+        //             this.pileManager.gameManager.incrementScore(5);
+        //         }
+        //         this.placeCardOnTableau(activeCard, tableauIndex);
+        //         this.substack.forEach(c => {
+        //             if (c === activeCard) return;
+        //             this.placeCardOnTableau(c, tableauIndex);
+        //         });
+    
+        //         this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
+        //         UndoManager.getInstance().saveState(this.pileManager.getState());
+        //     } else {
+        //         // Invalid drop, reset the card and any substack to the original position
+        //         if (this.activeCard) {
+        //             this.resetDraggedCards(this.activeCard, this.substack);
+        //             if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this);
+        //         }
+        //     }
+        // }
+
+        if (!placed) {
+            let validDropFound = false;
+        
+            for (let i = 0; i < tableauIndex.length; i++) {
+                let currentIndex = tableauIndex[i];
+                let currentPile = this.pileManager.getTableauPiles()[currentIndex];
+        
+                // Check if the drop is valid for this pile
+                if (currentPile.length === 0 && activeCard.rank === Rank.King) {
+                    // Valid drop on an empty tableau pile (Kings only)
+                    if (activeCard.pileType == PileType.Waste) {
+                        this.pileManager.gameManager.incrementScore(5);
+                    }
+                    this.placeCardOnTableau(activeCard, currentIndex);
+                    this.substack.forEach(c => {
+                        if (c === activeCard) return;
+                        this.placeCardOnTableau(c, currentIndex);
+                    });
+        
+                    this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
+                    UndoManager.getInstance().saveState(this.pileManager.getState());
+                    validDropFound = true;
+                    break; // Exit the loop once a valid drop is found
+                }
+            }
+        
+            if (!validDropFound) {
+                // Invalid drop, reset the card and any substack to the original position
+                if (this.activeCard) {
+                    this.resetDraggedCards(this.activeCard, this.substack);
+                    if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this);
+                }
+            }
+        }
+        
+    
+        this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile());
     }
+    
+
+    // handleCardDrop(activeCard: Card): void {
+        
+        
+    //     const overlappedCards = this.findDropTargets(activeCard);
+        
+    
+    //     const tableauIndex = this.getTableauIndexFromCoordinates(activeCard.x, activeCard.y, 140);
+    //     const foundationIndexes = this.getFoundationIndexFromCoordinates(activeCard.x, activeCard.y, 140);
+    //     console.log(foundationIndexes)
+        
+    
+    //     let placed = false;
+    
+    //     // Attempt to place the card on each overlapped card until one is successful
+    //     for (let card of overlappedCards) {
+    //         if (card.pileType == PileType.Tableau) {
+    //             if (this.canPlaceCardOnTableau(activeCard, card)) {
+    //                 let dropIdx = this.pileManager.getTableuPileIndexFromCard(card);
+    //                 if (dropIdx >= 0) {
+                        
+    //                     if (activeCard.pileType == PileType.Foundation) {
+    //                         this.pileManager.gameManager.incrementScore(-15)
+    //                     } else  if (activeCard.pileType == PileType.Waste) {
+    //                         this.pileManager.gameManager.incrementScore(5)
+    //                     }
+
+
+    //                     this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack])
+    //                     this.pileManager.cardLayoutManager.init(this.pileManager)
+    //                     this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true)
+    //                     this.placeCardOnTableau(activeCard, dropIdx);
+    //                     this.substack.forEach(c => {
+    //                         if (c === activeCard) return;
+    //                         this.placeCardOnTableau(c, dropIdx);
+    //                     });
+    //                     placed = true;
+    //                     this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles())
+    //                     UndoManager.getInstance().saveState(this.pileManager.getState());
+    //                     break; // Stop after successful placement
+    //                 }
+    //             }
+    //         }
+    //         else if (card.pileType == PileType.Foundation)
+    //         {
+    //             this.pileManager.gameManager.incrementScore(10)
+    //             let foundIndex = this.pileManager.getFoundationPileIndexFromCard(card)
+    //             if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
+    //                 // Valid drop on a foundation pile
+    //                 this.pileManager.addCardToFoundationPile(activeCard, foundIndex);
+    //                 UndoManager.getInstance().saveState(this.pileManager.getState());
+    //                 placed = true;
+    //                 break; // Stop after successful placement
+    //             }          
+    //         }
+
+
+    //     }
+    
+    //     if (!placed) {
+    //         if (tableauIndex !== -1 && this.pileManager.getTableauPiles()[tableauIndex].length === 0 && activeCard.rank === Rank.King) {
+    //             // Valid drop on an empty tableau pile (Kings only)
+    //             if (activeCard.pileType == PileType.Waste) {
+    //                 this.pileManager.gameManager.incrementScore(5);
+    //                 // this.pileManager.gameManager.incrementMoves();
+    //             }
+    //             this.placeCardOnTableau(activeCard, tableauIndex);
+    //             this.substack.forEach(c => {
+    //                 if (c === activeCard) return;
+    //                 this.placeCardOnTableau(c, tableauIndex);
+    //             });
+        
+    //             this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
+    //             UndoManager.getInstance().saveState(this.pileManager.getState());
+    //         } else {
+               
+    //             let cardPlaced = false;
+        
+    //             for (let i = 0; i < foundationIndexes.length; i++) {
+    //                 const foundationIndex = foundationIndexes[i];
+        
+    //                 if (this.canPlaceCardOnFoundation(activeCard, foundationIndex)) {
+    //                     // Valid drop on a foundation pile
+    //                     if (this.activeCard?.pileType != PileType.Foundation) {
+    //                         // this.pileManager.gameManager.incrementMoves();
+    //                         this.pileManager.gameManager.incrementScore(10);
+    //                         setTimeout(() => {
+    //                             UndoManager.getInstance().saveState(this.pileManager.getState());
+    //                         }, 200);
+    //                     }
+        
+    //                     this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
+    //                     cardPlaced = true;
+    //                     break;
+    //                 }
+    //             }
+        
+    //             if (!cardPlaced) {
+    //                 // Invalid drop, reset the card and any substack to the original position
+    //                 if (this.activeCard) {
+    //                     this.resetDraggedCards(this.activeCard, this.substack);
+    //                     if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this);
+    //                 }
+    //             }
+    //         }
+    //     }
+        
+    //     this.pileManager.cardLayoutManager.layoutWastePile(this.pileManager.getWastePile())
+    // }
 
     resetDraggedCards(activeCard: Card, substack : Card[])
     {
@@ -413,15 +579,12 @@ class ControlManager {
             this.resetCardDragState(card);
         });
     }
-    
-    
-    getTableauIndexFromCoordinates(x: number, y: number, cardWidth: number): number {
+     getTableauIndexFromCoordinates(x: number, y: number, cardWidth: number): number[] {
         const verticalStart = TABLEU_COORDS_INIT.y - 200; // Extend vertical detection range
         const verticalEnd = TABLEU_COORDS_INIT.y + 300;
     
         if (y >= verticalStart && y <= verticalEnd) {
-            let maxOverlap = 0;
-            let bestIndex = -1;
+            let overlaps = [];
     
             for (let i = 0; i < this.pileManager.getTableauPiles().length; i++) {
                 const pileStartX = TABLEU_COORDS_INIT.x + i * TABLEU_COORDS_DELTA.x;
@@ -429,44 +592,84 @@ class ControlManager {
     
                 // Calculate the overlap with the tableau pile
                 const overlapLeft = Math.max(0, Math.min(x + cardWidth, pileEndX) - Math.max(x, pileStartX));
-                if (overlapLeft > maxOverlap) {
-                    maxOverlap = overlapLeft;
-                    bestIndex = i;
-                }
+                if (overlapLeft > 0) overlaps.push({ index: i, overlap: overlapLeft });
             }
     
-            return bestIndex;
+            // Sort overlaps array by overlap value in descending order
+            overlaps.sort((a, b) => b.overlap - a.overlap);
+    
+            // Extract and return sorted indices
+            return overlaps.map(item => item.index);
         }
     
-        return -1; // Return -1 if no appropriate pile is found or if y-coordinate is out of range
+        return []; // Return empty array if y-coordinate is out of range
     }
     
     
-    getFoundationIndexFromCoordinates(x: number, y: number, cardWidth: number): number {
+    // getTableauIndexFromCoordinates(x: number, y: number, cardWidth: number): number {
+    //     const verticalStart = TABLEU_COORDS_INIT.y - 200; // Extend vertical detection range
+    //     const verticalEnd = TABLEU_COORDS_INIT.y + 300;
+    
+    //     if (y >= verticalStart && y <= verticalEnd) {
+    //         let maxOverlap = 0;
+    //         let bestIndex = -1;
+    
+    //         for (let i = 0; i < this.pileManager.getTableauPiles().length; i++) {
+    //             const pileStartX = TABLEU_COORDS_INIT.x + i * TABLEU_COORDS_DELTA.x;
+    //             const pileEndX = pileStartX + TABLEU_COORDS_DELTA.x; // Assuming piles have uniform width
+    
+    //             // Calculate the overlap with the tableau pile
+    //             const overlapLeft = Math.max(0, Math.min(x + cardWidth, pileEndX) - Math.max(x, pileStartX));
+    //             if (overlapLeft > maxOverlap) {
+    //                 maxOverlap = overlapLeft;
+    //                 bestIndex = i;
+    //             }
+    //         }
+    
+    //         return bestIndex;
+    //     }
+    
+    //     return -1; // Return -1 if no appropriate pile is found or if y-coordinate is out of range
+    // }
+    
+    
+    getFoundationIndexFromCoordinates(x: number, y: number, cardWidth: number): number[] {
         const verticalStart = FOUNDATION_COORDS_INIT.y - 150; // Some vertical tolerance
         const verticalEnd = FOUNDATION_COORDS_INIT.y + 190;   // Some vertical tolerance
+        // cardWidth = FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX]; 
     
         if (y >= verticalStart && y <= verticalEnd) {
-            let maxOverlap = 0;
-            let bestIndex = -1;
+            let overlaps = [];
     
             for (let i = 0; i < 4; i++) { // Assuming there are 4 foundation piles
                 const pileStartX = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + i * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX];
-                const pileEndX = pileStartX + FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX]; // Assuming all foundation piles have the same width
-    
-                // Calculate the overlap with the foundation pile
-                const overlapLeft = Math.max(0, Math.min(x + cardWidth, pileEndX) - Math.max(x, pileStartX));
-                if (overlapLeft > maxOverlap) {
-                    maxOverlap = overlapLeft;
-                    bestIndex = i;
+                const pileEndX = pileStartX +cardWidth; 
+
+                let overlapLeft = 0
+
+                if (x < pileEndX && (x + cardWidth) > pileStartX) {
+                    // Calculate the actual overlap
+                    let overlapStart = Math.max(x, pileStartX);
+                    let overlapEnd = Math.min(x + cardWidth, pileEndX);
+
+                    overlapLeft = overlapEnd - overlapStart;
                 }
+
+                if (overlapLeft > 0)  overlaps.push({ index: i, overlap: overlapLeft });
             }
+
+            console.log(overlaps);
     
-            return bestIndex;
+            // Sort overlaps array by overlap value in descending order
+            overlaps.sort((a, b) => b.overlap - a.overlap);
+    
+            // Extract and return sorted indices
+            return overlaps.map(item => item.index);
         }
     
-        return -1; // Return -1 if no appropriate pile is found or if y-coordinate is out of range
+        return []; // Return empty array if y-coordinate is out of range
     }
+    
     
     
     canPlaceCardOnFoundation(card: Card, index: number): boolean {
@@ -658,15 +861,19 @@ class ControlManager {
             }
     
             // Disable clicks for the cooldown period
-            this.disableCardClicksTemporarily(80);
+            this.disableCardClicksTemporarily(DISABLE_CLICK_DURATION_STOCK);
         }
     }
     
     handleUKey() {
+        console.log(this.activeCard, this.enabled)
         if (this.activeCard) return;
         if (!this.enabled) return;
         if (this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens()) )){
+            
+            console.log(this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens())))
             setTimeout(() => {
+                console.log("timeout call")
                 if (this.pileManager.getAllCards().find(c => c.inTransition || (c.isBeingFlipped==false && c.hasTweens()))) return
                 const undoManager = UndoManager.getInstance();
                 const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
@@ -680,6 +887,7 @@ class ControlManager {
         } 
         const undoManager = UndoManager.getInstance();
         const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
+        console.log(state);
         if (state) {
             this.pileManager.setToGameState(state);
         }
@@ -696,6 +904,7 @@ class ControlManager {
     // Handle the click event based on card's pile type
     private handleCardClick(card: Card) : boolean{
         
+        console.log("click attempt")
         
         
         // Prevent additional clicks if a card click was already processed
@@ -711,6 +920,7 @@ class ControlManager {
         let disableClickDuration = DISABLE_CLICK_DURATION_NORMAL;
         let ret = false
 
+        console.log("click success")
        
         switch (card.pileType) {
             case PileType.Tableau:
@@ -746,8 +956,13 @@ class ControlManager {
                 break;
         }
         // Disable clicks for the cooldown period
-        card.disbleInteractiveTemporarily(240);
-        this.disableCardClicksTemporarily(disableClickDuration);
+        if (card.pileType != PileType.Stock && card.pileType != PileType.Waste) {
+            card.disbleInteractiveTemporarily(240);
+            this.disableCardClicksTemporarily(disableClickDuration);
+        } else {
+            card.disbleInteractiveTemporarily(40);
+            this.disableCardClicksTemporarily(disableClickDuration);
+        }
         return ret
         
     }

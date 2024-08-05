@@ -1,5 +1,5 @@
 import { Game } from "phaser";
-import { FOLD_PIXELS_RATE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_FOLD_HEIGHT, WASTE_DELTA_FROM_STOCK } from "../config/Consts";
+import { FOLD_PIXELS_RATE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, PileType, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_FOLD_HEIGHT, WASTE_DELTA_FROM_STOCK } from "../config/Consts";
 import Card from "../elements/Card";
 import { GameState } from "../utils/types";
 import CardLayoutManager from './CardLayoutManager';
@@ -253,6 +253,7 @@ export default class PileManager {
                 this.cardLayoutManager.layoutWastePile(this.getWastePile(), false) 
             // }, 1);
         } else {
+            console.log("click move top card to waste")
             const card = this.getTopStockCard();
             if (card) {
                 this._addCardToWaste(card);
@@ -488,13 +489,15 @@ export default class PileManager {
 
     fixTableuYDelta(pileIndex: number, substack : Card[] = [], maxTries : number = 50) : number
     {
+        let tabCoordsDeltaY = TABLEU_COORDS_DELTA.y;
+        if (GameManager.isMobile) tabCoordsDeltaY+=TAB_DELTA_Y_MOBILE_EXTRA;
         maxTries--;
         if (maxTries <= 0) return this.tableuPilesYDelta[pileIndex];
         let height = this.calculateTableuPileHeight(pileIndex, this.tableuPilesYDelta[pileIndex], TABLEU_COORDS_DELTA.y_covered, substack)+30;
         
         let x = (GameManager.rendererHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
         
-        if (x > 20 && this.tableuPilesYDelta[pileIndex] < TABLEU_COORDS_DELTA.y) {
+        if (x > 20 && this.tableuPilesYDelta[pileIndex] < tabCoordsDeltaY) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] + 1;
             return this.fixTableuYDelta(pileIndex, substack, maxTries);
 

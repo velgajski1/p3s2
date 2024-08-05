@@ -13,9 +13,11 @@ class CardTransitionManager {
 
     moveAllCardsFromWasteToStock(stockPile: Card[], wastePile: Card[], gameplayContainer: Phaser.GameObjects.Container)
     {
-        
-       SOUND_ACTIVE && SoundManager.instance.flipBackToStock.play()
+        console.log("play flip back to stock")
+        wastePile.length && SOUND_ACTIVE && SoundManager.instance.flipBackToStock.play()
+       
         while(stockPile.length > 0) {
+
             const card = stockPile.pop()
             if (card) {
                 getTweensForObject(card.scene, card).forEach(x => x.remove());
@@ -38,6 +40,7 @@ class CardTransitionManager {
                 card.setX(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX])
                 card.setY(STOCK_COORDS.y)
                 getTweensForObject(card.scene, card).forEach(x => x.remove());
+                card.inTransition = false
                 
             }
         }

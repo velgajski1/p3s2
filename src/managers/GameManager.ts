@@ -34,11 +34,13 @@ export class GameManager {
     gameOverFlag : boolean = false
     wonscene: Phaser.Scenes.ScenePlugin;
     firstClickDone: boolean = false;
+    static isMobile: boolean = false;
     
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
     
+        console.log("start game manager")
         GameManager.instance = this;
         UndoManager.init(gameScene, this)
         UndoManager.getInstance().enableUndo()
@@ -190,7 +192,7 @@ export class GameManager {
 
         if ( !this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
             this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed : this.getElapsedTime(), timebonus : this.getTimeBonus(), totalscore : this.getTotalScore() } ).bringToTop("WonScene");
-
+            this.controlManager.disableControls()
             this.gameOverFlag = true
         }
 

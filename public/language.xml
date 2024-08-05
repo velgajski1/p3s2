@@ -19,7 +19,7 @@
         <LongestWinStreak>Longest Win Streak</LongestWinStreak>
         <TopScore>Top Score</TopScore>
         <BestTime>Best Time</BestTime>
-        <AvgTime>Avg. Time/Game</AvgTime>
+        <AvgTime>Avg. Time/Win</AvgTime>
         <GameSettings>Game Settings</GameSettings>
         <VisualSettings>Visual Settings</VisualSettings>
         <SoundOnOff>Sound On/Off</SoundOnOff>
