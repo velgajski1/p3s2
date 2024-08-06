@@ -71,7 +71,7 @@ class CardLayoutManager {
         cards.forEach((card, index) => {
             // 
             let wDeltaX : number = WASTE_DELTA_X[RIGHT_HANDED_MODE_IDX]
-            if (GameManager.isMobile) wDeltaX*=1.5
+            if (GameManager.isMobile) wDeltaX+=17;
             card.finishTweens()
             card.wasteDeltaX = 0;
             if (cards.length > 2) {

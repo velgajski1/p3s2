@@ -89,25 +89,59 @@ export class Preloader extends Scene {
 
         GameManager.isMobile = isMobile;
         // Load the appropriate multiatlas
-        if (isMobile) {
-            this.load.multiatlas('cards', 'assets_mobile.json', 'assets');
+
+        let locationBase = 'https://'+window.location.hostname+'/';
+        console.log(locationBase)
+        if(window.location.hostname=='localhost') {
+            if (isMobile) {
+                this.load.multiatlas('cards', 'assets_mobile1.json', 'assets');
+            } else {
+                this.load.multiatlas('cards', 'assets.json', 'assets');
+            }
+            this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
+            this.load.audio('click', '/sounds/click.mp3');
+            this.load.audio('deal_cards', '/sounds/deal-cards.mp3');
+            this.load.audio('end_3', '/sounds/end_3.mp3');
+            this.load.audio('flip_back_to_stock', '/sounds/flip-back-to-stock.mp3');
+            this.load.audio('grab_card', '/sounds/grab-card.mp3');
+            this.load.audio('hint', '/sounds/hint.mp3');
+            this.load.audio('invalid', '/sounds/invalid.mp3');
+            this.load.audio('no_hint', '/sounds/no-hint.mp3');
+            this.load.audio('silence', '/sounds/silence.mp3');
+            this.load.audio('undo', '/sounds/undo.mp3');
+            this.load.audio('valid', '/sounds/valid.mp3');
+            this.load.audio('won', '/sounds/won.mp3');
+
         } else {
-            this.load.multiatlas('cards', 'assets.json', 'assets');
+            let locationToLoad = locationBase+'shared/'
+            if (isMobile) {
+
+                locationToLoad += 'cards_mobile/assets_mobile1.json'
+                this.load.multiatlas('cards', locationToLoad, 'assets');
+            } else {
+                locationToLoad += 'cards_desktop/assets.json'
+                this.load.multiatlas('cards', locationToLoad, 'assets');
+            }
+            locationToLoad = locationBase+'shared/'
+            this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
+            this.load.audio('click', '/sounds/click.mp3');
+            this.load.audio('deal_cards', '/sounds/deal-cards.mp3');
+            this.load.audio('end_3', '/sounds/end_3.mp3');
+            this.load.audio('flip_back_to_stock', '/sounds/flip-back-to-stock.mp3');
+            this.load.audio('grab_card', '/sounds/grab-card.mp3');
+            this.load.audio('hint', '/sounds/hint.mp3');
+            this.load.audio('invalid', '/sounds/invalid.mp3');
+            this.load.audio('no_hint', '/sounds/no-hint.mp3');
+            this.load.audio('silence', '/sounds/silence.mp3');
+            this.load.audio('undo', '/sounds/undo.mp3');
+            this.load.audio('valid', '/sounds/valid.mp3');
+            this.load.audio('won', '/sounds/won.mp3');
+
         }
 
-        this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
-        this.load.audio('click', '/sounds/click.mp3');
-        this.load.audio('deal_cards', '/sounds/deal-cards.mp3');
-        this.load.audio('end_3', '/sounds/end_3.mp3');
-        this.load.audio('flip_back_to_stock', '/sounds/flip-back-to-stock.mp3');
-        this.load.audio('grab_card', '/sounds/grab-card.mp3');
-        this.load.audio('hint', '/sounds/hint.mp3');
-        this.load.audio('invalid', '/sounds/invalid.mp3');
-        this.load.audio('no_hint', '/sounds/no-hint.mp3');
-        this.load.audio('silence', '/sounds/silence.mp3');
-        this.load.audio('undo', '/sounds/undo.mp3');
-        this.load.audio('valid', '/sounds/valid.mp3');
-        this.load.audio('won', '/sounds/won.mp3');
+
+
+
     }
 
     create() {

@@ -44,7 +44,7 @@ export const TABLEU_FOLD_HEIGHT = 700;
 export const FOLD_PIXELS_RATE = 20;
 export const HINT_OVERLAY_DURATION = 600
 export const HINT_NEXT_OVERLAY_DELTA = 250;
-export const TAB_DELTA_Y_MOBILE_EXTRA = 6;
+export const TAB_DELTA_Y_MOBILE_EXTRA = 11;
 
 
 
