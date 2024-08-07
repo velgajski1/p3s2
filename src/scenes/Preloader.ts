@@ -5,9 +5,9 @@ import { GameManager } from '../managers/GameManager';
 
 export class Preloader extends Scene {
     cardManager: CardNameManager;
+    errorMessage: Phaser.GameObjects.Text;
 
     constructor() {
-        
         super('Preloader');
     }
 
@@ -37,6 +37,19 @@ export class Preloader extends Scene {
         });
 
         this.createProgressBar();
+        this.createErrorMessage();
+
+        // Add global error handling
+        window.onerror = (message, source, lineno, colno, error) => {
+            this.displayErrorMessage(`Error: ${message} at ${source}:${lineno}:${colno}`);
+            console.error('Global Error: ', error);
+            return true; // Prevent the default browser error handling
+        };
+
+        this.sys.game.events.on('error', (error: Error) => {
+            this.displayErrorMessage(`Phaser Error: ${error.message}`);
+            console.error('Phaser Error: ', error);
+        });
     }
 
     createProgressBar() {
@@ -58,11 +71,29 @@ export class Preloader extends Scene {
         });
     }
 
+    createErrorMessage() {
+        const centerX = this.cameras.main.centerX;
+        const centerY = this.cameras.main.centerY;
+
+        this.errorMessage = this.add.text(centerX, centerY + 50, '', {
+            fontFamily: 'Open Sans', fontSize: '32px', color: '#ff0000', align: 'center'
+        }).setOrigin(0.5, 0.5);
+    }
+
+    displayErrorMessage(message: string) {
+        if (this.errorMessage) {
+            this.errorMessage.setText(message);
+        } else {
+            console.error('Error Message:', message);
+        }
+    }
+
     preload() {
         // Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
-        this.load.image('ace', 'ace.png');
+        console.log(window.location)
+
         this.load.image('hint', 'hint.png');
         this.load.image('klondike_1_turn', 'klondike_1_turn.png');
         this.load.image('holder_foundation_cards', 'holder_foundation_cards.png');
@@ -79,7 +110,7 @@ export class Preloader extends Scene {
         this.load.image('prompt_radio_on', 'prompt_radio_on.png');
         this.load.image('settings', 'settings.png');
         this.load.image('undo', 'undo.png');
-        this.load.image('undo_na', 'undo_na.png');
+        // this.load.image('undo_na', 'undo_na.png');
         this.load.image('reddish_glow_outline', 'hint-overlay.png');
         this.load.image('backside', 'backside.png');
 
@@ -90,9 +121,19 @@ export class Preloader extends Scene {
         GameManager.isMobile = isMobile;
         // Load the appropriate multiatlas
 
-        let locationBase = 'https://'+window.location.hostname+'/';
-        console.log(locationBase)
-        if(window.location.hostname=='localhost') {
+        
+
+        let locationBase;
+        try {
+             locationBase = '' + window.location.origin+'/';
+             console.log(locationBase);
+        } catch (e) {
+            this.displayErrorMessage('Error loading assets: ' + e);
+            
+        }
+
+        // locationBase = 'http://gamestest.net/';
+        if (window.location.hostname == 'localhost' ) {
             if (isMobile) {
                 this.load.multiatlas('cards', 'assets_mobile1.json', 'assets');
             } else {
@@ -113,35 +154,37 @@ export class Preloader extends Scene {
             this.load.audio('won', '/sounds/won.mp3');
 
         } else {
-            let locationToLoad = locationBase+'shared/'
-            if (isMobile) {
+            try {
+                let locationToLoad = locationBase + 'shared/'
+                if (isMobile) {
 
-                locationToLoad += 'cards_mobile/assets_mobile1.json'
-                this.load.multiatlas('cards', locationToLoad, 'assets');
-            } else {
-                locationToLoad += 'cards_desktop/assets.json'
-                this.load.multiatlas('cards', locationToLoad, 'assets');
+                    locationToLoad += 'cards_mobile/assets_mobile1.json'
+
+                    this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_mobile');
+                } else {
+                    locationToLoad += 'cards_desktop/assets.json'
+                    this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_desktop');
+                }
+                console.log(locationToLoad)
+                locationToLoad = locationBase + 'shared'
+                this.load.audio('card_to_foundation', locationToLoad + '/sounds/card-to-foundation.mp3');
+                this.load.audio('click', locationToLoad + '/sounds/click.mp3');
+                this.load.audio('deal_cards', locationToLoad + '/sounds/deal-cards.mp3');
+                this.load.audio('end_3', locationToLoad + '/sounds/end_3.mp3');
+                this.load.audio('flip_back_to_stock', locationToLoad + '/sounds/flip-back-to-stock.mp3');
+                this.load.audio('grab_card', locationToLoad + '/sounds/grab-card.mp3');
+                this.load.audio('hint', locationToLoad + '/sounds/hint.mp3');
+                this.load.audio('invalid', locationToLoad + '/sounds/invalid.mp3');
+                this.load.audio('no_hint', locationToLoad + '/sounds/no-hint.mp3');
+                this.load.audio('silence', locationToLoad + '/sounds/silence.mp3');
+                this.load.audio('undo', locationToLoad + '/sounds/undo.mp3');
+                this.load.audio('valid', locationToLoad + '/sounds/valid.mp3');
+                this.load.audio('won', locationToLoad + '/sounds/won.mp3');
+            } catch (error) {
+                this.displayErrorMessage('Error loading assets: ' + error);
+                console.error('Error loading assets:', error);
             }
-            locationToLoad = locationBase+'shared/'
-            this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
-            this.load.audio('click', '/sounds/click.mp3');
-            this.load.audio('deal_cards', '/sounds/deal-cards.mp3');
-            this.load.audio('end_3', '/sounds/end_3.mp3');
-            this.load.audio('flip_back_to_stock', '/sounds/flip-back-to-stock.mp3');
-            this.load.audio('grab_card', '/sounds/grab-card.mp3');
-            this.load.audio('hint', '/sounds/hint.mp3');
-            this.load.audio('invalid', '/sounds/invalid.mp3');
-            this.load.audio('no_hint', '/sounds/no-hint.mp3');
-            this.load.audio('silence', '/sounds/silence.mp3');
-            this.load.audio('undo', '/sounds/undo.mp3');
-            this.load.audio('valid', '/sounds/valid.mp3');
-            this.load.audio('won', '/sounds/won.mp3');
-
         }
-
-
-
-
     }
 
     create() {
@@ -149,16 +192,20 @@ export class Preloader extends Scene {
         // For example, you can define global animations here, so we can use them in other scenes.
 
         // Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-       
+
         const cardData = this.cache.json.get('cardData');
 
-        const frames = cardData.textures[0].frames;
+        if (cardData && cardData.textures) {
+            const frames = cardData.textures[0].frames;
 
-        this.cardManager = CardNameManager.Instance;
-        this.cardManager.loadCardData(frames);
+            this.cardManager = CardNameManager.Instance;
+            this.cardManager.loadCardData(frames);
 
-        this.scene.start('BackgroundScene');
-        this.scene.launch('GameplayScene');
+            this.scene.start('BackgroundScene');
+            this.scene.launch('GameplayScene');
+        } else {
+            this.displayErrorMessage('Error: Invalid card data.');
+        }
     }
 
     resize() {

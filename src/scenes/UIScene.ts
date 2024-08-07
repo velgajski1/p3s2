@@ -76,7 +76,7 @@ export class UIScene extends Phaser.Scene {
                 if (!this.inputEnabled) return;
                 // 
                 // You can add more logic here to handle the toggle action
-                console.log("toglle swithc called")
+                
                 var gamemanager : GameManager = this.registry.get("gameManager")
                 gamemanager.updateStats()
                 toggleThreeModeActive(nextState);
@@ -153,7 +153,7 @@ export class UIScene extends Phaser.Scene {
             (nextState: boolean) => {
                 if (!this.inputEnabled) return;
 
-                console.log("toglle swithc called")
+                
                 var gamemanager : GameManager = this.registry.get("gameManager")
                 gamemanager.updateStats()
                 toggleThreeModeActive(nextState);
@@ -296,7 +296,7 @@ export class UIScene extends Phaser.Scene {
         this.calculateContainerHeightPercentage(height)
         this.updateTextPos()
         
-        console.log("resize called")
+        
         if (this.game.device.os.android || this.game.device.os.iOS) {
             if (innerWidth > innerHeight) {
                 this.handleMobileLandscape()
@@ -312,7 +312,7 @@ export class UIScene extends Phaser.Scene {
             this.elementsContainer.scale *= 2
             this.elementsContainer2.scale *= 2
             this.textContainer.scale *= 1.2
-            console.log(this.elementsContainer.x)
+            
             this.elementsContainer.x = window.innerWidth
             this.elementsContainer2.x = window.innerWidth
             this.textContainer.x = 10
@@ -335,13 +335,13 @@ export class UIScene extends Phaser.Scene {
         
             this.elementsContainer2.visible = false;
             this.elementsContainer.visible = true;
-            console.log("elem width: " + this.elementsContainer.width)
+            
             this.elementsContainer.scale *= 3.5;
             // this.textContainer.scale *= 1.3
             this.movesText.setFontSize(22)
             this.scoreText.setFontSize(22)
             this.timeText.setFontSize(22)
-            console.log(this.elementsContainer.x)
+            
             this.elementsContainer.x = window.innerWidth
             this.elementsContainer.y = window.innerHeight
             this.movesText.visible = false;
@@ -370,7 +370,7 @@ export class UIScene extends Phaser.Scene {
         this.registry.set('topUiWidthPercentage', 1.5*heightPercentage/100)
     }
     updateTextPos(){
-        console.log("update text pos")
+        
         this.timeText.x = this.scoreText.x + this.scoreText.width
         this.movesText.x = this.timeText.x + this.timeText.width
 
@@ -407,7 +407,7 @@ export class UIScene extends Phaser.Scene {
             this.textContainer.y = topUI*this.scale.height
             
             if (this.game.device.os.android || this.game.device.os.iOS) {
-                console.log("port")
+                
                 if (!this.game.device.os.iPad) {
                     this.elementsContainer.y = this.scale.height *0.86
                 } else if (this.game.device.os.iPad && innerHeight > innerWidth) {

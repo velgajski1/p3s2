@@ -21,7 +21,7 @@ export default class BaseScene extends Phaser.Scene {
     }
 
     protected maintainFullscreen() {
-        console.log(this.isTablet())
+        
         if (this.isMobile() && !this.isTablet() && !this.isFullscreen() && this.isLandscape()) {
             this.enterFullscreen();
         } else if (this.isFullscreen() && !this.isLandscape()) {
@@ -58,7 +58,7 @@ export default class BaseScene extends Phaser.Scene {
         const isTabletAspectRatio = aspectRatio > 1 && aspectRatio < 1.6;
         // const isTabletSize = screenDiagonalInches > 7 && screenDiagonalInches < 13;
 
-        console.log(isTabletAspectRatio)
+        
 
         return isTabletAspectRatio && (this.game.device.os.android || this.game.device.os.iOS);
     }

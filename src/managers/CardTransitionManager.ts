@@ -13,7 +13,7 @@ class CardTransitionManager {
 
     moveAllCardsFromWasteToStock(stockPile: Card[], wastePile: Card[], gameplayContainer: Phaser.GameObjects.Container)
     {
-        console.log("play flip back to stock")
+        
         wastePile.length && SOUND_ACTIVE && SoundManager.instance.flipBackToStock.play()
        
         while(stockPile.length > 0) {

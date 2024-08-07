@@ -253,7 +253,7 @@ export default class PileManager {
                 this.cardLayoutManager.layoutWastePile(this.getWastePile(), false) 
             // }, 1);
         } else {
-            console.log("click move top card to waste")
+            
             const card = this.getTopStockCard();
             if (card) {
                 this._addCardToWaste(card);

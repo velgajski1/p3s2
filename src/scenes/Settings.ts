@@ -157,7 +157,7 @@ export class Settings extends BaseMenuScene {
     //     // Use the larger scale factor that maintains aspect ratio without exceeding screen dimensions
     //     const scale = Math.min(1, Math.max(scaleX, scaleY));
 
-    //     console.log(scaleX, scaleY, scale);
+    //     
     
     //     // Check if scaling exceeds screen dimensions and adjust if necessary
     //     const effectiveWidth = scaleXDivider * scale;
@@ -165,14 +165,14 @@ export class Settings extends BaseMenuScene {
     //     if (effectiveWidth > width || effectiveHeight > height) {
     //         // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
     //         this.menuContainer.setScale(Math.min(scaleX, scaleY));
-    //         console.log("exceeds")
+    //         
     //     } else {
     //         // Otherwise, apply the calculated scale to maximize screen usage
     //         this.menuContainer.setScale(scale);
-    //         console.log("doesnt exceed")
+    //         
     //     }
     
-    //     console.log(scale, scaleX, scaleY)
+    //     
     //     this.menuContainer.setScale(scale);
     //     this.modalBackground.clear().fillRect(0, 0, width, height);
 

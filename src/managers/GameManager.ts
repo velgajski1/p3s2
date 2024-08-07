@@ -40,7 +40,7 @@ export class GameManager {
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
     
-        console.log("start game manager")
+        
         GameManager.instance = this;
         UndoManager.init(gameScene, this)
         UndoManager.getInstance().enableUndo()

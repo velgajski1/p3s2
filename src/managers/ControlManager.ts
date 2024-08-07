@@ -319,7 +319,7 @@ class ControlManager {
     
         const tableauIndex = this.getTableauIndexFromCoordinates(activeCard.x, activeCard.y, 140);
         const foundationIndexes = this.getFoundationIndexFromCoordinates(activeCard.x, activeCard.y, 140);
-        console.log(foundationIndexes);
+        
     
         let placed = false;
     
@@ -398,7 +398,7 @@ class ControlManager {
     
         // If not placed, check for special case with Kings on empty tableau piles
         // if (!placed) {
-        //     // console.log(tableauIndex, this.pileManager.getTableauPiles()[tableauIndex].length, activeCard.rank)
+        //     // 
         //     if (tableauIndex !== -1 && this.pileManager.getTableauPiles()[tableauIndex].length === 0 && activeCard.rank === Rank.King) {
         //         // Valid drop on an empty tableau pile (Kings only)
         //         if (activeCard.pileType == PileType.Waste) {
@@ -469,7 +469,7 @@ class ControlManager {
     
     //     const tableauIndex = this.getTableauIndexFromCoordinates(activeCard.x, activeCard.y, 140);
     //     const foundationIndexes = this.getFoundationIndexFromCoordinates(activeCard.x, activeCard.y, 140);
-    //     console.log(foundationIndexes)
+    //     
         
     
     //     let placed = false;
@@ -658,7 +658,7 @@ class ControlManager {
                 if (overlapLeft > 0)  overlaps.push({ index: i, overlap: overlapLeft });
             }
 
-            console.log(overlaps);
+            
     
             // Sort overlaps array by overlap value in descending order
             overlaps.sort((a, b) => b.overlap - a.overlap);
@@ -866,14 +866,14 @@ class ControlManager {
     }
     
     handleUKey() {
-        console.log(this.activeCard, this.enabled)
+        
         if (this.activeCard) return;
         if (!this.enabled) return;
         if (this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens()) )){
             
-            console.log(this.pileManager.getAllCards().find(c => c.inTransition|| (c.isBeingFlipped == false && c.hasTweens())))
+            
             setTimeout(() => {
-                console.log("timeout call")
+                
                 if (this.pileManager.getAllCards().find(c => c.inTransition || (c.isBeingFlipped==false && c.hasTweens()))) return
                 const undoManager = UndoManager.getInstance();
                 const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
@@ -887,7 +887,7 @@ class ControlManager {
         } 
         const undoManager = UndoManager.getInstance();
         const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
-        console.log(state);
+        
         if (state) {
             this.pileManager.setToGameState(state);
         }
@@ -904,7 +904,7 @@ class ControlManager {
     // Handle the click event based on card's pile type
     private handleCardClick(card: Card) : boolean{
         
-        console.log("click attempt")
+        
         
         
         // Prevent additional clicks if a card click was already processed
@@ -920,7 +920,7 @@ class ControlManager {
         let disableClickDuration = DISABLE_CLICK_DURATION_NORMAL;
         let ret = false
 
-        console.log("click success")
+        
        
         switch (card.pileType) {
             case PileType.Tableau:
