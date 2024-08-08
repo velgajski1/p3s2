@@ -1,10 +1,25 @@
+import { GameManager } from "../managers/GameManager";
+import Preloader from "../scenes/Preloader";
+
 export var STOCK_THREE_MODE_ACTIVE: boolean = false;
-export var RIGHT_HANDED_MODE_ACTIVE: boolean = false;
-export var RIGHT_HANDED_MODE_IDX : number = 0;
+export var RIGHT_HANDED_MODE_ACTIVE: boolean;
+export var RIGHT_HANDED_MODE_IDX : number;
 export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
 export var BG_INDEX : number = 0;
 export var DRAG_ACTIVE : boolean = true;
+
+export function loadDefaultSettings() {
+    console.log(RIGHT_HANDED_MODE_ACTIVE)
+    if (RIGHT_HANDED_MODE_ACTIVE == undefined || RIGHT_HANDED_MODE_ACTIVE == null) {
+        if (GameManager.isMobile) {
+            RIGHT_HANDED_MODE_ACTIVE = true;
+        } else {
+            RIGHT_HANDED_MODE_ACTIVE = false;
+        }
+        RIGHT_HANDED_MODE_IDX = RIGHT_HANDED_MODE_ACTIVE ? 1 : 0;
+    }
+}
 
 // Load saved settings from localStorage
 export function loadSettings() {
@@ -17,7 +32,7 @@ export function loadSettings() {
     const rightHandedMode = localStorage.getItem('RIGHT_HANDED_MODE_ACTIVE');
     if (rightHandedMode !== null) {
         RIGHT_HANDED_MODE_ACTIVE = JSON.parse(rightHandedMode);
-    }
+    } 
 
     const rightHandedModeIdx = localStorage.getItem('RIGHT_HANDED_MODE_IDX');
     if (rightHandedModeIdx !== null) {

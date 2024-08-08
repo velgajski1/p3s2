@@ -1,6 +1,7 @@
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK, CARD_MOVE_BEFORE_DRAG_AND_DROP } from "../config/Consts";
 import Card from "../elements/Card";
+import { UIScene } from "../scenes/UIScene";
 import CardLayoutManager from "./CardLayoutManager";
 import getRankValue, { Rank } from "./CardNameManager";
 import { GameManager } from "./GameManager";
@@ -169,10 +170,10 @@ class ControlManager {
     setupGlobalListeners(): void {
         const input = this.pileManager.gameplayContainer.scene.input;
 
+    
         input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
             this.lastKnownPointerPosition = { x: pointer.x, y: pointer.y };
-            
-
+    
             if (!this.dragAndDrop && this.activeCard) {
                 const localPoint = this.pileManager.gameplayContainer.getLocalPoint(pointer.x, pointer.y);
                 const movedDistance = Phaser.Math.Distance.Between(
@@ -181,103 +182,81 @@ class ControlManager {
                     localPoint.x - this.activeCard.getData('dragOffsetX'),
                     localPoint.y - this.activeCard.getData('dragOffsetY')
                 );
-
-                
-                if (this.dragAndDrop == false && movedDistance > CARD_MOVE_BEFORE_DRAG_AND_DROP) {
+    
+                if (!this.dragAndDrop && movedDistance > CARD_MOVE_BEFORE_DRAG_AND_DROP) {
                     this.dragAndDrop = true;
-                    
                 }
-
-                if (this.dragging == false && movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE ) {
-                    
-                    SOUND_ACTIVE && SoundManager.instance.grabCard.play()
+    
+                if (!this.dragging && movedDistance > CARD_MOVE_BEFORE_DRAG_ACTIVE) {
+                    if (SOUND_ACTIVE) SoundManager.instance.grabCard.play();
                     this.dragging = true;
-                    setDragActive(this.dragging)
+                    setDragActive(this.dragging);
                     let delta = 100000 + this.cardsDragged++;
                     this.activeCard.setDepth(this.activeCard.depth + delta);
                     this.substack.forEach(s => {
-                        if (s == this.activeCard) return;
+                        if (s === this.activeCard) return;
                         s.setDepth(s.depth + delta);
                     });
-                    
-
-
-                }
-                else
-                {
-                    
-                    // return
                 }
             }
-
+    
             if (this.dragging && this.activeCard) {
-                
                 const localPoint = this.pileManager.gameplayContainer.getLocalPoint(pointer.x, pointer.y);
                 const newX = localPoint.x - this.activeCard.getData('dragOffsetX');
                 const newY = localPoint.y - this.activeCard.getData('dragOffsetY');
                 this.activeCard.x = newX;
                 this.activeCard.y = newY;
-                this.substack.forEach((card, index) => {
+                this.substack.forEach((card) => {
                     if (this.activeCard == null) return;
-                    if (card == this.activeCard) return;
+                    if (card === this.activeCard) return;
                     card.x = this.activeCard.x;
-                    card.y = this.activeCard.y + card.getData('substackoffsetY');  // Adjust Y based on original offset in the substack
+                    card.y = this.activeCard.y + card.getData('substackoffsetY'); // Adjust Y based on original offset in the substack
                 });
             }
         });
-
-        input.on('pointerup', () => {
+    
+        const handlePointerUp = () => {
             clearTimeout(this.holdTimeout);
-            
+    
             if (this.activeCard) {
-                
                 if (this.dragging) {
                     this.activeCard.setDepth(this.activeCard.depth - 100000);
                     this.substack.forEach(s => {
-                        if (s == this.activeCard) return;
+                        if (s === this.activeCard) return;
                         s.setDepth(s.depth - 100000);
                     });
-
-                    
-                    //foundation doesnt use click at all, so it always goes to drop
-                    if (!this.dragAndDrop && this.holdTimeoutFlag && this.activeCard.pileType != PileType.Foundation) { 
-                        this.handleClick(this.activeCard)
-                    }
-                    else
-                    {
+    
+                    // Foundation doesn't use click at all, so it always goes to drop
+                    if (!this.dragAndDrop && this.holdTimeoutFlag && this.activeCard.pileType !== PileType.Foundation) { 
+                        this.handleClick(this.activeCard);
+                    } else {
                         this.handleCardDrop(this.activeCard);
-                        
                     }
-                    
-
+    
                     this.activeCard = undefined;  // Clear the active card reference
                     this.dragging = false;
                     this.dragAndDrop = false;
-                    setDragActive(this.dragging)
+                    setDragActive(this.dragging);
                     this.holdTimeoutFlag = false;
-                    this.addSubstackClearTimeout()
-
+                    this.addSubstackClearTimeout();
                 } else if (this.activeCard && this.isClickEnabled) {
                     this.handleClick(this.activeCard);
-                    SOUND_ACTIVE && SoundManager.instance.grabCard.play()
+                    if (SOUND_ACTIVE) SoundManager.instance.grabCard.play();
                 }
-
-                // this.pileManager.applyFoldingIfNotInTransition()
             }
-        });
-
+        };
     
-    
-        input.on('pointerupoutside', () => {
-            if (this.activeCard) {
-                input.emit('pointerup', this.lastKnownPointerPosition);
-            }
-        });
+        input.on('pointerup', handlePointerUp);
+        UIScene.myRef.input.on('pointerup', handlePointerUp);
+        input.on('pointerupoutside', handlePointerUp);
 
+        // UIScene.myRef.input
+    
         // Add window event listeners
         window.addEventListener('blur', this.handleWindowBlur.bind(this));
         window.addEventListener('mouseout', this.handleWindowMouseOut.bind(this));
     }
+    
 
     private handleClick(activeCard : Card) {
 

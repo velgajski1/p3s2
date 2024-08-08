@@ -3,7 +3,7 @@ import { GameManager } from '../managers/GameManager';
 import Registry from '../config/Registry';
 import Card from '../elements/Card';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
-import { PileType } from '../config/Consts';
+import { PileType, TABLEU_COORDS_DELTA } from '../config/Consts';
 import BaseScene from './BaseScene';
 import { SoundManager } from '../managers/SoundManager';
 
@@ -71,7 +71,9 @@ export class GameplayScene extends BaseScene {
         
         if (this.scale.isFullscreen && this.isLandscape()) {
             top = 20;
-            scale *= 1.2; 
+            let delta = Math.max(0, 2 - this.scale.gameSize.aspectRatio)
+            console.log(delta);
+            scale *= (1 +0.2 - delta); 
             this.gameplayContainer.setScale(scale);
             this.scene.launch("UIScene");
             this.registry.set("isFullscreen", true);
@@ -83,13 +85,31 @@ export class GameplayScene extends BaseScene {
             }
         }
 
+
         this.gameplayContainer.setPosition(width / 2, top);
+        if (this.scale.isPortrait) {
+            this.gameplayContainer.setPosition(0.505*width, top);
+
+        }
         
+
 
         const adjustedStartX = (width / 2) + -554 * scale;
         Registry.uiTextStartX = adjustedStartX
         // Registry.uiElemStartX = adjustedStartX + 1500
         Registry.uiElemStartX = width/2 +552*scale; 
+
+        setTimeout(() => {
+
+            this.gameManager.pileManager.tableuPilesYDelta = Array.from({length:7}, () => TABLEU_COORDS_DELTA.y)
+            this.gameManager.pileManager.fixTableuYDeltaAll()
+            console.log(this.gameManager.pileManager.tableuPilesYDelta)
+            this.gameManager.layoutManager.update()
+            this.gameManager.layoutManager.layoutTableauPiles(this.gameManager.pileManager.getTableauPiles())
+            this.gameManager.layoutManager.updateTabIndicators()         
+        }, 300);
+
+
     }
 
 

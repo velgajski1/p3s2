@@ -1,6 +1,6 @@
 // CardLayoutManager.ts
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
-import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
+import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, getCardScale, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { Rank, Suit } from "./CardNameManager";
 import CardTransitionManager from "./CardTransitionManager";
@@ -58,7 +58,7 @@ class CardLayoutManager {
         cards.forEach((card, index) => {
             card.x = STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX];
             card.y = STOCK_COORDS.y;
-            card.scale = CARD_SCALE
+            card.scale = getCardScale()
             card.setDepth(index); // Ensure stacking order for the stock
             card.setFaceUp(false);
         });
@@ -114,6 +114,8 @@ class CardLayoutManager {
                     }
                 });
             }
+
+            card.setScale(getCardScale())
 
 
 
@@ -172,7 +174,7 @@ class CardLayoutManager {
 
 
            
-           card.scale = CARD_SCALE;
+           card.scale = getCardScale();
        });
    
        
@@ -196,6 +198,7 @@ class CardLayoutManager {
                 card.x = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + pileIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX];
                 card.y = FOUNDATION_COORDS_INIT.y;
                 card.setDepth(1000 + pileIndex * 10 + cardIndex); // Ensure correct stacking order
+                card.setScale(getCardScale())
             });
         });
     }
@@ -213,7 +216,7 @@ class CardLayoutManager {
             foundationIndicator.setDepth(9000); // Ensure the indicator is below cards
             cont.add(foundationIndicator);
             // Optionally, customize the indicator with scale or tint
-            foundationIndicator.setScale(CARD_SCALE);
+            foundationIndicator.setScale(getCardScale());
             // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
             this.foundIndicators[i] = foundationIndicator;
         }
@@ -351,7 +354,7 @@ class CardLayoutManager {
             tabIndicator.setDepth(-100); // Ensure the indicator is below cards
             cont.add(tabIndicator);
             // Optionally, customize the indicator with scale or tint
-            tabIndicator.setScale(CARD_SCALE);
+            tabIndicator.setScale(getCardScale());
             // foundationIndicator.setTint(0xaaaaaa); // Example: Slight gray tint
             this.tabIndicators[i] = tabIndicator;
 
@@ -366,7 +369,7 @@ class CardLayoutManager {
         // Create a sprite for the waste pile indicator
         this.wasteIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'holder_foundation_cards');
         this.wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
-        this.wasteIndicator.setScale(CARD_SCALE);
+        this.wasteIndicator.setScale(getCardScale());
         cont.add(this.wasteIndicator);
         this.wasteIndicator.visible = false;
     }    
@@ -375,7 +378,7 @@ class CardLayoutManager {
         // Create a sprite for the waste pile indicator
         this.stockIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'holder_stock_cards');
         this.stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
-        this.stockIndicator.setScale(CARD_SCALE);
+        this.stockIndicator.setScale(getCardScale());
         cont.add(this.stockIndicator);
 
         // Make the indicator interactive and listen for clicks
@@ -387,21 +390,25 @@ class CardLayoutManager {
 
     updateStockIndicator() {
         this.stockIndicator.setX(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX])
+        this.stockIndicator.setScale(getCardScale())
     }
 
     updateWasteIndicator() {
         this.wasteIndicator.setX(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX])
+        this.wasteIndicator.setScale(getCardScale())
     }
 
     updateTabIndicators() {
         this.tabIndicators.forEach((tabId, i) => {
             tabId.setX(TABLEU_COORDS_INIT.x + i * TABLEU_COORDS_DELTA.x)
+            tabId.setScale(getCardScale())
         })
     }
 
     updateFoundIndicators() {
         this.foundIndicators.forEach((fid, i) => {
             fid.setX(FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + i * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX])
+            fid.setScale(getCardScale())
         })
     }
         

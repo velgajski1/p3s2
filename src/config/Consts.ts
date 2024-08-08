@@ -1,3 +1,5 @@
+import { GameManager } from "../managers/GameManager";
+
 export const BACKGROUND_COLORS = [
     '#367a37', '#37864f', '#226632', '#014001', '#3b403c',
     '#3d444e', '#575759', '#7b5f4a', '#4d5e72', '#616d95',
@@ -26,7 +28,18 @@ export enum PileType {
     Transition = 'Transition'
 }
 
-export const CARD_SCALE = 0.75;
+export const getCardScale = () => {
+    // Replace `condition` with your actual condition logic
+    
+    if (innerWidth > innerHeight) {
+        return 0.75; // Return a smaller scale for specific cases
+    } else {
+        return 0.8; // Default scale
+    }
+};
+
+
+export const CARD_SCALE = 0.8;
 export const WASTE_DELTA_FROM_STOCK = [160, -160];
 export const STOCK_COORDS = { x : [-488, -488+6*WASTE_DELTA_FROM_STOCK[0]], y : 80 };
 export const WASTE_OVERLAP = 0;
@@ -44,7 +57,9 @@ export const TABLEU_FOLD_HEIGHT = 700;
 export const FOLD_PIXELS_RATE = 20;
 export const HINT_OVERLAY_DURATION = 600
 export const HINT_NEXT_OVERLAY_DELTA = 250;
-export const TAB_DELTA_Y_MOBILE_EXTRA = 11;
+export const TAB_DELTA_Y_MOBILE_EXTRA = 31;
+
+
 
 
 

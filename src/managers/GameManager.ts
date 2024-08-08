@@ -35,6 +35,7 @@ export class GameManager {
     wonscene: Phaser.Scenes.ScenePlugin;
     firstClickDone: boolean = false;
     static isMobile: boolean = false;
+    static isPotrait: boolean = false;
     
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {

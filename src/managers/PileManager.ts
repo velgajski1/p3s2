@@ -31,7 +31,7 @@ export default class PileManager {
     private stockPile: Array<Card>;
     private wastePile: Array<Card>;
     private transitionPile : Array<Card>;
-    private tableuPilesYDelta : Array<number>;
+    public tableuPilesYDelta : Array<number>;
 
     cardLayoutManager: CardLayoutManager;
     gameplayContainer: Phaser.GameObjects.Container;
@@ -484,6 +484,7 @@ export default class PileManager {
     }
 
     fixTableuYDeltaAll() {
+        
         this.tableuPilesYDelta.forEach((x,i) => this.fixTableuYDelta(i));
     }
 
@@ -495,14 +496,20 @@ export default class PileManager {
         if (maxTries <= 0) return this.tableuPilesYDelta[pileIndex];
         let height = this.calculateTableuPileHeight(pileIndex, this.tableuPilesYDelta[pileIndex], TABLEU_COORDS_DELTA.y_covered, substack)+30;
         
-        let x = (GameManager.rendererHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
+        let renderHeight = GameManager.rendererHeight
+
+        if (GameManager.isMobile && GameManager.isPotrait) renderHeight *= 0.85;
+        if (GameManager.isMobile && !GameManager.isPotrait) renderHeight *= 0.875;
+        let x = (renderHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
+
+
         
-        if (x > 20 && this.tableuPilesYDelta[pileIndex] < tabCoordsDeltaY) {
+        if (x > 2 && this.tableuPilesYDelta[pileIndex] < tabCoordsDeltaY) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] + 1;
             return this.fixTableuYDelta(pileIndex, substack, maxTries);
 
         }
-        else if (x < 0) {
+        else if (x < -2) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] - 1;
             return this.fixTableuYDelta(pileIndex, substack, maxTries);
         }

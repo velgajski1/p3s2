@@ -30,8 +30,11 @@ export class UIScene extends Phaser.Scene {
     elementsContainer2: GameObjects.Container;
     elementsContainer3: GameObjects.Container;
 
+    static myRef : UIScene;
+
     constructor() {
         super('UIScene');
+        UIScene.myRef = this;
     }
 
 
@@ -273,6 +276,7 @@ export class UIScene extends Phaser.Scene {
         
         let textStartX = Registry.uiTextStartX;
         let elementsStartX = Registry.uiElemStartX;
+        
         this.textContainer.setPosition(textStartX, 0);
         this.elementsContainer.setPosition(elementsStartX, 0);
         let scale = Math.min(1, Math.min(width / 1600, height / 900));
@@ -283,6 +287,8 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer2.setPosition(elementsStartX, 0)
         this.elementsContainer2.x = elementsStartX;
         this.elementsContainer2.setScale(scale)
+
+        console.log(scale, fontsize)
 
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
             fontSize: fontsize+'px',
@@ -299,8 +305,10 @@ export class UIScene extends Phaser.Scene {
         
         if (this.game.device.os.android || this.game.device.os.iOS) {
             if (innerWidth > innerHeight) {
+                GameManager.isPotrait = false;
                 this.handleMobileLandscape()
             } else {
+                GameManager.isPotrait = true;
                 this.handleMobilePortrait()
             }
         }
@@ -308,10 +316,13 @@ export class UIScene extends Phaser.Scene {
     }
     handleMobileLandscape()
     {
-        if(this.scale.isFullscreen) {
+        console.log("handle mobile landscape")
+        if(this.scale.isFullscreen || !this.isTablet()) {
+            console.log("handle mobile landscape - is fullscreen")
             this.elementsContainer.scale *= 2
             this.elementsContainer2.scale *= 2
-            this.textContainer.scale *= 1.2
+            this.textContainer.scale = 1.2
+            console.log(this.textContainer.scale)
             
             this.elementsContainer.x = window.innerWidth
             this.elementsContainer2.x = window.innerWidth
@@ -324,6 +335,8 @@ export class UIScene extends Phaser.Scene {
             this.elementsContainer.visible = false;
             this.elementsContainer2.visible = true;
             this.elementsContainer3.visible = this.elementsContainer2.visible
+
+
         } else {
             this.elementsContainer.visible = true;
             this.elementsContainer2.visible = false;
@@ -390,7 +403,7 @@ export class UIScene extends Phaser.Scene {
         
         this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
-        if (this.registry.get("isFullscreen")) {
+        if (this.registry.get("isFullscreen") || ( !this.isTablet() && this.scale.isGameLandscape)) {
             this.elementsContainer.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.025
@@ -410,14 +423,33 @@ export class UIScene extends Phaser.Scene {
                 
                 if (!this.game.device.os.iPad) {
                     this.elementsContainer.y = this.scale.height *0.86
+                    this.elementsContainer.y = window.innerHeight * 0.86
+                    
                 } else if (this.game.device.os.iPad && innerHeight > innerWidth) {
                     this.elementsContainer.y = this.scale.height *0.86
+                    this.elementsContainer.y = window.innerHeight * 0.86
                 }
                 
                 
             }
         }
 
+    }
+
+
+    private isTablet(): boolean {
+        // Tablets generally have an aspect ratio between 1 and 1.6
+        const aspectRatio = window.innerWidth / window.innerHeight;
+        // Screen diagonal size in inches (e.g., diagonal of a 10.1" tablet)
+        // const screenDiagonalInches = Math.sqrt(window.innerWidth**2 + window.innerHeight**2) / window.devicePixelRatio;
+        
+        // Typically, tablets have a screen size between 7 and 13 inches
+        const isTabletAspectRatio = aspectRatio > 1 && aspectRatio < 1.6;
+        // const isTabletSize = screenDiagonalInches > 7 && screenDiagonalInches < 13;
+
+        
+
+        return isTabletAspectRatio && (this.game.device.os.android || this.game.device.os.iOS);
     }
 
     public setTime(time: number) : void {

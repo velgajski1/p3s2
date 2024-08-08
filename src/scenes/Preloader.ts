@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { CardNameManager } from '../managers/CardNameManager';
-import { loadSettings } from '../config/Config';
+import { loadDefaultSettings, loadSettings } from '../config/Config';
 import { GameManager } from '../managers/GameManager';
 
 export class Preloader extends Scene {
@@ -120,7 +120,7 @@ export class Preloader extends Scene {
 
         GameManager.isMobile = isMobile;
         // Load the appropriate multiatlas
-
+        loadDefaultSettings()
         
 
         let locationBase;

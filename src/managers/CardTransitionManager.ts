@@ -1,5 +1,5 @@
 import { RIGHT_HANDED_MODE_IDX, SOUND_ACTIVE, STOCK_THREE_MODE_ACTIVE } from '../config/Config';
-import { CARD_SCALE, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X } from '../config/Consts';
+import { CARD_SCALE, getCardScale, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 import { getTweensForObject } from '../utils/Utils';
 import { SoundManager } from './SoundManager';
@@ -190,12 +190,12 @@ class CardTransitionManager {
                 
                 card.scene.tweens.add({
                     targets: card,
-                    scaleX: CARD_SCALE,
+                    scaleX: getCardScale(),
                     duration: duration / 2,
                     onComplete: () => {
                         if (onComplete) onComplete();
                         card.isBeingFlipped = false;
-                        card.scaleX = CARD_SCALE;
+                        card.scaleX = getCardScale();
                     }
                 });
             }
