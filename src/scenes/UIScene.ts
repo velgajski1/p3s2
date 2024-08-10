@@ -398,12 +398,13 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer3.y = topUI*this.scale.height
         this.textContainer.y = topUI*this.scale.height
 
-        
+
 
         
         this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
-        if (this.registry.get("isFullscreen") || ( !this.isTablet() && this.scale.isGameLandscape)) {
+        if (this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {
+            console.log("is fullscreen")
             this.elementsContainer.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.025
@@ -413,6 +414,10 @@ export class UIScene extends Phaser.Scene {
                 this.elementsContainer.y = this.scale.height *0.9
                 this.elementsContainer2.y = this.scale.height *0.07
                 this.elementsContainer3.y = this.scale.height *0.07
+                if (!this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape && !this.registry.get("isFullscreen")) {
+                    this.elementsContainer2.y = this.scale.height *0.09
+                    this.elementsContainer3.y = this.scale.height *0.09
+                }
                 this.textContainer.y = this.scale.height * 0.9 
             }
         }

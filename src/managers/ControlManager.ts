@@ -11,6 +11,18 @@ import { SoundManager } from "./SoundManager";
 import UndoManager from "./UndoManager";
 
 class ControlManager {
+    update()
+    {
+        
+        if (this.activeCard) {
+            console.log(this.activeCard)
+            if (this.activeCard.scene) {
+                if (this.activeCard.scene.input.activePointer.isDown == false) {
+                    this.handlePointerUp()
+                }
+            }
+        }
+    }
     keyR: any;
     private pileManager: PileManager;
     private isClickEnabled: boolean = true;
@@ -40,6 +52,7 @@ class ControlManager {
         this.pileManager.gameplayContainer.setInteractive()
         this.setupGlobalListeners();  // Setup global listeners for move and up events
     }
+
 
     disableControls()
     {
@@ -167,6 +180,37 @@ class ControlManager {
         return (card.isFaceUp ||card.isBeingFlipped) && (card.pileType === PileType.Waste || card.pileType === PileType.Tableau || card.pileType === PileType.Foundation);
     }
 
+    handlePointerUp = () => {
+        clearTimeout(this.holdTimeout);
+
+        if (this.activeCard) {
+            if (this.dragging) {
+                this.activeCard.setDepth(this.activeCard.depth - 100000);
+                this.substack.forEach(s => {
+                    if (s === this.activeCard) return;
+                    s.setDepth(s.depth - 100000);
+                });
+
+                // Foundation doesn't use click at all, so it always goes to drop
+                if (!this.dragAndDrop && this.holdTimeoutFlag && this.activeCard.pileType !== PileType.Foundation) { 
+                    this.handleClick(this.activeCard);
+                } else {
+                    this.handleCardDrop(this.activeCard);
+                }
+
+                this.activeCard = undefined;  // Clear the active card reference
+                this.dragging = false;
+                this.dragAndDrop = false;
+                setDragActive(this.dragging);
+                this.holdTimeoutFlag = false;
+                this.addSubstackClearTimeout();
+            } else if (this.activeCard && this.isClickEnabled) {
+                this.handleClick(this.activeCard);
+                if (SOUND_ACTIVE) SoundManager.instance.grabCard.play();
+            }
+        }
+    };
+
     setupGlobalListeners(): void {
         const input = this.pileManager.gameplayContainer.scene.input;
 
@@ -215,40 +259,12 @@ class ControlManager {
             }
         });
     
-        const handlePointerUp = () => {
-            clearTimeout(this.holdTimeout);
+  
     
-            if (this.activeCard) {
-                if (this.dragging) {
-                    this.activeCard.setDepth(this.activeCard.depth - 100000);
-                    this.substack.forEach(s => {
-                        if (s === this.activeCard) return;
-                        s.setDepth(s.depth - 100000);
-                    });
-    
-                    // Foundation doesn't use click at all, so it always goes to drop
-                    if (!this.dragAndDrop && this.holdTimeoutFlag && this.activeCard.pileType !== PileType.Foundation) { 
-                        this.handleClick(this.activeCard);
-                    } else {
-                        this.handleCardDrop(this.activeCard);
-                    }
-    
-                    this.activeCard = undefined;  // Clear the active card reference
-                    this.dragging = false;
-                    this.dragAndDrop = false;
-                    setDragActive(this.dragging);
-                    this.holdTimeoutFlag = false;
-                    this.addSubstackClearTimeout();
-                } else if (this.activeCard && this.isClickEnabled) {
-                    this.handleClick(this.activeCard);
-                    if (SOUND_ACTIVE) SoundManager.instance.grabCard.play();
-                }
-            }
-        };
-    
-        input.on('pointerup', handlePointerUp);
-        UIScene.myRef.input.on('pointerup', handlePointerUp);
-        input.on('pointerupoutside', handlePointerUp);
+        input.on('pointerup', this.handlePointerUp);
+        UIScene.myRef.input.on('pointerup', this.handlePointerUp);
+        input.on('pointerupoutside', this.handlePointerUp);
+      
 
         // UIScene.myRef.input
     

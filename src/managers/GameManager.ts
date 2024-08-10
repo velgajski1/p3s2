@@ -85,6 +85,7 @@ export class GameManager {
                 this.pileManager.getAllCards().forEach(c => c.update())
                 this.gameplayContainer.sort('depth');
                 setDragActive(this.controlManager.dragging);
+                this.controlManager.update()
                 // if (this.gameScene.game.loop.actualFps < 59)  
                 // if (!this.controlManager.activeCard && !this.gameScene.input.activePointer.isDown) {
                     
@@ -154,6 +155,8 @@ export class GameManager {
         } 
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
         statsManager.updateCurrentGame(this.score, this.elapsedTime);
+
+        
         
 
 
@@ -162,7 +165,7 @@ export class GameManager {
     updateTimerQuick(): void {
         
         
-        
+       
      
         GameManager.rendererHeight = this.gameScene.renderer.height;
         GameManager.gameplayContainerY = this.gameplayContainer.y

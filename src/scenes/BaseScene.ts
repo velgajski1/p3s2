@@ -48,7 +48,7 @@ export default class BaseScene extends Phaser.Scene {
         return /android|iphone|ipod/.test(userAgent) && !this.isTablet();
     }
 
-    private isTablet(): boolean {
+    protected isTablet(): boolean {
         // Tablets generally have an aspect ratio between 1 and 1.6
         const aspectRatio = window.innerWidth / window.innerHeight;
         // Screen diagonal size in inches (e.g., diagonal of a 10.1" tablet)

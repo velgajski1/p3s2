@@ -89,7 +89,11 @@ class CardLayoutManager {
             
             let rightHandeWasteDelta = 0;
             if (RIGHT_HANDED_MODE_ACTIVE && STOCK_THREE_MODE_ACTIVE) {
-                rightHandeWasteDelta =-60;
+                rightHandeWasteDelta = -60;
+                if (GameManager.isMobile) {
+                    rightHandeWasteDelta = -95;
+                }
+                
             }
 
             card.wasteDeltaX += rightHandeWasteDelta;

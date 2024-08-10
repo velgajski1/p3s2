@@ -91,7 +91,9 @@ export class GameplayScene extends BaseScene {
             this.gameplayContainer.setPosition(0.505*width, top);
 
         }
-        
+        if (!this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape && !this.registry.get("isFullscreen")) {
+            this.gameplayContainer.setPosition(width / 2, top*0.7);
+        }
 
 
         const adjustedStartX = (width / 2) + -554 * scale;
