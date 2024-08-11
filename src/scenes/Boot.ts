@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { Language } from '../utils/Language';
+import { getBGINDEX } from '../config/Config';
 
 export class Boot extends Scene
 {
@@ -21,6 +22,7 @@ export class Boot extends Scene
     {
         this.scene.start('Preloader');
         Language.initLanguage(this.game)
+        console.log(getBGINDEX())
    
     }
 }

@@ -504,12 +504,12 @@ export default class PileManager {
 
 
         
-        if (x > 2 && this.tableuPilesYDelta[pileIndex] < tabCoordsDeltaY) {
+        if (x > 20 && this.tableuPilesYDelta[pileIndex] < tabCoordsDeltaY) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] + 1;
             return this.fixTableuYDelta(pileIndex, substack, maxTries);
 
         }
-        else if (x < -2) {
+        else if (x < 0) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] - 1;
             return this.fixTableuYDelta(pileIndex, substack, maxTries);
         }
@@ -681,7 +681,9 @@ export default class PileManager {
             () => {
                 this.removeCardFromTransition(card);
                 this._addCardToTableau(card, pileIndex);
+                this.fixTableuYDeltaAll()
                 // this.cardLayoutManager.layoutAll(this, true)
+                
                 this.fixTableuDepthAndFlipstatus()
                 this.gameplayContainer.sort("depth");
                 

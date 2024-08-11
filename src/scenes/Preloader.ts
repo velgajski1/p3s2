@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { CardNameManager } from '../managers/CardNameManager';
-import { loadDefaultSettings, loadSettings } from '../config/Config';
+import { getBGINDEX, loadDefaultSettings, loadSettings } from '../config/Config';
 import { GameManager } from '../managers/GameManager';
 
 export class Preloader extends Scene {
@@ -9,6 +9,7 @@ export class Preloader extends Scene {
 
     constructor() {
         super('Preloader');
+        console.log(getBGINDEX())
     }
 
     isMobile() {
@@ -92,7 +93,7 @@ export class Preloader extends Scene {
         // Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
-        console.log(window.location)
+        
 
         this.load.image('hint', 'hint.png');
         this.load.image('klondike_1_turn', 'klondike_1_turn.png');
@@ -120,13 +121,14 @@ export class Preloader extends Scene {
 
         GameManager.isMobile = isMobile;
         // Load the appropriate multiatlas
-        loadDefaultSettings()
+        console.log(getBGINDEX())
+        // loadDefaultSettings()
         
-
+        console.log(getBGINDEX())
         let locationBase;
         try {
              locationBase = '' + window.location.origin+'/';
-             console.log(locationBase);
+             
         } catch (e) {
             this.displayErrorMessage('Error loading assets: ' + e);
             
@@ -165,7 +167,7 @@ export class Preloader extends Scene {
                     locationToLoad += 'cards_desktop/assets.json'
                     this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_desktop');
                 }
-                console.log(locationToLoad)
+                
                 locationToLoad = locationBase + 'shared'
                 this.load.audio('card_to_foundation', locationToLoad + '/sounds/card-to-foundation.mp3');
                 this.load.audio('click', locationToLoad + '/sounds/click.mp3');
@@ -192,6 +194,10 @@ export class Preloader extends Scene {
         // For example, you can define global animations here, so we can use them in other scenes.
 
         // Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+
+
+        loadDefaultSettings(this.game.device.os.android || this.game.device.os.iOS)
+        loadSettings()
 
         const cardData = this.cache.json.get('cardData');
 

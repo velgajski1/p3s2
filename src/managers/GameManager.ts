@@ -9,6 +9,7 @@ import { STOCK_COORDS } from '../config/Consts';
 import { AUTOFINISH_MODE_ACTIVE, loadSettings, setDragActive } from '../config/Config';
 import statsManager from './StatsManager';
 import StatsManager from './StatsManager';
+import { UIScene } from '../scenes/UIScene';
 
 export class GameManager {
 
@@ -165,7 +166,7 @@ export class GameManager {
     updateTimerQuick(): void {
         
         
-       
+       UIScene.myRef.skipClicks = false;
      
         GameManager.rendererHeight = this.gameScene.renderer.height;
         GameManager.gameplayContainerY = this.gameplayContainer.y
@@ -180,7 +181,12 @@ export class GameManager {
         if (AUTOFINISH_MODE_ACTIVE && this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length <= 1 && this.pileManager.getStockPile().length == 0)
         {
             UndoManager.getInstance().disableUndo()
-            this.controlManager.disableControls()
+            this.controlManager.disableControls();
+            let uiscene : UIScene = (this.gameScene.scene.get("UIScene") as UIScene)
+            uiscene.inputEnabled = false;
+            UIScene.myRef.inputEnabled = false;
+            UIScene.myRef.skipClicks = true;
+            console.log("set input enabled to false")
             this.layoutManager.stockIndicator.removeAllListeners()
             let wasteTop = this.pileManager.getTopCardFromWaste();
             if (wasteTop)

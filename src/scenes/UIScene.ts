@@ -25,10 +25,12 @@ export class UIScene extends Phaser.Scene {
     hintBut: ImageButton;
     undoBut: ImageButton;
     inputEnabled: boolean =  true;
+    skipClicks : boolean = false;
     allInteractive : [ImageButton];
     toggleSwitch: ToggleSwitch;
     elementsContainer2: GameObjects.Container;
     elementsContainer3: GameObjects.Container;
+
 
     static myRef : UIScene;
 
@@ -76,7 +78,7 @@ export class UIScene extends Phaser.Scene {
             81, 
             0,
             (nextState: boolean) => {
-                if (!this.inputEnabled) return;
+                if (!this.inputEnabled|| this.skipClicks) return;
                 // 
                 // You can add more logic here to handle the toggle action
                 
@@ -94,7 +96,9 @@ export class UIScene extends Phaser.Scene {
      
 
          this.menuBut = new ImageButton(this, 160+deltaX, 0, 'menu', 'menu', () => {
-            if (!this.inputEnabled) return;
+            console.log("menu")
+            console.log(this.inputEnabled|| this.skipClicks)
+            if (!this.inputEnabled || this.skipClicks) return;
             if (this.scene.getIndex('MainMenu')>-1) {
                 this.scene.launch("MainMenu").bringToTop("MainMenu");
             }
@@ -109,7 +113,7 @@ export class UIScene extends Phaser.Scene {
          this.menuBut.setOrigin(0, 0);
 
          this.settingsBut = new ImageButton(this, 220+deltaX, 0, 'settings', 'settings', () => {
-            if (!this.inputEnabled) return;
+            if (!this.inputEnabled|| this.skipClicks) return;
             this.scene.launch("Settings").bringToTop("Settings");
             this.input.setDefaultCursor('default');
          })
@@ -118,7 +122,7 @@ export class UIScene extends Phaser.Scene {
          this.settingsBut.setOrigin(0, 0);
 
          this.hintBut = new ImageButton(this, 280+deltaX, 0, 'hint', 'hint', () => {
-            if (!this.inputEnabled) return;
+            if (!this.inputEnabled|| this.skipClicks) return;
             let gamemanager : GameManager = this.registry.get('gameManager')
             HintManager.getInstance().getHint(gamemanager.pileManager)
             
@@ -128,7 +132,7 @@ export class UIScene extends Phaser.Scene {
          this.hintBut.setOrigin(0, 0);
 
          this.undoBut = new ImageButton(this, 360+deltaX, 0, 'undo', 'undo', () => {
-            if (!this.inputEnabled) return;
+            if (!this.inputEnabled|| this.skipClicks) return;
             this.gameManager = this.registry.get("gameManager")
             this.gameManager.controlManager.handleUKey()
          })
@@ -154,7 +158,7 @@ export class UIScene extends Phaser.Scene {
             0, 
             55,
             (nextState: boolean) => {
-                if (!this.inputEnabled) return;
+                if (!this.inputEnabled|| this.skipClicks) return;
 
                 
                 var gamemanager : GameManager = this.registry.get("gameManager")
@@ -170,7 +174,9 @@ export class UIScene extends Phaser.Scene {
      
 
          this.menuBut = new ImageButton(this, deltaXLeft, 0, 'menu', 'menu', () => {
-            if (!this.inputEnabled) return;
+            console.log("menu")
+            console.log(this.inputEnabled)
+            if (!this.inputEnabled|| this.skipClicks) return;
             if (this.scene.getIndex('MainMenu')>-1) {
                 this.scene.launch("MainMenu").bringToTop("MainMenu");
             }
@@ -185,7 +191,10 @@ export class UIScene extends Phaser.Scene {
          this.menuBut.setOrigin(0, 0);
 
          this.settingsBut = new ImageButton(this, deltaXLeft, 55, 'settings', 'settings', () => {
-            if (!this.inputEnabled) return;
+            console.log("setting")
+            console.log(this.inputEnabled)
+            if (!this.inputEnabled|| this.skipClicks) return;
+            
             this.scene.launch("Settings").bringToTop("Settings");
             this.input.setDefaultCursor('default');
          })
@@ -194,7 +203,7 @@ export class UIScene extends Phaser.Scene {
          this.settingsBut.setOrigin(0, 0);
 
          this.hintBut = new ImageButton(this, deltaX, 114+50, 'hint', 'hint', () => {
-            if (!this.inputEnabled) return;
+            if (!this.inputEnabled|| this.skipClicks) return;
             let gamemanager : GameManager = this.registry.get('gameManager')
             HintManager.getInstance().getHint(gamemanager.pileManager)
             
@@ -204,7 +213,7 @@ export class UIScene extends Phaser.Scene {
          this.hintBut.setOrigin(0, 0);
 
          this.undoBut = new ImageButton(this, deltaX, 169+50, 'undo', 'undo', () => {
-            if (!this.inputEnabled) return;
+            if (!this.inputEnabled|| this.skipClicks) return;
             this.gameManager = this.registry.get("gameManager")
             this.gameManager.controlManager.handleUKey()
          })
@@ -288,7 +297,7 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer2.x = elementsStartX;
         this.elementsContainer2.setScale(scale)
 
-        console.log(scale, fontsize)
+        
 
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
             fontSize: fontsize+'px',
@@ -316,13 +325,13 @@ export class UIScene extends Phaser.Scene {
     }
     handleMobileLandscape()
     {
-        console.log("handle mobile landscape")
+        
         if(this.scale.isFullscreen || !this.isTablet()) {
-            console.log("handle mobile landscape - is fullscreen")
+            
             this.elementsContainer.scale *= 2
             this.elementsContainer2.scale *= 2
             this.textContainer.scale = 1.2
-            console.log(this.textContainer.scale)
+            
             
             this.elementsContainer.x = window.innerWidth
             this.elementsContainer2.x = window.innerWidth
@@ -404,7 +413,7 @@ export class UIScene extends Phaser.Scene {
         this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
         if (this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {
-            console.log("is fullscreen")
+            
             this.elementsContainer.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.025

@@ -1,4 +1,4 @@
-import { loadSettings, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { getBGINDEX, loadDefaultSettings, loadSettings, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 
 class StatsManager {
     private static instance: StatsManager;
@@ -278,6 +278,8 @@ class StatsManager {
 }
 
 // Export a singleton instance
-loadSettings()
+// loadDefaultSettings()
+// loadSettings()
 const statsManager = StatsManager.getInstance();
 export default statsManager;
+

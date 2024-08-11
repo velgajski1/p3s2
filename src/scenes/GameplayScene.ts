@@ -6,6 +6,7 @@ import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { PileType, TABLEU_COORDS_DELTA } from '../config/Consts';
 import BaseScene from './BaseScene';
 import { SoundManager } from '../managers/SoundManager';
+import { getBGINDEX, loadDefaultSettings, loadSettings } from '../config/Config';
 
 export class GameplayScene extends BaseScene {
     private gameplayContainer!: Phaser.GameObjects.Container;
@@ -14,6 +15,9 @@ export class GameplayScene extends BaseScene {
 
     constructor() {
         super('GameplayScene');
+        console.log(getBGINDEX())
+
+        
     }
 
     
@@ -72,7 +76,7 @@ export class GameplayScene extends BaseScene {
         if (this.scale.isFullscreen && this.isLandscape()) {
             top = 20;
             let delta = Math.max(0, 2 - this.scale.gameSize.aspectRatio)
-            console.log(delta);
+            
             scale *= (1 +0.2 - delta); 
             this.gameplayContainer.setScale(scale);
             this.scene.launch("UIScene");
@@ -105,7 +109,7 @@ export class GameplayScene extends BaseScene {
 
             this.gameManager.pileManager.tableuPilesYDelta = Array.from({length:7}, () => TABLEU_COORDS_DELTA.y)
             this.gameManager.pileManager.fixTableuYDeltaAll()
-            console.log(this.gameManager.pileManager.tableuPilesYDelta)
+            
             this.gameManager.layoutManager.update()
             this.gameManager.layoutManager.layoutTableauPiles(this.gameManager.pileManager.getTableauPiles())
             this.gameManager.layoutManager.updateTabIndicators()         

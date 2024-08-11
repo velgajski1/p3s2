@@ -9,10 +9,14 @@ export var SOUND_ACTIVE: boolean = true;
 export var BG_INDEX : number = 0;
 export var DRAG_ACTIVE : boolean = true;
 
-export function loadDefaultSettings() {
-    console.log(RIGHT_HANDED_MODE_ACTIVE)
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+export function loadDefaultSettings(isMobile : boolean = false) {
+    console.log(isMobile)
     if (RIGHT_HANDED_MODE_ACTIVE == undefined || RIGHT_HANDED_MODE_ACTIVE == null) {
-        if (GameManager.isMobile) {
+        if (isMobile) {
             RIGHT_HANDED_MODE_ACTIVE = true;
         } else {
             RIGHT_HANDED_MODE_ACTIVE = false;
@@ -24,6 +28,7 @@ export function loadDefaultSettings() {
 // Load saved settings from localStorage
 export function loadSettings() {
     
+    console.log("loadsettings called")
     const stockThreeMode = localStorage.getItem('STOCK_THREE_MODE_ACTIVE');
     if (stockThreeMode !== null) {
         STOCK_THREE_MODE_ACTIVE = JSON.parse(stockThreeMode);
@@ -39,6 +44,8 @@ export function loadSettings() {
         RIGHT_HANDED_MODE_IDX = JSON.parse(rightHandedModeIdx);
     }
 
+    console.log(RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX)
+
     const autofinishMode = localStorage.getItem('AUTOFINISH_MODE_ACTIVE');
     if (autofinishMode !== null) {
         AUTOFINISH_MODE_ACTIVE = JSON.parse(autofinishMode);
@@ -53,6 +60,8 @@ export function loadSettings() {
     if (bgIndex !== null) {
         BG_INDEX = JSON.parse(bgIndex);
     }
+
+    console.log(BG_INDEX)
 }
 
 export function toggleThreeModeActive(params: boolean) {
@@ -84,6 +93,10 @@ export function setBgIdx(params: number) {
 
 export function setDragActive(val:boolean) {
     DRAG_ACTIVE = val;
+}
+
+export function getBGINDEX() {
+    return BG_INDEX
 }
 
 // Call this function during initialization to load saved settings

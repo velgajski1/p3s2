@@ -15,7 +15,7 @@ class ControlManager {
     {
         
         if (this.activeCard) {
-            console.log(this.activeCard)
+            
             if (this.activeCard.scene) {
                 if (this.activeCard.scene.input.activePointer.isDown == false) {
                     this.handlePointerUp()
@@ -389,32 +389,7 @@ class ControlManager {
                 }
             }
         }
-        
     
-        // If not placed, check for special case with Kings on empty tableau piles
-        // if (!placed) {
-        //     // 
-        //     if (tableauIndex !== -1 && this.pileManager.getTableauPiles()[tableauIndex].length === 0 && activeCard.rank === Rank.King) {
-        //         // Valid drop on an empty tableau pile (Kings only)
-        //         if (activeCard.pileType == PileType.Waste) {
-        //             this.pileManager.gameManager.incrementScore(5);
-        //         }
-        //         this.placeCardOnTableau(activeCard, tableauIndex);
-        //         this.substack.forEach(c => {
-        //             if (c === activeCard) return;
-        //             this.placeCardOnTableau(c, tableauIndex);
-        //         });
-    
-        //         this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
-        //         UndoManager.getInstance().saveState(this.pileManager.getState());
-        //     } else {
-        //         // Invalid drop, reset the card and any substack to the original position
-        //         if (this.activeCard) {
-        //             this.resetDraggedCards(this.activeCard, this.substack);
-        //             if (this.activeCard.pileType == PileType.Waste) this.activeCard.renewWasteCoords(this);
-        //         }
-        //     }
-        // }
 
         if (!placed) {
             let validDropFound = false;

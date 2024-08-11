@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { BACKGROUND_COLORS} from '../config/Consts';
-import { BG_INDEX } from '../config/Config';
+import { BG_INDEX, getBGINDEX } from '../config/Config';
 
 export class BackgroundScene extends Phaser.Scene {
 
@@ -24,7 +24,8 @@ export class BackgroundScene extends Phaser.Scene {
         this.changeBackgroundColor();
         // 
         // Additional setup as needed
-        this.changeBackgroundColor(BG_INDEX);
+        this.changeBackgroundColor(getBGINDEX());
+        console.log(getBGINDEX())
     }
 
     public setToColor(color : string): void {
