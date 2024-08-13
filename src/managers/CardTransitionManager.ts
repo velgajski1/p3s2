@@ -46,7 +46,11 @@ class CardTransitionManager {
         }
     }
 
-    moveCardToTableau( tab_deltaY : number, tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void) {
+    moveCardToTableau( tab_deltaY : number, tableuPiles : Card[][], card: Card, targetPileIndex: number, indexWithinTargetPile: number, container: Phaser.GameObjects.Container, onComplete: () => void, immediately : boolean = false) {
+        let duration = TABLEU_STACK_TWEEN_DURATION
+        if (immediately) {
+            duration = 10
+        }
         card.setInteractive(false); // Temporarily disable interaction during the movement
         getTweensForObject(card.scene, card).forEach(x => x.complete());
         SOUND_ACTIVE && SoundManager.instance.valid.play() 
@@ -75,7 +79,7 @@ class CardTransitionManager {
             targets: card,
             x: TABLEU_COORDS_INIT.x + TABLEU_COORDS_DELTA.x * targetPileIndex,
             y: yPosition,
-            duration: TABLEU_STACK_TWEEN_DURATION, // Adjust as necessary
+            duration: duration, // Adjust as necessary
             ease: 'Cubic.easeOut',
             onComplete: () => {
                 // Enable interaction and call the completion callback

@@ -150,6 +150,17 @@ class ControlManager {
 
             if (this.substack.length > 0) {
                 this.substack.forEach(c => c.y -= 3)
+                // let delta = 100000 + this.cardsDragged++;
+                // this.activeCard.setDepth(this.activeCard.depth + delta);
+                // this.activeCard.isBeingDragged = true;
+                // this.substack.forEach((s,i) => {
+                //     // 
+                //     if (s == this.activeCard) return;
+                //     s.isBeingDragged = true;
+                //     if (this.activeCard) s.setDepth(this.activeCard.depth + delta+i);
+                //     
+                // });
+
             }else{
                 card.y -= 3;
             }
@@ -189,6 +200,7 @@ class ControlManager {
                 this.substack.forEach(s => {
                     if (s === this.activeCard) return;
                     s.setDepth(s.depth - 100000);
+                    s.isBeingDragged = false
                 });
 
                 // Foundation doesn't use click at all, so it always goes to drop
@@ -330,8 +342,12 @@ class ControlManager {
                         UndoManager.getInstance().saveState(this.pileManager.getState());
                     }, 200);
                 }
-    
+                let pileToFix = activeCard.pileIndex
                 this.pileManager.addCardToFoundationPile(activeCard, foundationIndex);
+                this.pileManager.fixTableuYDelta(pileToFix);
+                this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
+
+
                 placed = true;
                 break;
             }
@@ -342,6 +358,7 @@ class ControlManager {
             // First, try placing on foundation piles
             for (let card of overlappedCards) {
                 if (card.pileType == PileType.Foundation) {
+
                     let foundIndex = this.pileManager.getFoundationPileIndexFromCard(card);
                     if (foundIndex != -1 && this.canPlaceCardOnFoundation(activeCard, foundIndex)) {
                         // Valid drop on a foundation pile
@@ -351,7 +368,11 @@ class ControlManager {
                                 UndoManager.getInstance().saveState(this.pileManager.getState());
                             }, 200);
                         }
+                        let pileToFix = activeCard.pileIndex
+
                         this.pileManager.addCardToFoundationPile(activeCard, foundIndex);
+                        this.pileManager.fixTableuYDelta(pileToFix);
+                        this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
                         placed = true;
                         break; // Stop after successful placement
                     }
@@ -371,7 +392,14 @@ class ControlManager {
                                     this.pileManager.gameManager.incrementScore(5);
                                 }
         
-                                this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack]);
+                                let pileToFix = activeCard.pileIndex
+                                let pileTypeInit = activeCard.pileType
+                                if (pileTypeInit == PileType.Foundation || pileTypeInit == PileType.Waste) {
+                                    this.pileManager.fixTableuYDelta(card.pileIndex, [activeCard, ...this.substack]);
+                                } else {
+                                    this.pileManager.fixTableuYDelta(card.pileIndex, [...this.substack]);
+                                }
+                                
                                 this.pileManager.cardLayoutManager.init(this.pileManager);
                                 this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), dropIdx, true);
                                 this.placeCardOnTableau(activeCard, dropIdx);
@@ -380,6 +408,7 @@ class ControlManager {
                                     this.placeCardOnTableau(c, dropIdx);
                                 });
                                 placed = true;
+                                if (pileTypeInit == PileType.Tableau) this.pileManager.fixTableuYDelta(pileToFix);
                                 this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
                                 UndoManager.getInstance().saveState(this.pileManager.getState());
                                 break; // Stop after successful placement
@@ -404,12 +433,16 @@ class ControlManager {
                     if (activeCard.pileType == PileType.Waste) {
                         this.pileManager.gameManager.incrementScore(5);
                     }
+                    let pileToFix = activeCard.pileIndex;
+                    let pileTypeInit = activeCard.pileType
+                    this.pileManager.fixTableuYDelta(currentIndex, [ ...this.substack]);
                     this.placeCardOnTableau(activeCard, currentIndex);
                     this.substack.forEach(c => {
                         if (c === activeCard) return;
                         this.placeCardOnTableau(c, currentIndex);
                     });
-        
+                   
+                    if (pileTypeInit == PileType.Tableau)  this.pileManager.fixTableuYDelta(pileToFix);
                     this.pileManager.cardLayoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
                     UndoManager.getInstance().saveState(this.pileManager.getState());
                     validDropFound = true;
@@ -716,11 +749,9 @@ class ControlManager {
     
     private placeCardOnTableau(activeCard: Card, targetPileIndex: number): void {
 
-        this.pileManager.addCardToTableuPile(activeCard, targetPileIndex);
+        this.pileManager.addCardToTableuPile(activeCard, targetPileIndex, true);
         this.pileManager.getTableauPiles().forEach((pile, index) => {
             this.pileManager.uncoverTableuPile(index)
-            // this.pileManager.fixTableuYDelta(index)
-            // this.pileManager.cardLayoutManager.layoutTableauPile(this.pileManager.getTableauPiles(), index, true)
         })
 
         

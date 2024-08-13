@@ -7,4 +7,5 @@ export interface GameState {
     wastePile: Card[];
     flippedCounts: number[]; // Array to hold the number of flipped cards per tableau pile
     score : number; //
+    // tableuYDelta : number[];
 }

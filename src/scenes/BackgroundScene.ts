@@ -25,7 +25,7 @@ export class BackgroundScene extends Phaser.Scene {
         // 
         // Additional setup as needed
         this.changeBackgroundColor(getBGINDEX());
-        console.log(getBGINDEX())
+        
     }
 
     public setToColor(color : string): void {

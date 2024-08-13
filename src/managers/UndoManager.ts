@@ -54,6 +54,7 @@ export default class UndoManager {
         
         if (totalCards == 52 && (!lastState || !this.areStatesEqual(lastState, copiedState))) {
             this.states.push(copiedState);
+            // 
             HintManager.getInstance().clearHints();
             
             if (this.states.length > 1) {
@@ -61,6 +62,8 @@ export default class UndoManager {
             }
             
         }
+
+    
     }
 
     private deepCopyState(state: GameState): GameState {
@@ -72,6 +75,7 @@ export default class UndoManager {
         const stockPile = [...state.stockPile];
         const wastePile = [...state.wastePile];
         const score = state.score;
+        // const tableuYDelta = state.tableuYDelta;
 
 
 
@@ -85,7 +89,8 @@ export default class UndoManager {
             stockPile,
             wastePile,
             flippedCounts,
-            score
+            score,
+            // tableuYDelta
         };
     }
 

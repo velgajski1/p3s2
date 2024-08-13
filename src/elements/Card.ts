@@ -29,6 +29,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
     hintTimerEvent: Phaser.Time.TimerEvent;
     outline: Phaser.GameObjects.Sprite;
     isClickEnabled: boolean = true;
+    isBeingDragged: boolean = false;
 
     constructor(scene: Phaser.Scene, x: number, y: number, suit : Suit, rank : Rank, isFaceUp: boolean) {
         
@@ -327,7 +328,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
         return this;
     }
 
-    getName() : string { return this.name + ", faceup="+this.isFaceUp+", pile="+this.pileType + " x/y= " + this.x +","+ this.y }
+    getName() : string { return this.name + ", faceup="+this.isFaceUp+", pile="+this.pileType + " x/y/depth= " + this.x +","+ this.y+","+ this.depth }
 
     // Additional methods to manipulate the card state...
 }

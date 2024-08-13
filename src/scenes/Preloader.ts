@@ -9,7 +9,7 @@ export class Preloader extends Scene {
 
     constructor() {
         super('Preloader');
-        console.log(getBGINDEX())
+        
     }
 
     isMobile() {
@@ -121,10 +121,10 @@ export class Preloader extends Scene {
 
         GameManager.isMobile = isMobile;
         // Load the appropriate multiatlas
-        console.log(getBGINDEX())
+        
         // loadDefaultSettings()
         
-        console.log(getBGINDEX())
+        
         let locationBase;
         try {
              locationBase = '' + window.location.origin+'/';

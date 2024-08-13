@@ -186,7 +186,7 @@ export class GameManager {
             uiscene.inputEnabled = false;
             UIScene.myRef.inputEnabled = false;
             UIScene.myRef.skipClicks = true;
-            console.log("set input enabled to false")
+            
             this.layoutManager.stockIndicator.removeAllListeners()
             let wasteTop = this.pileManager.getTopCardFromWaste();
             if (wasteTop)

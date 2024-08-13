@@ -43,15 +43,11 @@ class CardLayoutManager {
 
     layoutAll(pileManager : PileManager, withTween : boolean = false) 
     {
-        
         this.init(pileManager)
         this.layoutStockPile(pileManager.getStockPile())
         this.layoutWastePile(pileManager.getWastePile())
         this.layoutTableauPiles(pileManager.getTableauPiles(), withTween)
         this.layoutFoundationPiles(pileManager.getFoundationPiles())
-
-
-        
     }
     // Layout method for stock pile, usually a single stack
     layoutStockPile(cards: Card[]) {
@@ -173,6 +169,7 @@ class CardLayoutManager {
            }
            else
            {
+            // 
             card.setDepth(pileIndex * 100 + cardIndex); // Ensure correct stacking order
            }
 

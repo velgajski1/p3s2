@@ -15,7 +15,7 @@ export class GameplayScene extends BaseScene {
 
     constructor() {
         super('GameplayScene');
-        console.log(getBGINDEX())
+        
 
         
     }
@@ -73,7 +73,7 @@ export class GameplayScene extends BaseScene {
         let top = this.registry.get("uiBottomPx")
         
         
-        if (this.scale.isFullscreen && this.isLandscape()) {
+        if ( (this.scale.isFullscreen || this.game.device.os.iOS ) && this.isLandscape()) {
             top = 20;
             let delta = Math.max(0, 2 - this.scale.gameSize.aspectRatio)
             
@@ -97,6 +97,10 @@ export class GameplayScene extends BaseScene {
         }
         if (!this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape && !this.registry.get("isFullscreen")) {
             this.gameplayContainer.setPosition(width / 2, top*0.7);
+        }
+        if (this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) {
+            this.gameplayContainer.setScale(scale*1.3);
+            this.gameplayContainer.setPosition(width / 2, 3*top);
         }
 
 

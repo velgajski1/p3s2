@@ -96,8 +96,8 @@ export class UIScene extends Phaser.Scene {
      
 
          this.menuBut = new ImageButton(this, 160+deltaX, 0, 'menu', 'menu', () => {
-            console.log("menu")
-            console.log(this.inputEnabled|| this.skipClicks)
+            
+            
             if (!this.inputEnabled || this.skipClicks) return;
             if (this.scene.getIndex('MainMenu')>-1) {
                 this.scene.launch("MainMenu").bringToTop("MainMenu");
@@ -174,8 +174,8 @@ export class UIScene extends Phaser.Scene {
      
 
          this.menuBut = new ImageButton(this, deltaXLeft, 0, 'menu', 'menu', () => {
-            console.log("menu")
-            console.log(this.inputEnabled)
+            
+            
             if (!this.inputEnabled|| this.skipClicks) return;
             if (this.scene.getIndex('MainMenu')>-1) {
                 this.scene.launch("MainMenu").bringToTop("MainMenu");
@@ -191,8 +191,8 @@ export class UIScene extends Phaser.Scene {
          this.menuBut.setOrigin(0, 0);
 
          this.settingsBut = new ImageButton(this, deltaXLeft, 55, 'settings', 'settings', () => {
-            console.log("setting")
-            console.log(this.inputEnabled)
+            
+            
             if (!this.inputEnabled|| this.skipClicks) return;
             
             this.scene.launch("Settings").bringToTop("Settings");
@@ -311,6 +311,7 @@ export class UIScene extends Phaser.Scene {
         this.calculateContainerHeightPercentage(height)
         this.updateTextPos()
         
+        console.log(this.game.device.os)
         
         if (this.game.device.os.android || this.game.device.os.iOS) {
             if (innerWidth > innerHeight) {
@@ -325,8 +326,9 @@ export class UIScene extends Phaser.Scene {
     }
     handleMobileLandscape()
     {
-        
-        if(this.scale.isFullscreen || !this.isTablet()) {
+        console.log(this.scale.isFullscreen, !this.isTablet(), this.game.device.os.iOS)
+        if(this.scale.isFullscreen || !this.isTablet() || (this.game.device.os.iOS && this.isTablet() && this.scale.isGameLandscape)) {
+            
             
             this.elementsContainer.scale *= 2
             this.elementsContainer2.scale *= 2
@@ -412,12 +414,16 @@ export class UIScene extends Phaser.Scene {
         
         this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
-        if (this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {
+        console.log(this.registry.get("isFullscreen") , this.game.device.os.desktop,  this.isTablet() , this.scale.isGameLandscape)
+        if ((this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) || this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {
             
             this.elementsContainer.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.925
             this.elementsContainer2.y = this.scale.height *0.025
             this.textContainer.y = this.scale.height * 0.925
+
+        
+
 
             if (this.game.device.os.android || this.game.device.os.iOS) {
                 this.elementsContainer.y = this.scale.height *0.9
@@ -428,6 +434,10 @@ export class UIScene extends Phaser.Scene {
                     this.elementsContainer3.y = this.scale.height *0.09
                 }
                 this.textContainer.y = this.scale.height * 0.9 
+                // this.textContainer.y = this.scale.height * 0.525
+                if (this.game.device.os.iPad) {
+                    this.textContainer.y = this.scale.height * 0.86 
+                } 
             }
         }
         else {

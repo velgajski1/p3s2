@@ -14,7 +14,7 @@ function isMobileDevice() {
 }
 
 export function loadDefaultSettings(isMobile : boolean = false) {
-    console.log(isMobile)
+    
     if (RIGHT_HANDED_MODE_ACTIVE == undefined || RIGHT_HANDED_MODE_ACTIVE == null) {
         if (isMobile) {
             RIGHT_HANDED_MODE_ACTIVE = true;
@@ -28,7 +28,7 @@ export function loadDefaultSettings(isMobile : boolean = false) {
 // Load saved settings from localStorage
 export function loadSettings() {
     
-    console.log("loadsettings called")
+    
     const stockThreeMode = localStorage.getItem('STOCK_THREE_MODE_ACTIVE');
     if (stockThreeMode !== null) {
         STOCK_THREE_MODE_ACTIVE = JSON.parse(stockThreeMode);
@@ -44,7 +44,7 @@ export function loadSettings() {
         RIGHT_HANDED_MODE_IDX = JSON.parse(rightHandedModeIdx);
     }
 
-    console.log(RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX)
+    
 
     const autofinishMode = localStorage.getItem('AUTOFINISH_MODE_ACTIVE');
     if (autofinishMode !== null) {
@@ -61,7 +61,7 @@ export function loadSettings() {
         BG_INDEX = JSON.parse(bgIndex);
     }
 
-    console.log(BG_INDEX)
+    
 }
 
 export function toggleThreeModeActive(params: boolean) {

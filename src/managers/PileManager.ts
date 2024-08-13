@@ -161,7 +161,7 @@ export default class PileManager {
                     if (this.canMoveToTableauPile(card, targetPile)) {
                         // Identify the substack starting from the clicked card to the end
                         const substack = this.getSubstack(card);
-                        this.fixTableuYDelta(i, substack)
+                        this.fixTableuYDelta(i, [ ...substack])
                         this.cardLayoutManager.init(this)
                         this.cardLayoutManager.layoutTableauPile(this.tableauPiles, i, true)
                         
@@ -462,7 +462,7 @@ export default class PileManager {
         return this.wastePile;
     }
 
-    calculateTableuPileHeight(pileIndex : number, tabCoordsDeltaY :number, tabCoordsDeltaYCovered : number, substack : Card[] = []): number {
+    calculateTableuPileHeight(pileIndex : number, tabCoordsDeltaY :number, tabCoordsDeltaYCovered : number, substack : Card[] = [], extraSubstacks : number = 0): number {
         let targetPile = this.tableauPiles[pileIndex];
         let yPosition = TABLEU_COORDS_INIT.y;
         for (let i = 0; i < targetPile.length; i++) {
@@ -472,50 +472,57 @@ export default class PileManager {
                 yPosition += tabCoordsDeltaYCovered;
             }
         }
+        // 
         for (let i = 0; i < substack.length; i++) {
-            if (substack[i].isFaceUp) {
+            // if (substack[i].isFaceUp) {
                 yPosition += tabCoordsDeltaY;
-            } else {
-                yPosition += tabCoordsDeltaYCovered;
-            }
+            // } else {
+            //     yPosition += tabCoordsDeltaYCovered;
+            // }
         }
+        // 
+        // while(extraSubstacks-- > 0) yPosition += tabCoordsDeltaY;
+        // 
         return yPosition;
 
     }
 
     fixTableuYDeltaAll() {
         
-        this.tableuPilesYDelta.forEach((x,i) => this.fixTableuYDelta(i));
+        this.tableuPilesYDelta.forEach((x,i) => this.fixTableuYDelta(i, [], 50, 0));
     }
 
-    fixTableuYDelta(pileIndex: number, substack : Card[] = [], maxTries : number = 50) : number
+    fixTableuYDelta(pileIndex: number, substack : Card[] = [], maxTries : number = 50, extraSubstacks :number =0, resetDeltaY:boolean = true) : number
     {
+        // 
         let tabCoordsDeltaY = TABLEU_COORDS_DELTA.y;
         if (GameManager.isMobile) tabCoordsDeltaY+=TAB_DELTA_Y_MOBILE_EXTRA;
+        if (resetDeltaY) this.tableuPilesYDelta[pileIndex] = tabCoordsDeltaY;
         maxTries--;
         if (maxTries <= 0) return this.tableuPilesYDelta[pileIndex];
-        let height = this.calculateTableuPileHeight(pileIndex, this.tableuPilesYDelta[pileIndex], TABLEU_COORDS_DELTA.y_covered, substack)+30;
-        
+        let height = this.calculateTableuPileHeight(pileIndex, this.tableuPilesYDelta[pileIndex], TABLEU_COORDS_DELTA.y_covered, substack, extraSubstacks)+30;
+        // 
         let renderHeight = GameManager.rendererHeight
 
-        if (GameManager.isMobile && GameManager.isPotrait) renderHeight *= 0.85;
-        if (GameManager.isMobile && !GameManager.isPotrait) renderHeight *= 0.875;
+        if (GameManager.isMobile && GameManager.isPotrait) renderHeight *= 0.70;
+        if (GameManager.isMobile && !GameManager.isPotrait) renderHeight *= 0.825;
         let x = (renderHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
 
+      
 
         
         if (x > 20 && this.tableuPilesYDelta[pileIndex] < tabCoordsDeltaY) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] + 1;
-            return this.fixTableuYDelta(pileIndex, substack, maxTries);
+            return this.fixTableuYDelta(pileIndex, substack, maxTries, extraSubstacks, false); // maybe i messed up here?
 
         }
         else if (x < 0) {
             this.tableuPilesYDelta[pileIndex] =  this.tableuPilesYDelta[pileIndex] - 1;
-            return this.fixTableuYDelta(pileIndex, substack, maxTries);
+            return this.fixTableuYDelta(pileIndex, substack, maxTries, extraSubstacks, false);// maybe i messed up here?
         }
         else
         {
-            // 
+            
             return this.tableuPilesYDelta[pileIndex];
         }
 
@@ -647,7 +654,11 @@ export default class PileManager {
 
         if (card.inTransition) newLen += 20000;
        
-        card.setDepth(newLen);
+
+         card.setDepth(newLen);
+        
+        
+        // 
         this.gameplayContainer.sort("depth");
 
            
@@ -661,13 +672,14 @@ export default class PileManager {
             stockPile: this.getStockPile(),
             wastePile: this.getWastePile(),
             flippedCounts :[],
-            score : this.gameManager.getCurrentScore()
+            score : this.gameManager.getCurrentScore(),
+            // tableuYDelta: [...this.tableuPilesYDelta],
             // Include other elements of the game state
         }
     }
 
 
-    public addCardToTableuPile(card: Card, pileIndex: number) {
+    public addCardToTableuPile(card: Card, pileIndex: number, immediately : boolean = false) {
         let targetPile = this.tableauPiles[pileIndex];
 
         
@@ -681,14 +693,15 @@ export default class PileManager {
             () => {
                 this.removeCardFromTransition(card);
                 this._addCardToTableau(card, pileIndex);
-                this.fixTableuYDeltaAll()
+                // this.fixTableuYDeltaAll()
                 // this.cardLayoutManager.layoutAll(this, true)
                 
                 this.fixTableuDepthAndFlipstatus()
                 this.gameplayContainer.sort("depth");
                 
                 
-            }
+            },
+            immediately
         );
 
         // Remove the card from the waste pile after moving
@@ -816,9 +829,13 @@ export default class PileManager {
     setToGameState(state: GameState): void {
         // Clear all current piles without affecting the cards themselves
 
+        // this.tableuPilesYDelta = state.tableuYDelta;
+        // 
         this.gameManager.setScore(state.score)
         
         this.clearPiles();
+        
+        // this.tableuPilesYDelta = Array.from({length:7}, () => TABLEU_COORDS_DELTA.y+TAB_DELTA_Y_MOBILE_EXTRA)
 
         // Rearrange cards according to the saved state
         state.tableauPiles.forEach((pile, pileIndex) => {
@@ -839,8 +856,12 @@ export default class PileManager {
 
         this.applyFlippedCounts(state.flippedCounts)
        
+        // this.fixTableuYDeltaAll()
+        
         this.gameManager.layoutManager.layoutAll(this)
+        // this.gameManager.layoutManager.layoutTableauPiles(this.gameManager.pileManager.getTableauPiles())
         this.fixTableuDepthAndFlipstatus()
+        // this.fixTableuYDeltaAll()
     }
 
     fixTableuDepthAndFlipstatus()
