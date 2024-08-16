@@ -22,15 +22,15 @@ const config: Types.Core.GameConfig = {
     parent: 'game-container',
     backgroundColor: '#3b3b3b',
     roundPixels: true,
-    plugins: {
-        global: [{
-            key: 'rexInversePipeline',
-            plugin: InversePipelinePlugin,
-            start: true
-        },
-        // ...
-        ]
-    },
+    // plugins: {
+    //     global: [{
+    //         key: 'rexInversePipeline',
+    //         plugin: InversePipelinePlugin,
+    //         start: true
+    //     },
+    //     // ...
+    //     ]
+    // },
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -48,6 +48,8 @@ const config: Types.Core.GameConfig = {
         GameOver
     ]
 };
+
+
 
 
 export default new Game(config);

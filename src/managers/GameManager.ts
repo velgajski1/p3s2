@@ -10,6 +10,16 @@ import { AUTOFINISH_MODE_ACTIVE, loadSettings, setDragActive } from '../config/C
 import statsManager from './StatsManager';
 import StatsManager from './StatsManager';
 import { UIScene } from '../scenes/UIScene';
+import { SoundManager } from './SoundManager';
+
+function resumeSoundContext()
+{
+    const { context } = GameManager.gameScene.game.sound as Phaser.Sound.WebAudioSoundManager;
+    if (context.state === "suspended") {
+    context.resume();
+    }
+    
+}
 
 export class GameManager {
 
@@ -37,12 +47,16 @@ export class GameManager {
     firstClickDone: boolean = false;
     static isMobile: boolean = false;
     static isPotrait: boolean = false;
+    scaleRefreshing: boolean = false;
+    gameBlurred: boolean = false;
+
+
     
 
     constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
         
     
-        
+       
         GameManager.instance = this;
         UndoManager.init(gameScene, this)
         UndoManager.getInstance().enableUndo()
@@ -65,7 +79,25 @@ export class GameManager {
             callbackScope: this,
             loop: true
         });      
+
+        document.body.addEventListener('pointerup',resumeSoundContext);	
         
+        this.gameScene.game.events.on('blur', () => {
+            this.gameScene.game.scale.refresh();
+            // const titleElement = document.querySelector('.title')!;
+            // titleElement.textContent = 'blurred'
+            this.gameBlurred = true;
+            // this.gameScene.scene.pause()//THIS IS MAYBE NEEDED
+        }, this);
+
+        this.gameScene.game.events.on('focus', () => {
+            // this.gameScene.game.scale.refresh();
+            // const titleElement = document.querySelector('.title')!;
+            // titleElement.textContent = 'focused'
+            this.gameBlurred = false;
+            // this.gameScene.scene.resume() //THIS IS MAYBE NEEDED
+        }, this);
+
         // this.gameScene.time.addEvent({
         //     delay: 1000,
         //     callback: () => {
@@ -82,6 +114,8 @@ export class GameManager {
         this.gameScene.time.addEvent({
             delay: 10,
             callback:  () => {
+                if (this.scaleRefreshing) return;
+                if (this.gameBlurred) return;
                 // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
                 this.pileManager.getAllCards().forEach(c => c.update())
                 this.gameplayContainer.sort('depth');
@@ -96,6 +130,8 @@ export class GameManager {
             callbackScope: this,
             loop: true
         });
+
+
 
     }
 
@@ -150,6 +186,9 @@ export class GameManager {
     }
 
     updateTimer(): void {
+
+        if (this.gameBlurred) return;
+        if (this.scaleRefreshing) return;
         if (this.gameOverFlag || !this.firstClickDone) {
             if (!this.firstClickDone) { this.startTime = Date.now() }
             return;
@@ -157,14 +196,26 @@ export class GameManager {
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
         statsManager.updateCurrentGame(this.score, this.elapsedTime);
 
-        
-        
-
 
     }   
     
     updateTimerQuick(): void {
         
+        if (this.gameBlurred) return;
+        let g = this.gameScene.game;
+        // const titleElement = document.querySelector('.title')!;
+        // titleElement.textContent = window.innerWidth + ", " + window.innerHeight + ", " + g.scale.width + ", " + g.scale.height;
+        if (g.device.os.iOS && window.innerWidth != g.scale.width && window.innerHeight != g.scale.height) { 
+
+            if (this.scaleRefreshing) return;
+            this.scaleRefreshing = true;
+            setTimeout(() => {
+                g.scale.refresh();
+                this.scaleRefreshing = false;
+            }, 200);
+            return
+        }
+
         
        UIScene.myRef.skipClicks = false;
      

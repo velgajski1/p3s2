@@ -115,7 +115,7 @@ export class Preloader extends Scene {
         this.load.image('reddish_glow_outline', 'hint-overlay.png');
         this.load.image('backside', 'backside.png');
 
-        this.load.json('cardData', 'assets.json');
+        
 
         const isMobile = this.game.device.os.android || this.game.device.os.iOS;
 
@@ -134,12 +134,16 @@ export class Preloader extends Scene {
             
         }
 
+        console.log(locationBase, window.location.hostname)
+
         // locationBase = 'http://gamestest.net/';
         if (window.location.hostname == 'localhost' ) {
+            this.load.json('cardData', 'assets.json');
             if (isMobile) {
                 this.load.multiatlas('cards', 'assets_mobile1.json', 'assets');
             } else {
                 this.load.multiatlas('cards', 'assets.json', 'assets');
+                
             }
             this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
             this.load.audio('click', '/sounds/click.mp3');
@@ -151,6 +155,7 @@ export class Preloader extends Scene {
             this.load.audio('invalid', '/sounds/invalid.mp3');
             this.load.audio('no_hint', '/sounds/no-hint.mp3');
             this.load.audio('silence', '/sounds/silence.mp3');
+            // this.load.audio('test', '/sounds/test.mp3');
             this.load.audio('undo', '/sounds/undo.mp3');
             this.load.audio('valid', '/sounds/valid.mp3');
             this.load.audio('won', '/sounds/won.mp3');
@@ -158,17 +163,22 @@ export class Preloader extends Scene {
         } else {
             try {
                 let locationToLoad = locationBase + 'shared/'
+                console.log(locationToLoad)
                 if (isMobile) {
 
                     locationToLoad += 'cards_mobile/assets_mobile1.json'
+                    console.log(locationToLoad)
 
                     this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_mobile');
                 } else {
                     locationToLoad += 'cards_desktop/assets.json'
+                    console.log(locationToLoad)
                     this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_desktop');
+                    console.log(locationToLoad)
                 }
-                
+                this.load.json('cardData', locationBase + 'shared/cards_desktop' + '/assets.json');
                 locationToLoad = locationBase + 'shared'
+                
                 this.load.audio('card_to_foundation', locationToLoad + '/sounds/card-to-foundation.mp3');
                 this.load.audio('click', locationToLoad + '/sounds/click.mp3');
                 this.load.audio('deal_cards', locationToLoad + '/sounds/deal-cards.mp3');
@@ -179,6 +189,7 @@ export class Preloader extends Scene {
                 this.load.audio('invalid', locationToLoad + '/sounds/invalid.mp3');
                 this.load.audio('no_hint', locationToLoad + '/sounds/no-hint.mp3');
                 this.load.audio('silence', locationToLoad + '/sounds/silence.mp3');
+                // this.load.audio('test', '/sounds/test.mp3');
                 this.load.audio('undo', locationToLoad + '/sounds/undo.mp3');
                 this.load.audio('valid', locationToLoad + '/sounds/valid.mp3');
                 this.load.audio('won', locationToLoad + '/sounds/won.mp3');

@@ -15,6 +15,7 @@ export class SoundManager {
     public undo: Phaser.Sound.BaseSound;
     public valid: Phaser.Sound.BaseSound;
     public won: Phaser.Sound.BaseSound;
+    test: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
 
     private constructor() {}
 
@@ -43,7 +44,12 @@ export class SoundManager {
         this.hint = SoundManager._scene.sound.add('hint');
         this.invalid = SoundManager._scene.sound.add('invalid');
         this.noHint = SoundManager._scene.sound.add('no_hint');
-        this.silence = SoundManager._scene.sound.add('silence');
+        this.silence = SoundManager._scene.sound.add('silence', {
+            loop:true
+        });
+        // this.test = SoundManager._scene.sound.add('test', {
+        //     loop:true
+        // });
         this.undo = SoundManager._scene.sound.add('undo');
         this.valid = SoundManager._scene.sound.add('valid');
         this.won = SoundManager._scene.sound.add('won');

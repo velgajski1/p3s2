@@ -52,6 +52,8 @@ export class GameplayScene extends BaseScene {
 
 
         SoundManager.init(this);
+        SoundManager.instance.silence.play()
+        // SoundManager.instance.test.play()
 
     }
 
@@ -60,6 +62,9 @@ export class GameplayScene extends BaseScene {
         setTimeout(() => {
             this.doResize(gameSize);
         }, 10);
+        setTimeout(() => {
+            this.doResize(gameSize);
+        }, 100);
 
     }
 
@@ -79,7 +84,7 @@ export class GameplayScene extends BaseScene {
             
             scale *= (1 +0.2 - delta); 
             this.gameplayContainer.setScale(scale);
-            this.scene.launch("UIScene");
+            // this.scene.launch("UIScene");
             this.registry.set("isFullscreen", true);
         } else {
             this.registry.set("isFullscreen", false);

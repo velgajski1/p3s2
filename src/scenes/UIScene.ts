@@ -311,7 +311,7 @@ export class UIScene extends Phaser.Scene {
         this.calculateContainerHeightPercentage(height)
         this.updateTextPos()
         
-        console.log(this.game.device.os)
+        
         
         if (this.game.device.os.android || this.game.device.os.iOS) {
             if (innerWidth > innerHeight) {
@@ -326,7 +326,7 @@ export class UIScene extends Phaser.Scene {
     }
     handleMobileLandscape()
     {
-        console.log(this.scale.isFullscreen, !this.isTablet(), this.game.device.os.iOS)
+        
         if(this.scale.isFullscreen || !this.isTablet() || (this.game.device.os.iOS && this.isTablet() && this.scale.isGameLandscape)) {
             
             
@@ -414,7 +414,7 @@ export class UIScene extends Phaser.Scene {
         
         this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
 
-        console.log(this.registry.get("isFullscreen") , this.game.device.os.desktop,  this.isTablet() , this.scale.isGameLandscape)
+        
         if ((this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) || this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {
             
             this.elementsContainer.y = this.scale.height *0.925

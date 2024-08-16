@@ -56,7 +56,7 @@ export class WonScene extends BaseMenuScene {
 
     private createTextElements(): void {
         // Title
-        const title = this.add.text(-170, -154, 'You Won :)', {
+        const title = this.add.text(-170, -154, translate(LanguageConfig.YouWon), {
             fontFamily: 'Open Sans', 
             fontSize: '32px', 
             color: '#000000', 

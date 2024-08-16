@@ -12,4 +12,5 @@ node_modules/
 
 # Build
 dist/
+dist_final/
 /npm-debug.log
