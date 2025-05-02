@@ -22,6 +22,11 @@ const config: Types.Core.GameConfig = {
     parent: 'game-container',
     backgroundColor: '#3b3b3b',
     roundPixels: true,
+    input: {
+        mouse: {
+            preventDefaultWheel: false // Allows default scroll behavior in the browser
+        }
+    },
     // plugins: {
     //     global: [{
     //         key: 'rexInversePipeline',
@@ -40,7 +45,7 @@ const config: Types.Core.GameConfig = {
         BackgroundScene,
         Preloader,
         MainMenu,
-        Settings, 
+        Settings,
         Statistics,
         GameplayScene,
         UIScene,

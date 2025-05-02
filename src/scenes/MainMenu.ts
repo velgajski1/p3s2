@@ -8,18 +8,21 @@ import { BaseMenuScene } from './BaseMenuScene';
 import UndoManager from '../managers/UndoManager';
 import { SoundManager } from '../managers/SoundManager';
 
-export class MainMenu extends BaseMenuScene {
+export class MainMenu extends BaseMenuScene
+{
     private menuContainer!: Phaser.GameObjects.Container;
     whiteBg: Phaser.GameObjects.Graphics;
     titleTxt: Phaser.GameObjects.Text;
     cancelButton: Button;
     prompt_close: Phaser.GameObjects.Image; //..gggdd
 
-    constructor() {
+    constructor()
+    {
         super('MainMenu');
     }
 
-    create(): void {
+    create(): void
+    {
         super.create();
 
         // Create a container centered in the game
@@ -40,7 +43,8 @@ export class MainMenu extends BaseMenuScene {
         this.menuContainer.add(this.titleTxt);
 
         this.prompt_close = this.add.image(170, -220, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
-        this.prompt_close.on('pointerdown', () => {
+        this.prompt_close.on('pointerdown', () =>
+        {
             this.remove();
         });
         this.menuContainer.add(this.prompt_close);
@@ -65,8 +69,9 @@ export class MainMenu extends BaseMenuScene {
         ];
 
         // Add menu items to the container
-        menuItems.forEach((item, index) => {
-            let startY = (index - 3) * 50 - 15-2;
+        menuItems.forEach((item, index) =>
+        {
+            let startY = (index - 3) * 50 - 15 - 2;
             const menuItem = this.add.text(-162, startY, item, {
                 fontFamily: 'Open Sans',
                 fontSize: '25px',
@@ -77,21 +82,24 @@ export class MainMenu extends BaseMenuScene {
             const underline = this.add.graphics();
             underline.lineStyle(2, 0x000000, 1);
             underline.moveTo(-162, startY + 30); // Adjust position as needed
-            underline.lineTo(-162+menuItem.width, startY + 30); // Adjust width as needed
+            underline.lineTo(-162 + menuItem.width, startY + 30); // Adjust width as needed
             underline.strokePath();
             underline.setVisible(false);
 
 
-            menuItem.on('pointerdown', () => {
+            menuItem.on('pointerdown', () =>
+            {
                 menuActions[index]();
                 SOUND_ACTIVE && SoundManager.instance.click.play()
             });
 
-            menuItem.on('pointerover', () => {
+            menuItem.on('pointerover', () =>
+            {
                 underline.setVisible(true);
             });
 
-            menuItem.on('pointerout', () => {
+            menuItem.on('pointerout', () =>
+            {
                 underline.setVisible(false);
             });
 
@@ -99,7 +107,8 @@ export class MainMenu extends BaseMenuScene {
             this.menuContainer.add(underline);
         });
 
-        this.cancelButton = new Button(this, 0, 180-15, translate(LanguageConfig.Cancel), () => {
+        this.cancelButton = new Button(this, 0, 180 - 15, translate(LanguageConfig.Cancel), () =>
+        {
             this.remove();
         }, {
             color: 0x668b9e,
@@ -121,7 +130,8 @@ export class MainMenu extends BaseMenuScene {
         this.scaleMenuContainer();
     }
 
-    private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
+    private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void
+    {
         // Use provided gameSize or current game size
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
@@ -138,51 +148,61 @@ export class MainMenu extends BaseMenuScene {
         // Check if scaling exceeds screen dimensions and adjust if necessary
         const effectiveWidth = scaleXDivider * scale;
         const effectiveHeight = scaleYDivider * scale;
-        if (effectiveWidth > width || effectiveHeight > height) {
+        if (effectiveWidth > width || effectiveHeight > height)
+        {
             // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
             this.menuContainer.setScale(Math.min(scaleX, scaleY));
-        } else {
+        } else
+        {
             // Otherwise, apply the calculated scale to maximize screen usage
             this.menuContainer.setScale(scale);
         }
     }
 
-    restartThisGame = () => {
+    restartThisGame = () =>
+    {
         const state = UndoManager.getInstance().undoFully();
-        
-        const gManager : GameManager = this.registry.get('gameManager');
+
+        const gManager: GameManager = this.registry.get('gameManager');
         gManager.reset()
         // const state = undoManager.undo(); // Assuming you have an UndoManager implemented as a singleton
-        if (state) {
+        if (state)
+        {
             gManager.pileManager.setToGameState(state);
         }
         this.remove();
     }
 
-    newGame1 = () => {
+    newGame1 = () =>
+    {
         toggleThreeModeActive(false);
         this.restartGame();
     }
 
-    newGame3 = () => {
+    newGame3 = () =>
+    {
         toggleThreeModeActive(true);
         this.restartGame();
     }
 
-    howToPlay = () => {
-        window.open('/how-to-play-solitaire', '_blank');
+    howToPlay = () =>
+    {
+        window.open('/posts/posts-guides/klondike-solitaire-rules', '_blank');
     }
 
-    statistics = () => {
+    statistics = () =>
+    {
         this.remove();
-        setTimeout(() => {
+        setTimeout(() =>
+        {
             this.scene.launch("Statistics").bringToTop("Statistics");
         }, 500);
     }
 
-    allGames = () => {
+    allGames = () =>
+    {
         // Add logic for all games
-        window.open('/all-games', '_blank');
+        window.open('/solitaire-games', '_blank');
 
 
     }

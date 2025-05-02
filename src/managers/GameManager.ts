@@ -15,13 +15,15 @@ import { SoundManager } from './SoundManager';
 function resumeSoundContext()
 {
     const { context } = GameManager.gameScene.game.sound as Phaser.Sound.WebAudioSoundManager;
-    if (context.state === "suspended") {
-    context.resume();
+    if (context.state === "suspended")
+    {
+        context.resume();
     }
-    
+
 }
 
-export class GameManager {
+export class GameManager
+{
 
     private static instance: GameManager | null = null;
     private score: number = 0;
@@ -38,11 +40,11 @@ export class GameManager {
     controlManager: ControlManager;
     quickTimeEvent: Phaser.Time.TimerEvent;
 
-    public static gameScene : Phaser.Scene 
+    public static gameScene: Phaser.Scene
     static rendererHeight: number;
     static gameplayContainerY: number;
     static gameplayContainerScale: number;
-    gameOverFlag : boolean = false
+    gameOverFlag: boolean = false
     wonscene: Phaser.Scenes.ScenePlugin;
     firstClickDone: boolean = false;
     static isMobile: boolean = false;
@@ -51,12 +53,13 @@ export class GameManager {
     gameBlurred: boolean = false;
 
 
-    
 
-    constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container) {
-        
-    
-       
+
+    constructor(gameScene: Phaser.Scene, gameplayContainer: Phaser.GameObjects.Container)
+    {
+
+
+
         GameManager.instance = this;
         UndoManager.init(gameScene, this)
         UndoManager.getInstance().enableUndo()
@@ -78,11 +81,12 @@ export class GameManager {
             callback: this.updateTimer,
             callbackScope: this,
             loop: true
-        });      
+        });
 
-        document.body.addEventListener('pointerup',resumeSoundContext);	
-        
-        this.gameScene.game.events.on('blur', () => {
+        document.body.addEventListener('pointerup', resumeSoundContext);
+
+        this.gameScene.game.events.on('blur', () =>
+        {
             this.gameScene.game.scale.refresh();
             // const titleElement = document.querySelector('.title')!;
             // titleElement.textContent = 'blurred'
@@ -90,7 +94,8 @@ export class GameManager {
             // this.gameScene.scene.pause()//THIS IS MAYBE NEEDED
         }, this);
 
-        this.gameScene.game.events.on('focus', () => {
+        this.gameScene.game.events.on('focus', () =>
+        {
             // this.gameScene.game.scale.refresh();
             // const titleElement = document.querySelector('.title')!;
             // titleElement.textContent = 'focused'
@@ -113,7 +118,8 @@ export class GameManager {
 
         this.gameScene.time.addEvent({
             delay: 10,
-            callback:  () => {
+            callback: () =>
+            {
                 if (this.scaleRefreshing) return;
                 if (this.gameBlurred) return;
                 // this.pileManager.getWastePile().forEach(c => c.renewWasteCoords(this.controlManager))
@@ -121,11 +127,11 @@ export class GameManager {
                 this.gameplayContainer.sort('depth');
                 setDragActive(this.controlManager.dragging);
                 this.controlManager.update()
-                // if (this.gameScene.game.loop.actualFps < 59)  
+                // if (this.gameScene.game.loop.actualFps < 59)
                 // if (!this.controlManager.activeCard && !this.gameScene.input.activePointer.isDown) {
-                    
+
                 // }
-                
+
             },
             callbackScope: this,
             loop: true
@@ -142,10 +148,10 @@ export class GameManager {
             callback: this.updateTimerQuick,
             callbackScope: this,
             loop: true
-        });        
+        });
 
-        
-        
+
+
     }
 
     setScore(score: number)
@@ -153,11 +159,14 @@ export class GameManager {
         this.score = score;
     }
 
-    public static getInstance(scene: Phaser.Scene, container : Phaser.GameObjects.Container): GameManager {
-        if (this.instance == null) {
+    public static getInstance(scene: Phaser.Scene, container: Phaser.GameObjects.Container): GameManager
+    {
+        if (this.instance == null)
+        {
             this.instance = new GameManager(scene, container);
-        }else {
-            
+        } else
+        {
+
         }
 
         return this.instance;
@@ -165,7 +174,8 @@ export class GameManager {
 
 
 
-    startGame(): void {
+    startGame(): void
+    {
         this.score = 0;
         this.moves = 0;
         this.startTime = Date.now();
@@ -177,55 +187,63 @@ export class GameManager {
         this.controlManager.setupControls()
     }
 
-    incrementScore(amount: number): void {
+    incrementScore(amount: number): void
+    {
         this.score += amount;
     }
 
-    incrementMoves(): void {
+    incrementMoves(): void
+    {
         this.moves++;
     }
 
-    updateTimer(): void {
+    updateTimer(): void
+    {
 
         if (this.gameBlurred) return;
         if (this.scaleRefreshing) return;
-        if (this.gameOverFlag || !this.firstClickDone) {
+        if (this.gameOverFlag || !this.firstClickDone)
+        {
             if (!this.firstClickDone) { this.startTime = Date.now() }
             return;
-        } 
+        }
         this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
         statsManager.updateCurrentGame(this.score, this.elapsedTime);
 
 
-    }   
-    
-    updateTimerQuick(): void {
-        
+    }
+
+    updateTimerQuick(): void
+    {
+
         if (this.gameBlurred) return;
         let g = this.gameScene.game;
         // const titleElement = document.querySelector('.title')!;
         // titleElement.textContent = window.innerWidth + ", " + window.innerHeight + ", " + g.scale.width + ", " + g.scale.height;
-        if (g.device.os.iOS && window.innerWidth != g.scale.width && window.innerHeight != g.scale.height) { 
+        if (g.device.os.iOS && window.innerWidth != g.scale.width && window.innerHeight != g.scale.height)
+        {
 
             if (this.scaleRefreshing) return;
             this.scaleRefreshing = true;
-            setTimeout(() => {
+            setTimeout(() =>
+            {
                 g.scale.refresh();
                 this.scaleRefreshing = false;
             }, 200);
             return
         }
 
-        
-       UIScene.myRef.skipClicks = false;
-     
+
+        UIScene.myRef.skipClicks = false;
+
         GameManager.rendererHeight = this.gameScene.renderer.height;
         GameManager.gameplayContainerY = this.gameplayContainer.y
         GameManager.gameplayContainerScale = this.gameplayContainer.scale;
-        
-        
+
+
         this.pileManager.fixTableuDepthAndFlipstatus()
-        this.pileManager.getWastePile().forEach(c => {
+        this.pileManager.getWastePile().forEach(c =>
+        {
             c.setFaceUp(true)
         });
 
@@ -233,26 +251,28 @@ export class GameManager {
         {
             UndoManager.getInstance().disableUndo()
             this.controlManager.disableControls();
-            let uiscene : UIScene = (this.gameScene.scene.get("UIScene") as UIScene)
+            let uiscene: UIScene = (this.gameScene.scene.get("UIScene") as UIScene)
             uiscene.inputEnabled = false;
             UIScene.myRef.inputEnabled = false;
             UIScene.myRef.skipClicks = true;
-            
+
             this.layoutManager.stockIndicator.removeAllListeners()
             let wasteTop = this.pileManager.getTopCardFromWaste();
             if (wasteTop)
             {
                 if (this.pileManager.moveCardToFoundationIfPossible(wasteTop, -1, true)) return;
-            } 
-            this.pileManager.getTableauPiles().some((pile, index) => {
+            }
+            this.pileManager.getTableauPiles().some((pile, index) =>
+            {
                 if (this.pileManager.moveTopCardTableauToFoundation(index)) return true;
             });
 
 
         }
 
-        if ( !this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) &&  this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0) {
-            this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed : this.getElapsedTime(), timebonus : this.getTimeBonus(), totalscore : this.getTotalScore() } ).bringToTop("WonScene");
+        if (!this.gameOverFlag && this.pileManager.getTableauPiles().every(pile => pile.length == 0) && this.pileManager.allCardsUncovered() && this.pileManager.getWastePile().length < 1 && this.pileManager.getStockPile().length == 0)
+        {
+            this.gameScene.scene.launch("WonScene", { score: this.getCurrentScore(), timeplayed: this.getElapsedTime(), timebonus: this.getTimeBonus(), totalscore: this.getTotalScore() }).bringToTop("WonScene");
             this.controlManager.disableControls()
             this.gameOverFlag = true
         }
@@ -260,44 +280,50 @@ export class GameManager {
     }
     getTotalScore()
     {
-       return this.getCurrentScore() + this.getTimeBonus();
+        return this.getCurrentScore() + this.getTimeBonus();
     }
     getTimeBonus()
     {
-        return  Math.floor(700000/ this.getElapsedTime());
+        return Math.floor(700000 / this.getElapsedTime());
     }
 
-    restart() {
-        
+    restart()
+    {
+
         GameManager.removeInstance();
         UndoManager.removeInstance()
         GameManager.instance = null;
         this.gameScene.events.emit('restartScene');
     }
 
-    updateStats() {
-      
+    updateStats()
+    {
+
         statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
     }
 
     static removeInstance()
-    {    
-        this.instance = null 
+    {
+        this.instance = null
     }
 
-    getElapsedTime(): number {
+    getElapsedTime(): number
+    {
         return this.elapsedTime;
     }
 
-    getCurrentScore(): number {
+    getCurrentScore(): number
+    {
         return this.score;
     }
 
-    getMoves(): number {
+    getMoves(): number
+    {
         return this.moves;
     }
 
-    reset() {
+    reset()
+    {
         this.moves = this.score = this.elapsedTime = 0;
         this.startTime = Date.now()
         this.gameOverFlag = false;
@@ -306,7 +332,8 @@ export class GameManager {
 
     // Create and shuffle the deck
     // Update the createAndShuffleDeck method to use the Suit and Rank enums
-    private createAndShuffleDeck() {
+    private createAndShuffleDeck()
+    {
         const suits = [Suit.Clubs, Suit.Diamonds, Suit.Hearts, Suit.Spades];
         const ranks = [
             Rank.Two, Rank.Three, Rank.Four, Rank.Five, Rank.Six, Rank.Seven,
@@ -314,9 +341,11 @@ export class GameManager {
         ];
 
         // Create cards for each suit and rank combination
-        for (const suit of suits) {
-            for (const rank of ranks) {
-                const card = new Card(this.gameScene, 0, 0, suit, rank, true ); // Adjust parameters as needed
+        for (const suit of suits)
+        {
+            for (const rank of ranks)
+            {
+                const card = new Card(this.gameScene, 0, 0, suit, rank, true); // Adjust parameters as needed
                 this.gameplayContainer.add(card)
                 this.deck.push(card);
             }
@@ -327,8 +356,10 @@ export class GameManager {
     }
 
     // Shuffle the deck (using the Fisher-Yates algorithm)
-    private shuffleDeck(deck: Card[]): Card[] {
-        for (let i = deck.length - 1; i > 0; i--) {
+    private shuffleDeck(deck: Card[]): Card[]
+    {
+        for (let i = deck.length - 1; i > 0; i--)
+        {
             const j = Math.floor(Math.random() * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
         }
@@ -336,13 +367,14 @@ export class GameManager {
     }
 
     // Lay out the cards in the initial game arrangement
-    private layoutInitialCards() {
+    private layoutInitialCards()
+    {
         this.layoutManager.init(this.pileManager)
         // Use the pile manager to distribute cards and the layout manager to arrange them
-        this.layoutManager.addFoundationIndicators(this.gameScene,this.gameplayContainer)
-        this.layoutManager.addTableuIndicators(this.gameScene,this.gameplayContainer)
-        this.layoutManager.addWasteIndicator(this.gameScene,this.gameplayContainer)
-        this.layoutManager.addStockIndicator(this.pileManager, this.gameScene,this.gameplayContainer)
+        this.layoutManager.addFoundationIndicators(this.gameScene, this.gameplayContainer)
+        this.layoutManager.addTableuIndicators(this.gameScene, this.gameplayContainer)
+        this.layoutManager.addWasteIndicator(this.gameScene, this.gameplayContainer)
+        this.layoutManager.addStockIndicator(this.pileManager, this.gameScene, this.gameplayContainer)
 
         this.pileManager.distributeCardsToPiles(this.deck);
         // this.pileManager.distributeCardsToPilesEndGame(this.deck)
@@ -352,9 +384,9 @@ export class GameManager {
         this.layoutManager.layoutStockPile(this.pileManager.getStockPile())
         this.layoutManager.layoutWastePile(this.pileManager.getWastePile())
 
-        
-        
+
+
         UndoManager.getInstance().saveState(this.pileManager.getState())
-        
+
     }
 }

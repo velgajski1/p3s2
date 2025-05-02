@@ -32,7 +32,7 @@ async function uploadFolder(ftpClient, localFolder, remoteFolder) {
   // Iterate over the files and upload them to the FTP server
   for (const file of files) {
     const localPath = path.join(localFolder, file);
-    const remotePath = path.join(remoteFolder, file).replace(/\\/g, '/');  // 
+    const remotePath = path.join(remoteFolder, file).replace(/\\/g, '/');  //
 
     // Check if the file is a directory
     if (fs.lstatSync(localPath).isDirectory()) {
@@ -40,7 +40,7 @@ async function uploadFolder(ftpClient, localFolder, remoteFolder) {
       await uploadFolder(ftpClient, localPath, remotePath);
     } else {
       // Upload the file
-      
+
       try {
         await ftpClient.uploadFrom(localPath, remotePath);
       } catch (err) {
@@ -64,7 +64,7 @@ async function main() {
     });
 
     // Upload the local folder to the remote folder
-    await uploadFolder(ftpClient, 'D:/Projects/'+ basename + '/dist/', '/domains/gamestest.net/public_html/klondike');
+    await uploadFolder(ftpClient, 'D:/Projects/' + basename + '/dist/', '/domains/gamestest.net/public_html/free/klondike');
   } catch (err) {
     console.error('Error:', err);
   } finally {
