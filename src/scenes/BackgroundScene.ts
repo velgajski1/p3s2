@@ -1,51 +1,36 @@
 import Phaser from 'phaser';
-import { BACKGROUND_COLORS} from '../config/Consts';
-import { BG_INDEX, getBGINDEX } from '../config/Config';
+import { NIGHT_MODE_ACTIVE } from '../config/Config';
 
 export class BackgroundScene extends Phaser.Scene {
-
-    // List of possible background colors
-    private backgroundColors: string[] = BACKGROUND_COLORS
-
-    // Current color index
-    private currentColorIndex: number = 0;
+    private bgImage: Phaser.GameObjects.Image;
 
     constructor() {
-        
         super('BackgroundScene');
     }
 
-    preload(): void {
-        // Preload assets for the background if any
-    }
-
     create(): void {
-        // Set the default background color
-        this.changeBackgroundColor();
-        // 
-        // Additional setup as needed
-        this.changeBackgroundColor(getBGINDEX());
-        
+        this.bgImage = this.add.image(0, 0, this.currentKey()).setOrigin(0, 0);
+        this.fitToCanvas(this.scale.gameSize);
+        this.scale.on('resize', this.fitToCanvas, this);
     }
 
-    public setToColor(color : string): void {
-        this.cameras.main.setBackgroundColor(color);
-        this.currentColorIndex = this.backgroundColors.indexOf(color)
+    public setNightMode(night: boolean): void {
+        this.bgImage.setTexture(night ? 'bg-dark' : 'bg-light');
+        this.fitToCanvas(this.scale.gameSize);
     }
 
-    // Method to change the background color, optionally to a specific color
-    public changeBackgroundColor(colorIndex?: number): void {
+    private currentKey(): string {
+        return NIGHT_MODE_ACTIVE ? 'bg-dark' : 'bg-light';
+    }
 
-        // If a specific color index is provided, use it; otherwise, use the current index
-        if (colorIndex !== undefined && colorIndex >= 0 && colorIndex < this.backgroundColors.length) {
-            this.currentColorIndex = colorIndex;
-        }
-
-        // Apply the background color
-        this.cameras.main.setBackgroundColor(this.backgroundColors[this.currentColorIndex]);
-
-        // 
-        // Example of how to cycle colors every call
-        // this.currentColorIndex = (this.currentColorIndex + 1) % this.backgroundColors.length;
+    private fitToCanvas(gameSize: Phaser.Structs.Size): void {
+        if (!this.bgImage) return;
+        const { width, height } = gameSize;
+        const src = this.bgImage.texture.getSourceImage();
+        const srcW = (src as any).width;
+        const srcH = (src as any).height;
+        const scale = Math.max(width / srcW, height / srcH);
+        this.bgImage.setScale(scale);
+        this.bgImage.setPosition((width - srcW * scale) / 2, (height - srcH * scale) / 2);
     }
 }

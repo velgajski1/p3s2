@@ -6,7 +6,7 @@ import { formatTime } from '../utils/Utils';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
-import { DRAG_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
+import { DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleNightModeActive, toggleThreeModeActive } from '../config/Config';
 import CardLayoutManager from '../managers/CardLayoutManager';
 import UndoManager from '../managers/UndoManager';
 import HintManager from '../managers/HintManager';
@@ -130,6 +130,7 @@ export class UIScene extends Phaser.Scene {
 
         this.desktopUI.night = new ImageButton(this, 222, 0, 'icon-night', 'icon-night-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
+            this.toggleNightMode();
         });
         this.desktopUI.night.setOrigin(0, 0);
         this.elementsContainer.add(this.desktopUI.night);
@@ -233,6 +234,7 @@ export class UIScene extends Phaser.Scene {
 
         this.mobileUI.night = new ImageButton(this, colLeftX, 165, 'icon-night', 'icon-night-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
+            this.toggleNightMode();
         });
         this.mobileUI.night.setOrigin(0, 0);
         this.elementsContainer3.add(this.mobileUI.night);
@@ -526,6 +528,13 @@ export class UIScene extends Phaser.Scene {
     }
 
     public setTime(time: number) : void {
-        
+
+    }
+
+    private toggleNightMode(): void {
+        const next = !NIGHT_MODE_ACTIVE;
+        toggleNightModeActive(next);
+        const bg = this.scene.get('BackgroundScene') as any;
+        if (bg && bg.setNightMode) bg.setNightMode(next);
     }
 }

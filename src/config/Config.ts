@@ -7,6 +7,7 @@ export var RIGHT_HANDED_MODE_IDX : number;
 export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
 export var BG_INDEX : number = 0;
+export var NIGHT_MODE_ACTIVE : boolean = false;
 export var DRAG_ACTIVE : boolean = true;
 
 function isMobileDevice() {
@@ -61,7 +62,10 @@ export function loadSettings() {
         BG_INDEX = JSON.parse(bgIndex);
     }
 
-    
+    const nightMode = localStorage.getItem('NIGHT_MODE_ACTIVE');
+    if (nightMode !== null) {
+        NIGHT_MODE_ACTIVE = JSON.parse(nightMode);
+    }
 }
 
 export function toggleThreeModeActive(params: boolean) {
@@ -89,6 +93,11 @@ export function toggleSoundActive(params: boolean) {
 export function setBgIdx(params: number) {
     BG_INDEX = params;
     localStorage.setItem('BG_INDEX', JSON.stringify(params));
+}
+
+export function toggleNightModeActive(params: boolean) {
+    NIGHT_MODE_ACTIVE = params;
+    localStorage.setItem('NIGHT_MODE_ACTIVE', JSON.stringify(params));
 }
 
 export function setDragActive(val:boolean) {
