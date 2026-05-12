@@ -7,6 +7,8 @@ import {LanguageConfig} from '../config/Language';
 import { Language } from '../utils/Language';
 import { BaseMenuScene } from './BaseMenuScene';
 import { AUTOFINISH_MODE_ACTIVE, BG_INDEX, RIGHT_HANDED_MODE_ACTIVE, SOUND_ACTIVE, setBgIdx, toggleAutofinishActive, toggleRightHandedActive, toggleSoundActive, toggleThreeModeActive } from '../config/Config';
+import UndoManager from '../managers/UndoManager';
+import { GameManager } from '../managers/GameManager';
 
 export class Settings extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
@@ -28,6 +30,7 @@ export class Settings extends BaseMenuScene {
         this.createMenuContainer();
         this.createWhiteBackground();
         this.createTitle();
+        this.createGameActionButtons();
         this.createRadioButtons();
         this.createBackgroundSelector();
         this.createCancelButton();
@@ -52,11 +55,44 @@ export class Settings extends BaseMenuScene {
 
     createXButton()
     {
-        this.prompt_close = this.add.image(170, -180, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
+        this.prompt_close = this.add.image(170, -460, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
         this.prompt_close.on('pointerdown', () => {
             this.remove()
         })
         this.menuContainer.add(this.prompt_close)
+    }
+
+    private createGameActionButtons(): void {
+        const w = 320;
+        const h = 44;
+        const fontSize = '20px';
+        const color = 0x668b9e;
+
+        new Button(this, 0, -400, Language.getTranslation(LanguageConfig.RestartGame), () => {
+            const state = UndoManager.getInstance().undoFully();
+            const gManager: GameManager = this.registry.get('gameManager');
+            gManager.reset();
+            if (state) {
+                gManager.pileManager.setToGameState(state);
+            }
+            this.remove();
+        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
+
+        new Button(this, 0, -345, Language.getTranslation(LanguageConfig.NewGameTurn1), () => {
+            toggleThreeModeActive(false);
+            this.restartGame();
+        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
+
+        new Button(this, 0, -290, Language.getTranslation(LanguageConfig.NewGameTurn3), () => {
+            toggleThreeModeActive(true);
+            this.restartGame();
+        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
+
+        new Button(this, 0, -235, Language.getTranslation(LanguageConfig.AllGames), () => {
+            const url = '/solitaire-games';
+            const win = window.open(url, '_blank');
+            if (!win) window.location.href = url;
+        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
     }
 
 
@@ -66,7 +102,7 @@ export class Settings extends BaseMenuScene {
 
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-200, -210, 400, 452, 12);
+        this.whiteBg.fillRoundedRect(-200, -490, 400, 732, 12);
         this.menuContainer.add(this.whiteBg);
     }
 
@@ -184,7 +220,7 @@ export class Settings extends BaseMenuScene {
         this.menuContainer.setPosition(width / 2, height / 2);
 
         let scaleXDivider = 600;
-        let scaleYDivider = 600;
+        let scaleYDivider = 850;
 
         // Calculate scale based on a 1600x900 design, trying to fill as much as possible
         const scaleX = width / scaleXDivider;

@@ -95,25 +95,46 @@ export class Preloader extends Scene {
 
         
 
-        this.load.image('hint', 'hint.png');
-        this.load.image('klondike_1_turn', 'klondike_1_turn.png');
         this.load.image('holder_foundation_cards', 'holder_foundation_cards.png');
         this.load.image('holder_stock_cards', 'holder_stock_cards.png');
         this.load.image('holder_tableau_cards', 'holder_tableau_cards.png');
-        this.load.image('klondike_1_turn_selected', 'klondike_1_turn_selected.png');
-        this.load.image('klondike_3_turn', 'klondike_3_turn.png');
-        this.load.image('klondike_3_turn_selected', 'klondike_3_turn_selected.png');
-        this.load.image('menu', 'menu.png');
         this.load.image('prompt_btn_left', 'prompt_btn_left.png');
         this.load.image('prompt_btn_right', 'prompt_btn_right.png');
         this.load.image('prompt_close', 'prompt_close.png');
         this.load.image('prompt_radio_off', 'prompt_radio_off.png');
         this.load.image('prompt_radio_on', 'prompt_radio_on.png');
-        this.load.image('settings', 'settings.png');
-        this.load.image('undo', 'undo.png');
-        // this.load.image('undo_na', 'undo_na.png');
         this.load.image('reddish_glow_outline', 'hint-overlay.png');
         this.load.image('backside', 'backside.png');
+
+        // Toolbar buttons — desktop art
+        this.load.image('btn-1-card-off', 'menu/btn-1-card-off.png');
+        this.load.image('btn-1-card-off-hover', 'menu/btn-1-card-off-hover.png');
+        this.load.image('btn-1-card-on', 'menu/btn-1-card-on.png');
+        this.load.image('btn-1-card-on-hover', 'menu/btn-1-card-on-hover.png');
+        this.load.image('btn-3-card-off', 'menu/btn-3-card-off.png');
+        this.load.image('btn-3-card-off-hover', 'menu/btn-3-card-off-hover.png');
+        this.load.image('btn-3-card-on', 'menu/btn-3-card-on.png');
+        this.load.image('btn-3-card-on-hover', 'menu/btn-3-card-on-hover.png');
+        this.load.image('btn-hint', 'menu/btn-hint.png');
+        this.load.image('btn-hint-hover', 'menu/btn-hint-hover.png');
+        this.load.image('btn-undo', 'menu/btn-undo.png');
+        this.load.image('btn-undo-hover', 'menu/btn-undo-hover.png');
+        this.load.image('icon-settings', 'menu/icon-settings.png');
+        this.load.image('icon-settings-hover', 'menu/icon-settings-hover.png');
+        this.load.image('icon-help', 'menu/icon-help.png');
+        this.load.image('icon-help-hover', 'menu/icon-help-hover.png');
+        this.load.image('icon-stats', 'menu/icon-stats.png');
+        this.load.image('icon-stats-hover', 'menu/icon-stats-hover.png');
+        this.load.image('icon-night', 'menu/icon-night.png');
+        this.load.image('icon-night-hover', 'menu/icon-night-hover.png');
+
+        // Toolbar buttons — mobile art (always loaded; UIScene builds both UIs unconditionally)
+        this.load.image('mobile-btn-1-card-off', 'menu/mobile-btn-1-card-off.png');
+        this.load.image('mobile-btn-1-card-on', 'menu/mobile-btn-1-card-on.png');
+        this.load.image('mobile-btn-3-card-off', 'menu/mobile-btn-3-card-off.png');
+        this.load.image('mobile-btn-3-card-on', 'menu/mobile-btn-3-card-on.png');
+        this.load.image('mobile-btn-hint', 'menu/mobile-btn-hint.png');
+        this.load.image('mobile-btn-undo', 'menu/mobile-btn-undo.png');
 
         
 

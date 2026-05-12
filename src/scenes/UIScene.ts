@@ -9,7 +9,6 @@ import ImageButton from '../ui/ImageButton';
 import { DRAG_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
 import CardLayoutManager from '../managers/CardLayoutManager';
 import UndoManager from '../managers/UndoManager';
-import { MainMenu } from './MainMenu';
 import HintManager from '../managers/HintManager';
 import ControlManager from '../managers/ControlManager';
 
@@ -20,16 +19,29 @@ export class UIScene extends Phaser.Scene {
     private gameManager: GameManager; // Reference to the GameManager
     movesText: Phaser.GameObjects.Text;
     elementsContainer: Phaser.GameObjects.Container;
-    menuBut: ImageButton;
-    settingsBut: ImageButton;
-    hintBut: ImageButton;
-    undoBut: ImageButton;
-    inputEnabled: boolean =  true;
-    skipClicks : boolean = false;
-    allInteractive : [ImageButton];
-    toggleSwitch: ToggleSwitch;
     elementsContainer2: GameObjects.Container;
     elementsContainer3: GameObjects.Container;
+    inputEnabled: boolean = true;
+    skipClicks: boolean = false;
+
+    desktopUI: {
+        toggle: ToggleSwitch;
+        settings: ImageButton;
+        help: ImageButton;
+        stats: ImageButton;
+        night: ImageButton;
+        hint: ImageButton;
+        undo: ImageButton;
+    };
+    mobileUI: {
+        toggle: ToggleSwitch;
+        settings: ImageButton;
+        help: ImageButton;
+        stats: ImageButton;
+        night: ImageButton;
+        hint: ImageButton;
+        undo: ImageButton;
+    };
 
 
     static myRef : UIScene;
@@ -65,164 +77,157 @@ export class UIScene extends Phaser.Scene {
     }
     createUIElements()
     {
-              // Instantiate the ToggleSwitch
-        let deltaX = -440
-        this.toggleSwitch = new ToggleSwitch(
+        this.desktopUI = {} as any;
+
+        this.desktopUI.toggle = new ToggleSwitch(
             this,
-            -2+deltaX,
+            -955,
             0,
-            'klondike_1_turn', // 1-card pull off texture
-            'klondike_1_turn_selected', // 1-card pull on texture
-            'klondike_3_turn', // 3-card pull off texture
-            'klondike_3_turn_selected', // 3-card pull on texture
-            81, 
+            'btn-1-card-off',
+            'btn-1-card-on',
+            'btn-3-card-off',
+            'btn-3-card-on',
+            115,
             0,
             (nextState: boolean) => {
-                if (!this.inputEnabled|| this.skipClicks) return;
-                // 
-                // You can add more logic here to handle the toggle action
-                
-                var gamemanager : GameManager = this.registry.get("gameManager")
-                gamemanager.updateStats()
+                if (!this.inputEnabled || this.skipClicks) return;
+                const gamemanager: GameManager = this.registry.get("gameManager");
+                gamemanager.updateStats();
                 toggleThreeModeActive(nextState);
-                gamemanager.restart()
-                // this.remove()
-
+                gamemanager.restart();
             },
             STOCK_THREE_MODE_ACTIVE
         );
+        this.elementsContainer.add(this.desktopUI.toggle);
 
-         this.elementsContainer.add(this.toggleSwitch);
-     
-
-         this.menuBut = new ImageButton(this, 160+deltaX, 0, 'menu', 'menu', () => {
-            
-            
+        this.desktopUI.settings = new ImageButton(this, -720, 0, 'icon-settings', 'icon-settings-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            if (this.scene.getIndex('MainMenu')>-1) {
-                this.scene.launch("MainMenu").bringToTop("MainMenu");
-            }
-            else if (this.scene) {
-                this.scene.start("MainMenu").bringToTop("MainMenu");
-            } 
-
-            this.input.setDefaultCursor('default');
-            
-         })
-         this.elementsContainer.add(this.menuBut)
-         this.menuBut.setOrigin(0, 0);
-
-         this.settingsBut = new ImageButton(this, 220+deltaX, 0, 'settings', 'settings', () => {
-            if (!this.inputEnabled|| this.skipClicks) return;
             this.scene.launch("Settings").bringToTop("Settings");
             this.input.setDefaultCursor('default');
-         })
-         this.settingsBut.setDepth(50000)
-         this.elementsContainer.add(this.settingsBut)
-         this.settingsBut.setOrigin(0, 0);
+        });
+        this.desktopUI.settings.setDepth(50000);
+        this.desktopUI.settings.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.settings);
 
-         this.hintBut = new ImageButton(this, 280+deltaX, 0, 'hint', 'hint', () => {
-            if (!this.inputEnabled|| this.skipClicks) return;
-            let gamemanager : GameManager = this.registry.get('gameManager')
-            HintManager.getInstance().getHint(gamemanager.pileManager)
-            
-         })
-         this.hintBut.skipClickSound = true;
-         this.elementsContainer.add(this.hintBut)
-         this.hintBut.setOrigin(0, 0);
+        this.desktopUI.help = new ImageButton(this, -660, 0, 'icon-help', 'icon-help-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const url = '/posts/posts-guides/klondike-solitaire-rules';
+            const w = window.open(url, '_blank');
+            if (!w) window.location.href = url;
+        });
+        this.desktopUI.help.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.help);
 
-         this.undoBut = new ImageButton(this, 360+deltaX, 0, 'undo', 'undo', () => {
-            if (!this.inputEnabled|| this.skipClicks) return;
-            this.gameManager = this.registry.get("gameManager")
-            this.gameManager.controlManager.handleUKey()
-         })
-         this.elementsContainer.add(this.undoBut)
-         this.undoBut.setOrigin(0, 0);
-         this.undoBut.skipClickSound = true
+        this.desktopUI.stats = new ImageButton(this, -600, 0, 'icon-stats', 'icon-stats-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            this.scene.launch("Statistics").bringToTop("Statistics");
+        });
+        this.desktopUI.stats.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.stats);
 
+        this.desktopUI.night = new ImageButton(this, -540, 0, 'icon-night', 'icon-night-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+        });
+        this.desktopUI.night.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.night);
 
-         
+        this.desktopUI.hint = new ImageButton(this, -465, 0, 'btn-hint', 'btn-hint-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const gamemanager: GameManager = this.registry.get('gameManager');
+            HintManager.getInstance().getHint(gamemanager.pileManager);
+        });
+        this.desktopUI.hint.skipClickSound = true;
+        this.desktopUI.hint.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.hint);
+
+        this.desktopUI.undo = new ImageButton(this, -240, 0, 'btn-undo', 'btn-undo-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            this.gameManager = this.registry.get("gameManager");
+            this.gameManager.controlManager.handleUKey();
+        });
+        this.desktopUI.undo.skipClickSound = true;
+        this.desktopUI.undo.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.undo);
     }
 
     createUIElementsMobile() {
-        let deltaX = -80
-        let deltaXLeft = 20;
-        this.toggleSwitch = new ToggleSwitch(
+        this.mobileUI = {} as any;
+        const colRightX = -80;
+        const colLeftX = 20;
+
+        // ec2: right cluster (toggle + hint + undo) using mobile-* art
+        this.mobileUI.toggle = new ToggleSwitch(
             this,
-            deltaX,
+            colRightX,
             0,
-            'klondike_1_turn', // 1-card pull off texture
-            'klondike_1_turn_selected', // 1-card pull on texture
-            'klondike_3_turn', // 3-card pull off texture
-            'klondike_3_turn_selected', // 3-card pull on texture
-            0, 
+            'mobile-btn-1-card-off',
+            'mobile-btn-1-card-on',
+            'mobile-btn-3-card-off',
+            'mobile-btn-3-card-on',
+            0,
             55,
             (nextState: boolean) => {
-                if (!this.inputEnabled|| this.skipClicks) return;
-
-                
-                var gamemanager : GameManager = this.registry.get("gameManager")
-                gamemanager.updateStats()
+                if (!this.inputEnabled || this.skipClicks) return;
+                const gamemanager: GameManager = this.registry.get("gameManager");
+                gamemanager.updateStats();
                 toggleThreeModeActive(nextState);
-                gamemanager.restart()
-
+                gamemanager.restart();
             },
             STOCK_THREE_MODE_ACTIVE
         );
+        this.elementsContainer2.add(this.mobileUI.toggle);
 
-         this.elementsContainer2.add(this.toggleSwitch);
-     
+        this.mobileUI.hint = new ImageButton(this, colRightX, 164, 'mobile-btn-hint', 'mobile-btn-hint', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const gamemanager: GameManager = this.registry.get('gameManager');
+            HintManager.getInstance().getHint(gamemanager.pileManager);
+        });
+        this.mobileUI.hint.skipClickSound = true;
+        this.mobileUI.hint.setOrigin(0, 0);
+        this.elementsContainer2.add(this.mobileUI.hint);
 
-         this.menuBut = new ImageButton(this, deltaXLeft, 0, 'menu', 'menu', () => {
-            
-            
-            if (!this.inputEnabled|| this.skipClicks) return;
-            if (this.scene.getIndex('MainMenu')>-1) {
-                this.scene.launch("MainMenu").bringToTop("MainMenu");
-            }
-            else if (this.scene) {
-                this.scene.start("MainMenu").bringToTop("MainMenu");
-            } 
+        this.mobileUI.undo = new ImageButton(this, colRightX, 219, 'mobile-btn-undo', 'mobile-btn-undo', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            this.gameManager = this.registry.get("gameManager");
+            this.gameManager.controlManager.handleUKey();
+        });
+        this.mobileUI.undo.skipClickSound = true;
+        this.mobileUI.undo.setOrigin(0, 0);
+        this.elementsContainer2.add(this.mobileUI.undo);
 
-            this.input.setDefaultCursor('default');
-            
-         })
-         this.elementsContainer3.add(this.menuBut)
-         this.menuBut.setOrigin(0, 0);
-
-         this.settingsBut = new ImageButton(this, deltaXLeft, 55, 'settings', 'settings', () => {
-            
-            
-            if (!this.inputEnabled|| this.skipClicks) return;
-            
+        // ec3: left cluster (settings/help/stats/night) using icon-* art
+        this.mobileUI.settings = new ImageButton(this, colLeftX, 0, 'icon-settings', 'icon-settings-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
             this.scene.launch("Settings").bringToTop("Settings");
             this.input.setDefaultCursor('default');
-         })
-         this.settingsBut.setDepth(50000)
-         this.elementsContainer3.add(this.settingsBut)
-         this.settingsBut.setOrigin(0, 0);
+        });
+        this.mobileUI.settings.setDepth(50000);
+        this.mobileUI.settings.setOrigin(0, 0);
+        this.elementsContainer3.add(this.mobileUI.settings);
 
-         this.hintBut = new ImageButton(this, deltaX, 114+50, 'hint', 'hint', () => {
-            if (!this.inputEnabled|| this.skipClicks) return;
-            let gamemanager : GameManager = this.registry.get('gameManager')
-            HintManager.getInstance().getHint(gamemanager.pileManager)
-            
-         })
-         this.hintBut.skipClickSound = true;
-         this.elementsContainer2.add(this.hintBut)
-         this.hintBut.setOrigin(0, 0);
+        this.mobileUI.help = new ImageButton(this, colLeftX, 55, 'icon-help', 'icon-help-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const url = '/posts/posts-guides/klondike-solitaire-rules';
+            const w = window.open(url, '_blank');
+            if (!w) window.location.href = url;
+        });
+        this.mobileUI.help.setOrigin(0, 0);
+        this.elementsContainer3.add(this.mobileUI.help);
 
-         this.undoBut = new ImageButton(this, deltaX, 169+50, 'undo', 'undo', () => {
-            if (!this.inputEnabled|| this.skipClicks) return;
-            this.gameManager = this.registry.get("gameManager")
-            this.gameManager.controlManager.handleUKey()
-         })
-         this.elementsContainer2.add(this.undoBut)
-         this.undoBut.setOrigin(0, 0);
-         this.undoBut.skipClickSound = true
+        this.mobileUI.stats = new ImageButton(this, colLeftX, 110, 'icon-stats', 'icon-stats-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            this.scene.launch("Statistics").bringToTop("Statistics");
+        });
+        this.mobileUI.stats.setOrigin(0, 0);
+        this.elementsContainer3.add(this.mobileUI.stats);
 
-         this.elementsContainer2.visible = this.elementsContainer3.visible = false
+        this.mobileUI.night = new ImageButton(this, colLeftX, 165, 'icon-night', 'icon-night-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+        });
+        this.mobileUI.night.setOrigin(0, 0);
+        this.elementsContainer3.add(this.mobileUI.night);
 
+        this.elementsContainer2.visible = this.elementsContainer3.visible = false;
     }
 
     update(time: number, delta: number): void
@@ -237,20 +242,16 @@ export class UIScene extends Phaser.Scene {
 
         this.inputEnabled = true
 
+        const ui = this.elementsContainer.visible ? this.desktopUI : this.mobileUI;
+        const buttons: ImageButton[] = [ui.settings, ui.help, ui.stats, ui.night, ui.hint, ui.undo];
         if (DRAG_ACTIVE) {
-            this.hintBut.disableInteractive()
-            this.menuBut.disableInteractive()
-            this.undoBut.disableInteractive()
-            this.settingsBut.disableInteractive()
-            this.toggleSwitch.icon1.disableInteractive()
-            this.toggleSwitch.icon2.disableInteractive()
+            buttons.forEach(b => b.disableInteractive());
+            ui.toggle.icon1.disableInteractive();
+            ui.toggle.icon2.disableInteractive();
         } else {
-            this.hintBut.setInteractive()
-            this.menuBut.setInteractive()
-            this.undoBut.setInteractive()
-            this.settingsBut.setInteractive()
-            this.toggleSwitch.icon1.setInteractive()
-            this.toggleSwitch.icon2.setInteractive()
+            buttons.forEach(b => b.setInteractive());
+            ui.toggle.icon1.setInteractive();
+            ui.toggle.icon2.setInteractive();
         }
         
         if (this.scene.isActive("Settings")||this.scene.isActive("MainMenu")||this.scene.isActive("Statistics")||this.scene.isActive("WonScene")) this.inputEnabled = false
@@ -326,17 +327,16 @@ export class UIScene extends Phaser.Scene {
     }
     handleMobileLandscape()
     {
-        
         if(this.scale.isFullscreen || !this.isTablet() || (this.game.device.os.iOS && this.isTablet() && this.scale.isGameLandscape)) {
-            
-            
+            this.applyMobileLandscapeLayout();
+
             this.elementsContainer.scale *= 2
             this.elementsContainer2.scale *= 2
             this.textContainer.scale = 1.2
-            
-            
+
             this.elementsContainer.x = window.innerWidth
             this.elementsContainer2.x = window.innerWidth
+            this.elementsContainer3.x = 0
             this.textContainer.x = 10
             this.movesText.setFontSize(19)
             this.scoreText.setFontSize(19)
@@ -346,30 +346,66 @@ export class UIScene extends Phaser.Scene {
             this.elementsContainer.visible = false;
             this.elementsContainer2.visible = true;
             this.elementsContainer3.visible = this.elementsContainer2.visible
-
-
         } else {
             this.elementsContainer.visible = true;
             this.elementsContainer2.visible = false;
+            this.elementsContainer3.visible = false;
         }
-        
     }
+
     handleMobilePortrait()
     {
-        
-            this.elementsContainer2.visible = false;
-            this.elementsContainer.visible = true;
-            
-            this.elementsContainer.scale *= 3.5;
-            // this.textContainer.scale *= 1.3
-            this.movesText.setFontSize(22)
-            this.scoreText.setFontSize(22)
-            this.timeText.setFontSize(22)
-            
-            this.elementsContainer.x = window.innerWidth
-            this.elementsContainer.y = window.innerHeight
-            this.movesText.visible = false;
-        
+        this.applyMobilePortraitLayout();
+
+        this.elementsContainer.visible = false;
+        this.elementsContainer2.visible = true;
+        this.elementsContainer3.visible = true;
+
+        const scaleFactor = Math.min(2.0, window.innerWidth / 500);
+        this.elementsContainer2.scale = scaleFactor;
+        this.elementsContainer3.scale = scaleFactor;
+
+        this.movesText.setFontSize(22)
+        this.scoreText.setFontSize(22)
+        this.timeText.setFontSize(22)
+        this.textContainer.scale = 1.2;
+        this.movesText.visible = false;
+
+        // ec3 (settings/help/stats/night) anchored at left, ec2 (toggle/hint/undo) anchored at right
+        this.elementsContainer3.x = 10;
+        this.elementsContainer2.x = window.innerWidth - 234 * scaleFactor - 10;
+    }
+
+    private applyMobileLandscapeLayout()
+    {
+        if (!this.mobileUI) return;
+        // ec3 left column (4 icons stacked vertically at x=20)
+        this.mobileUI.settings.setXY(20, 0);
+        this.mobileUI.help.setXY(20, 55);
+        this.mobileUI.stats.setXY(20, 110);
+        this.mobileUI.night.setXY(20, 165);
+        // ec2 right column (toggle stacked vertically, then hint/undo)
+        this.mobileUI.toggle.setPosition(-80, 0);
+        this.mobileUI.toggle.icon1.setPosition(0, 0);
+        this.mobileUI.toggle.icon2.setPosition(0, 55);
+        this.mobileUI.hint.setXY(-80, 164);
+        this.mobileUI.undo.setXY(-80, 219);
+    }
+
+    private applyMobilePortraitLayout()
+    {
+        if (!this.mobileUI) return;
+        // ec3 row: 4 square icons horizontal (0, 60, 120, 180)
+        this.mobileUI.settings.setXY(0, 0);
+        this.mobileUI.help.setXY(60, 0);
+        this.mobileUI.stats.setXY(120, 0);
+        this.mobileUI.night.setXY(180, 0);
+        // ec2 row: toggle side-by-side (0, 60), hint at 120, undo at 180
+        this.mobileUI.toggle.setPosition(0, 0);
+        this.mobileUI.toggle.icon1.setPosition(0, 0);
+        this.mobileUI.toggle.icon2.setPosition(60, 0);
+        this.mobileUI.hint.setXY(120, 0);
+        this.mobileUI.undo.setXY(180, 0);
     }
 
     private calculateContainerHeightPercentage(screenHeight: number): void {
@@ -442,19 +478,18 @@ export class UIScene extends Phaser.Scene {
         }
         else {
             this.textContainer.y = topUI*this.scale.height
-            
+
             if (this.game.device.os.android || this.game.device.os.iOS) {
-                
+
                 if (!this.game.device.os.iPad) {
-                    this.elementsContainer.y = this.scale.height *0.86
                     this.elementsContainer.y = window.innerHeight * 0.86
-                    
+                    this.elementsContainer2.y = window.innerHeight * 0.86
+                    this.elementsContainer3.y = window.innerHeight * 0.86
                 } else if (this.game.device.os.iPad && innerHeight > innerWidth) {
-                    this.elementsContainer.y = this.scale.height *0.86
                     this.elementsContainer.y = window.innerHeight * 0.86
+                    this.elementsContainer2.y = window.innerHeight * 0.86
+                    this.elementsContainer3.y = window.innerHeight * 0.86
                 }
-                
-                
             }
         }
 

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "Bash(dir /B \"d:\\\\Projects\\\\p3s2\")",
+      "Bash(powershell \"Get-ChildItem 'D:\\\\Projects\\\\p3s2\\\\newassets\\\\menu\\\\' | Select-Object -ExpandProperty Name\")",
+      "Bash(mkdir -p \"d:\\\\Projects\\\\p3s2\\\\.claude\\\\plans\" 2>&1 | head -5; ls \"d:\\\\Projects\\\\p3s2\\\\.claude\" 2>&1)",
+      "Bash(mkdir -p \"d:\\\\Projects\\\\p3s2\\\\public\\\\assets\\\\menu\" && mv \"d:\\\\Projects\\\\p3s2\\\\newassets\\\\menu\\\\btn-1-card-off.hover.png\" \"d:\\\\Projects\\\\p3s2\\\\newassets\\\\menu\\\\btn-1-card-off-hover.png\" && mv \"d:\\\\Projects\\\\p3s2\\\\newassets\\\\menu\\\\\"*.png \"d:\\\\Projects\\\\p3s2\\\\public\\\\assets\\\\menu\\\\\" && ls \"d:\\\\Projects\\\\p3s2\\\\public\\\\assets\\\\menu\")",
+      "Bash(mkdir -p /d/Projects/p3s2/public/assets/menu && mv \"/d/Projects/p3s2/newassets/menu/btn-1-card-off.hover.png\" \"/d/Projects/p3s2/newassets/menu/btn-1-card-off-hover.png\" && mv /d/Projects/p3s2/newassets/menu/*.png /d/Projects/p3s2/public/assets/menu/ && ls /d/Projects/p3s2/public/assets/menu)",
+      "Bash(mkdir -p /d/Projects/p3s2/public/assets/menu && mv /d/Projects/p3s2/newassets/menu/*.png /d/Projects/p3s2/public/assets/menu/ && ls /d/Projects/p3s2/public/assets/menu/)"
+    ],
+    "additionalDirectories": [
+      "d:\\Projects\\p3s2\\.claude",
+      "d:\\Projects\\p3s2\\newassets",
+      "D:\\Projects\\p3s2\\newassets\\menu"
+    ]
+  }
+}
