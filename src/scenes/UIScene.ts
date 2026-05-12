@@ -24,6 +24,10 @@ export class UIScene extends Phaser.Scene {
     inputEnabled: boolean = true;
     skipClicks: boolean = false;
 
+    private htmlScore: HTMLElement | null = null;
+    private htmlTime: HTMLElement | null = null;
+    private htmlMoves: HTMLElement | null = null;
+
     desktopUI: {
         toggle: ToggleSwitch;
         settings: ImageButton;
@@ -67,6 +71,10 @@ export class UIScene extends Phaser.Scene {
   
 
         this.createTextElements();
+        this.textContainer.setVisible(false);
+        this.htmlScore = document.querySelector('.stat-score');
+        this.htmlTime = document.querySelector('.stat-time');
+        this.htmlMoves = document.querySelector('.stat-moves');
         this.createUIElements()
         this.createUIElementsMobile()
         this.gameManager = this.registry.get('gameManager');
@@ -79,15 +87,35 @@ export class UIScene extends Phaser.Scene {
     {
         this.desktopUI = {} as any;
 
+        // Centered horizontal toolbar. Order left→right: undo, hint, 1-card, 3-card, night, stats, help, settings.
+        // 15px gap between all neighbors EXCEPT 1-card and 3-card which are flush (0 gap). Total span 966 → ±483.
+        this.desktopUI.undo = new ImageButton(this, -483, 0, 'btn-undo', 'btn-undo-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            this.gameManager = this.registry.get("gameManager");
+            this.gameManager.controlManager.handleUKey();
+        });
+        this.desktopUI.undo.skipClickSound = true;
+        this.desktopUI.undo.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.undo);
+
+        this.desktopUI.hint = new ImageButton(this, -248, 0, 'btn-hint', 'btn-hint-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const gamemanager: GameManager = this.registry.get('gameManager');
+            HintManager.getInstance().getHint(gamemanager.pileManager);
+        });
+        this.desktopUI.hint.skipClickSound = true;
+        this.desktopUI.hint.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.hint);
+
         this.desktopUI.toggle = new ToggleSwitch(
             this,
-            -955,
+            -13,
             0,
             'btn-1-card-off',
             'btn-1-card-on',
             'btn-3-card-off',
             'btn-3-card-on',
-            115,
+            110,
             0,
             (nextState: boolean) => {
                 if (!this.inputEnabled || this.skipClicks) return;
@@ -100,16 +128,20 @@ export class UIScene extends Phaser.Scene {
         );
         this.elementsContainer.add(this.desktopUI.toggle);
 
-        this.desktopUI.settings = new ImageButton(this, -720, 0, 'icon-settings', 'icon-settings-hover', () => {
+        this.desktopUI.night = new ImageButton(this, 222, 0, 'icon-night', 'icon-night-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            this.scene.launch("Settings").bringToTop("Settings");
-            this.input.setDefaultCursor('default');
         });
-        this.desktopUI.settings.setDepth(50000);
-        this.desktopUI.settings.setOrigin(0, 0);
-        this.elementsContainer.add(this.desktopUI.settings);
+        this.desktopUI.night.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.night);
 
-        this.desktopUI.help = new ImageButton(this, -660, 0, 'icon-help', 'icon-help-hover', () => {
+        this.desktopUI.stats = new ImageButton(this, 291, 0, 'icon-stats', 'icon-stats-hover', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            this.scene.launch("Statistics").bringToTop("Statistics");
+        });
+        this.desktopUI.stats.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.stats);
+
+        this.desktopUI.help = new ImageButton(this, 360, 0, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
             const url = '/posts/posts-guides/klondike-solitaire-rules';
             const w = window.open(url, '_blank');
@@ -118,36 +150,14 @@ export class UIScene extends Phaser.Scene {
         this.desktopUI.help.setOrigin(0, 0);
         this.elementsContainer.add(this.desktopUI.help);
 
-        this.desktopUI.stats = new ImageButton(this, -600, 0, 'icon-stats', 'icon-stats-hover', () => {
+        this.desktopUI.settings = new ImageButton(this, 429, 0, 'icon-settings', 'icon-settings-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            this.scene.launch("Statistics").bringToTop("Statistics");
+            this.scene.launch("Settings").bringToTop("Settings");
+            this.input.setDefaultCursor('default');
         });
-        this.desktopUI.stats.setOrigin(0, 0);
-        this.elementsContainer.add(this.desktopUI.stats);
-
-        this.desktopUI.night = new ImageButton(this, -540, 0, 'icon-night', 'icon-night-hover', () => {
-            if (!this.inputEnabled || this.skipClicks) return;
-        });
-        this.desktopUI.night.setOrigin(0, 0);
-        this.elementsContainer.add(this.desktopUI.night);
-
-        this.desktopUI.hint = new ImageButton(this, -465, 0, 'btn-hint', 'btn-hint-hover', () => {
-            if (!this.inputEnabled || this.skipClicks) return;
-            const gamemanager: GameManager = this.registry.get('gameManager');
-            HintManager.getInstance().getHint(gamemanager.pileManager);
-        });
-        this.desktopUI.hint.skipClickSound = true;
-        this.desktopUI.hint.setOrigin(0, 0);
-        this.elementsContainer.add(this.desktopUI.hint);
-
-        this.desktopUI.undo = new ImageButton(this, -240, 0, 'btn-undo', 'btn-undo-hover', () => {
-            if (!this.inputEnabled || this.skipClicks) return;
-            this.gameManager = this.registry.get("gameManager");
-            this.gameManager.controlManager.handleUKey();
-        });
-        this.desktopUI.undo.skipClickSound = true;
-        this.desktopUI.undo.setOrigin(0, 0);
-        this.elementsContainer.add(this.desktopUI.undo);
+        this.desktopUI.settings.setDepth(50000);
+        this.desktopUI.settings.setOrigin(0, 0);
+        this.elementsContainer.add(this.desktopUI.settings);
     }
 
     createUIElementsMobile() {
@@ -235,9 +245,15 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer3.visible = this.elementsContainer2.visible
         this.elementsContainer3.setScale(this.elementsContainer2.scale)
         // 
-        this.scoreText.text = ""+translate(LanguageConfig.Score)+this.gameManager.getCurrentScore()
-        this.timeText.text = " | "+translate(LanguageConfig.Time) + formatTime(this.gameManager.getElapsedTime())
-        this.movesText.text = " | "+translate(LanguageConfig.Moves) +this.gameManager.getMoves()
+        const scoreStr = translate(LanguageConfig.Score) + this.gameManager.getCurrentScore();
+        const timeStr = translate(LanguageConfig.Time) + formatTime(this.gameManager.getElapsedTime());
+        const movesStr = translate(LanguageConfig.Moves) + this.gameManager.getMoves();
+        this.scoreText.text = scoreStr;
+        this.timeText.text = timeStr;
+        this.movesText.text = movesStr;
+        if (this.htmlScore) this.htmlScore.textContent = scoreStr;
+        if (this.htmlTime) this.htmlTime.textContent = timeStr;
+        if (this.htmlMoves) this.htmlMoves.textContent = movesStr;
         this.updateTextPos()
 
         this.inputEnabled = true
@@ -288,10 +304,10 @@ export class UIScene extends Phaser.Scene {
         let elementsStartX = Registry.uiElemStartX;
         
         this.textContainer.setPosition(textStartX, 0);
-        this.elementsContainer.setPosition(elementsStartX, 0);
         let scale = Math.min(1, Math.min(width / 1600, height / 900));
-        let fontsize = Math.max(12, Math.ceil(20 * Math.sqrt(scale))); 
-        this.elementsContainer.x = elementsStartX;
+        let fontsize = Math.max(12, Math.ceil(20 * Math.sqrt(scale)));
+        // Desktop toolbar: centered horizontally
+        this.elementsContainer.x = width / 2;
         this.elementsContainer.setScale(scale)
 
         this.elementsContainer2.setPosition(elementsStartX, 0)
@@ -440,15 +456,13 @@ export class UIScene extends Phaser.Scene {
         // if (!this.game.device.os.windows)
         
         
-        this.elementsContainer.y = topUI*this.scale.height
+        // Desktop default: text at top, button toolbar at bottom. Mobile branches below override these.
+        this.textContainer.y = topUI*this.scale.height
+        this.elementsContainer.y = this.scale.height * 0.93
         this.elementsContainer2.y = topUI*this.scale.height
         this.elementsContainer3.y = topUI*this.scale.height
-        this.textContainer.y = topUI*this.scale.height
 
-
-
-        
-        this.registry.set("uiBottomPx", this.elementsContainer.y + this.scoreText.height*2.9)
+        this.registry.set("uiBottomPx", this.textContainer.y + this.scoreText.height*1.5)
 
         
         if ((this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) || this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {

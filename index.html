@@ -13,21 +13,15 @@
 <body>
 <div id="app">
   <div class="top-bar">
-    <div class="title"></div>
-    <div class="game-links"><a href="/all-games" class="game-link" target="_blank"><span>All Games</span></a> <a href="/blog" class="game-link" target="_blank"><span>Blog</span></a></div>
+    <div class="game-stats">
+      <span class="stat-score"></span>
+      <span class="stat-time"></span>
+      <span class="stat-moves"></span>
+    </div>
   </div>
   <div id="game-container"></div>
 </div>
-<script>function adjustTitle() {
-            const titleElement = document.querySelector('.title');
-            if (window.innerWidth <= 750) {
-                titleElement.textContent = 'SOLITAIRE';
-            } else {
-                titleElement.textContent = 'FREESOLITAIRE.COM - SOLITAIRE';
-            }
-        }
-
-        function calculateTopBarPosition() {
+<script>function calculateTopBarPosition() {
             const topBar = document.querySelector('.top-bar');
             const topBarHeight = topBar.offsetHeight;
             const viewportHeight = window.innerHeight;
@@ -35,23 +29,9 @@
 
             window.topBarBottomPosition = bottomPositionPercentage * window.innerHeight / 100;
         }
-    
-        // Run on initial load and window resize
-        window.addEventListener('load', () => {
-            adjustTitle();
-            calculateTopBarPosition();
-        });
-        window.addEventListener('resize', () => {
-            adjustTitle();
-            calculateTopBarPosition();
-        });
-        function updateFunction() {
 
-         calculateTopBarPosition();
-    // Any additional logic you need to run
-        }
-
-// Set up the interval to run the function every 5 milliseconds
-const intervalId = setInterval(updateFunction, 5);</script>
+        window.addEventListener('load', calculateTopBarPosition);
+        window.addEventListener('resize', calculateTopBarPosition);
+        const intervalId = setInterval(calculateTopBarPosition, 5);</script>
 </body>
 </html>
