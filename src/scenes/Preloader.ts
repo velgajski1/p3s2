@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { CardNameManager } from '../managers/CardNameManager';
-import { getBGINDEX, loadDefaultSettings, loadSettings } from '../config/Config';
+import { loadDefaultSettings, loadSettings } from '../config/Config';
 import { GameManager } from '../managers/GameManager';
 
 export class Preloader extends Scene {
@@ -100,9 +100,11 @@ export class Preloader extends Scene {
         this.load.image('holder_tableau_cards', 'placeholders/tableau-empty.png');
         this.load.image('prompt_btn_left', 'prompt_btn_left.png');
         this.load.image('prompt_btn_right', 'prompt_btn_right.png');
-        this.load.image('prompt_close', 'prompt_close.png');
+        this.load.image('prompt_close', 'prompts/icon-close.png');
         this.load.image('prompt_radio_off', 'prompt_radio_off.png');
         this.load.image('prompt_radio_on', 'prompt_radio_on.png');
+        this.load.image('toggle-on', 'prompts/toggle-on.png');
+        this.load.image('toggle-off', 'prompts/toggle-off.png');
         this.load.image('reddish_glow_outline', 'placeholders/card-hint-overlay.png');
         this.load.image('backside', 'backside.png');
 

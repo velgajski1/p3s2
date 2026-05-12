@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Solitaire Klondike Game</title>
+<title>Solitär Kostenlos</title>
 <link rel="icon" type="image/png" href="./favicon.png"/>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
-<!-- ANALYTICS --> 
+<!-- ANALYTICS -->
 <script defer src="./bundle.min.js"></script>
 </head>
 <body>
@@ -16,22 +16,21 @@
     <div class="game-stats">
       <span class="stat-score"></span>
       <span class="stat-time"></span>
-      <span class="stat-moves"></span>
     </div>
+    <div class="brand">Solitär Kostenlos</div>
+    <div class="top-bar-spacer"></div>
   </div>
   <div id="game-container"></div>
 </div>
-<script>function calculateTopBarPosition() {
-            const topBar = document.querySelector('.top-bar');
-            const topBarHeight = topBar.offsetHeight;
-            const viewportHeight = window.innerHeight;
-            const bottomPositionPercentage = (topBarHeight / viewportHeight) * 100;
-
-            window.topBarBottomPosition = bottomPositionPercentage * window.innerHeight / 100;
-        }
-
-        window.addEventListener('load', calculateTopBarPosition);
-        window.addEventListener('resize', calculateTopBarPosition);
-        const intervalId = setInterval(calculateTopBarPosition, 5);</script>
+<script>
+    function calculateTopBarPosition() {
+        const topBar = document.querySelector('.top-bar');
+        if (!topBar) return;
+        window.topBarBottomPosition = topBar.offsetHeight;
+    }
+    window.addEventListener('load', calculateTopBarPosition);
+    window.addEventListener('resize', calculateTopBarPosition);
+    setInterval(calculateTopBarPosition, 1000);
+</script>
 </body>
 </html>

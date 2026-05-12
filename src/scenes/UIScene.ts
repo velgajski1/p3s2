@@ -6,6 +6,7 @@ import { formatTime } from '../utils/Utils';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
+import ButtonWithColorBackground from '../ui/ButtonWithColorBackground';
 import { DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleNightModeActive, toggleThreeModeActive } from '../config/Config';
 import CardLayoutManager from '../managers/CardLayoutManager';
 import UndoManager from '../managers/UndoManager';
@@ -26,10 +27,10 @@ export class UIScene extends Phaser.Scene {
 
     private htmlScore: HTMLElement | null = null;
     private htmlTime: HTMLElement | null = null;
-    private htmlMoves: HTMLElement | null = null;
 
     desktopUI: {
         toggle: ToggleSwitch;
+        neustart: ButtonWithColorBackground;
         settings: ImageButton;
         help: ImageButton;
         stats: ImageButton;
@@ -39,6 +40,7 @@ export class UIScene extends Phaser.Scene {
     };
     mobileUI: {
         toggle: ToggleSwitch;
+        neustart: ButtonWithColorBackground;
         settings: ImageButton;
         help: ImageButton;
         stats: ImageButton;
@@ -74,7 +76,6 @@ export class UIScene extends Phaser.Scene {
         this.textContainer.setVisible(false);
         this.htmlScore = document.querySelector('.stat-score');
         this.htmlTime = document.querySelector('.stat-time');
-        this.htmlMoves = document.querySelector('.stat-moves');
         this.createUIElements()
         this.createUIElementsMobile()
         this.gameManager = this.registry.get('gameManager');
@@ -128,6 +129,24 @@ export class UIScene extends Phaser.Scene {
         );
         this.elementsContainer.add(this.desktopUI.toggle);
 
+        // NEUSTART occupies the same slot as the 1/3 toggle; visibility-swapped while a modal is open.
+        this.desktopUI.neustart = new ButtonWithColorBackground(this, 97, 27, '↺ ' + translate(LanguageConfig.Neustart), () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const gm: GameManager = this.registry.get('gameManager');
+            gm.updateStats();
+            gm.restart();
+        }, {
+            color: 0x568234,
+            textColor: '#ffffff',
+            width: 220,
+            height: 54,
+            fontSize: '20px',
+            fontStyle: 'bold',
+            cornerRadius: 8,
+            parentContainer: this.elementsContainer,
+        });
+        this.desktopUI.neustart.setVisible(false);
+
         this.desktopUI.night = new ImageButton(this, 222, 0, 'icon-night', 'icon-night-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
             this.toggleNightMode();
@@ -144,7 +163,7 @@ export class UIScene extends Phaser.Scene {
 
         this.desktopUI.help = new ImageButton(this, 360, 0, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            const url = '/posts/posts-guides/klondike-solitaire-rules';
+            const url = '/howtoplay';
             const w = window.open(url, '_blank');
             if (!w) window.location.href = url;
         });
@@ -188,6 +207,24 @@ export class UIScene extends Phaser.Scene {
         );
         this.elementsContainer2.add(this.mobileUI.toggle);
 
+        // Mobile NEUSTART overlays the toggle position (visibility-swapped when a modal is open)
+        this.mobileUI.neustart = new ButtonWithColorBackground(this, colRightX + 27, 55, '↺', () => {
+            if (!this.inputEnabled || this.skipClicks) return;
+            const gm: GameManager = this.registry.get('gameManager');
+            gm.updateStats();
+            gm.restart();
+        }, {
+            color: 0x568234,
+            textColor: '#ffffff',
+            width: 54,
+            height: 110,
+            fontSize: '28px',
+            fontStyle: 'bold',
+            cornerRadius: 8,
+            parentContainer: this.elementsContainer2,
+        });
+        this.mobileUI.neustart.setVisible(false);
+
         this.mobileUI.hint = new ImageButton(this, colRightX, 164, 'mobile-btn-hint', 'mobile-btn-hint', () => {
             if (!this.inputEnabled || this.skipClicks) return;
             const gamemanager: GameManager = this.registry.get('gameManager');
@@ -218,7 +255,7 @@ export class UIScene extends Phaser.Scene {
 
         this.mobileUI.help = new ImageButton(this, colLeftX, 55, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            const url = '/posts/posts-guides/klondike-solitaire-rules';
+            const url = '/howtoplay';
             const w = window.open(url, '_blank');
             if (!w) window.location.href = url;
         });
@@ -246,19 +283,26 @@ export class UIScene extends Phaser.Scene {
     {
         this.elementsContainer3.visible = this.elementsContainer2.visible
         this.elementsContainer3.setScale(this.elementsContainer2.scale)
-        // 
+
         const scoreStr = translate(LanguageConfig.Score) + this.gameManager.getCurrentScore();
-        const timeStr = translate(LanguageConfig.Time) + formatTime(this.gameManager.getElapsedTime());
-        const movesStr = translate(LanguageConfig.Moves) + this.gameManager.getMoves();
+        const timeStr = formatTime(this.gameManager.getElapsedTime());
         this.scoreText.text = scoreStr;
-        this.timeText.text = timeStr;
-        this.movesText.text = movesStr;
+        this.timeText.text = ' | ' + timeStr;
+        this.movesText.text = '';
         if (this.htmlScore) this.htmlScore.textContent = scoreStr;
-        if (this.htmlTime) this.htmlTime.textContent = timeStr;
-        if (this.htmlMoves) this.htmlMoves.textContent = movesStr;
+        if (this.htmlTime) this.htmlTime.textContent = '| ' + timeStr;
         this.updateTextPos()
 
         this.inputEnabled = true
+
+        const modalOpen = this.scene.isActive('Settings') || this.scene.isActive('Statistics') || this.scene.isActive('WonScene');
+        if (modalOpen) this.inputEnabled = false;
+
+        // Swap 1/3 toggle with NEUSTART while a modal is open
+        this.desktopUI.toggle.setVisible(!modalOpen);
+        this.desktopUI.neustart.setVisible(modalOpen);
+        this.mobileUI.toggle.setVisible(!modalOpen);
+        this.mobileUI.neustart.setVisible(modalOpen);
 
         const ui = this.elementsContainer.visible ? this.desktopUI : this.mobileUI;
         const buttons: ImageButton[] = [ui.settings, ui.help, ui.stats, ui.night, ui.hint, ui.undo];
@@ -271,8 +315,6 @@ export class UIScene extends Phaser.Scene {
             ui.toggle.icon1.setInteractive();
             ui.toggle.icon2.setInteractive();
         }
-        
-        if (this.scene.isActive("Settings")||this.scene.isActive("MainMenu")||this.scene.isActive("Statistics")||this.scene.isActive("WonScene")) this.inputEnabled = false
     }
 
     private createTextElements(): void {

@@ -1,6 +1,5 @@
 import { Scene } from 'phaser';
 import { Language } from '../utils/Language';
-import { getBGINDEX } from '../config/Config';
 
 export class Boot extends Scene
 {

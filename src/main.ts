@@ -1,8 +1,6 @@
 import { BackgroundScene } from './scenes/BackgroundScene';
 import { Boot } from './scenes/Boot';
 import { GameplayScene } from './scenes/GameplayScene';
-import { GameOver } from './scenes/GameOver';
-import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 
 import { Game, Types } from "phaser";
@@ -10,11 +8,7 @@ import { UIScene } from './scenes/UIScene';
 import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
-import InversePipelinePlugin from 'phaser3-rex-plugins/plugins/inversepipeline-plugin.js';
-import { loadSettings } from './config/Config';
 
-//  Find out more information about the Game Config at:dd
-//  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 1024,
@@ -24,18 +18,9 @@ const config: Types.Core.GameConfig = {
     roundPixels: true,
     input: {
         mouse: {
-            preventDefaultWheel: false // Allows default scroll behavior in the browser
+            preventDefaultWheel: false
         }
     },
-    // plugins: {
-    //     global: [{
-    //         key: 'rexInversePipeline',
-    //         plugin: InversePipelinePlugin,
-    //         start: true
-    //     },
-    //     // ...
-    //     ]
-    // },
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -44,17 +29,12 @@ const config: Types.Core.GameConfig = {
         Boot,
         BackgroundScene,
         Preloader,
-        MainMenu,
         Settings,
         Statistics,
         GameplayScene,
         UIScene,
-        WonScene,
-        GameOver
+        WonScene
     ]
 };
-
-
-
 
 export default new Game(config);

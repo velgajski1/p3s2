@@ -1,4 +1,4 @@
-import { getBGINDEX, loadDefaultSettings, loadSettings, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { loadDefaultSettings, loadSettings, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 
 class StatsManager {
     private static instance: StatsManager;
@@ -50,7 +50,7 @@ class StatsManager {
     }
 
     private getModePrefix(): string {
-        return STOCK_THREE_MODE_ACTIVE ? 'p3s1_three_' : 'p3s1_one_';
+        return STOCK_THREE_MODE_ACTIVE ? 'solkost_klondike_three_' : 'solkost_klondike_one_';
     }
 
     // Getter and Setter for games played

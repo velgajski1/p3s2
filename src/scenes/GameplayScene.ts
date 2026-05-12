@@ -6,7 +6,7 @@ import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import { PileType, TABLEU_COORDS_DELTA } from '../config/Consts';
 import BaseScene from './BaseScene';
 import { SoundManager } from '../managers/SoundManager';
-import { getBGINDEX, loadDefaultSettings, loadSettings } from '../config/Config';
+import { loadDefaultSettings, loadSettings } from '../config/Config';
 
 export class GameplayScene extends BaseScene {
     private gameplayContainer!: Phaser.GameObjects.Container;

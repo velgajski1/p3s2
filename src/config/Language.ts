@@ -20,7 +20,10 @@ export const LanguageConfig = {
     BestTime: "BestTime",
     AvgTime: "AvgTime",
     GameSettings: "GameSettings",
+    Settings: "Settings",
     VisualSettings: "VisualSettings",
+    Spielen: "Spielen",
+    Leistung: "Leistung",
     SoundOnOff: "SoundOnOff",
     AutoFinish: "AutoFinish",
     RightHanded: "RightHanded",
@@ -35,4 +38,5 @@ export const LanguageConfig = {
     TotalScore: "TotalScore",
     Time: "Time",
     Moves: "Moves",
+    Neustart: "Neustart",
 };

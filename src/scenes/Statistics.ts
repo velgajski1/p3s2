@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
-import Button, { ButtonWithColorBackground } from '../ui/ButtonWithColorBackground';
-import { STAT_LABELS } from '../config/Consts';
+import { ButtonWithColorBackground } from '../ui/ButtonWithColorBackground';
 import { Language, translate } from '../utils/Language';
 import { LanguageConfig } from '../config/Language';
 import { BaseMenuScene } from './BaseMenuScene';
@@ -11,25 +10,23 @@ export class Statistics extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
     private whiteBg!: Phaser.GameObjects.Graphics;
     private titleTxt!: Phaser.GameObjects.Text;
-    private closeButton: Button;
-    private resetButton: Button;
+    private resetButton: ButtonWithColorBackground;
     prompt_close: Phaser.GameObjects.Image;
-    totalOffsetY: number;
 
     constructor() {
         super('Statistics');
     }
 
     create(): void {
-        statsManager.loadStats(true)
+        statsManager.loadStats(true);
         super.create();
         this.createMenuContainer();
         this.createWhiteBackground();
         this.createTitleText();
-        this.createStatsTextItems();
-        this.createButtons();
-        this.scaleMenuContainer();
+        this.createSections();
+        this.createResetButton();
         this.createXButton();
+        this.scaleMenuContainer();
 
         this.scale.on('resize', this.scaleMenuContainer, this);
     }
@@ -39,129 +36,107 @@ export class Statistics extends BaseMenuScene {
     }
 
     private createWhiteBackground(): void {
+        // 400 wide x 410 tall, top-left at (-200, -200)
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-200, -250, 400, 470+12, 8);
+        this.whiteBg.fillRoundedRect(-200, -200, 400, 410, 8);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTitleText(): void {
-        let statTitle = translate(LanguageConfig.Stats1);
-        if (STOCK_THREE_MODE_ACTIVE) statTitle = translate(LanguageConfig.Stats3);
-        this.titleTxt = this.add.text(-165, -230, statTitle, {
+        const statTitle = STOCK_THREE_MODE_ACTIVE
+            ? translate(LanguageConfig.Stats3)
+            : translate(LanguageConfig.Stats1);
+        this.titleTxt = this.add.text(-170, -178, statTitle, {
             fontFamily: 'Open Sans',
-            fontSize: '30px',
+            fontSize: '24px',
             color: '#000000',
-            align: 'left',
-            fontStyle: 'bold'
-        }).setOrigin(0);
+            align: 'center',
+            fontStyle: 'bold',
+        }).setOrigin(0, 0);
         this.menuContainer.add(this.titleTxt);
     }
 
-    private createStatsTextItems(): void {
-        const statsData = [
-            { lang: LanguageConfig.GamesPlayed, label: STAT_LABELS.GamesPlayed, value: statsManager.gamesPlayed },
-            { lang: LanguageConfig.GamesWon, label: STAT_LABELS.GamesWon, value: statsManager.gamesWon },
-            { lang: LanguageConfig.GamesLost, label: STAT_LABELS.GamesLost, value: statsManager.gamesLost },
-            { lang: LanguageConfig.WinPercentage, label: STAT_LABELS.WinPercentage, value: statsManager.winPercentage + "%" },
-            // { lang: LanguageConfig.CurrentWinStreak, label: STAT_LABELS.CurrentWinStreak, value: statsManager.currentWinStreak },
-            // { lang: LanguageConfig.LongestWinStreak, label: STAT_LABELS.LongestWinStreak, value: statsManager.longestWinStreak },
-            { lang: LanguageConfig.TopScore, label: STAT_LABELS.TopScore, value: statsManager.topScore },
-            { lang: LanguageConfig.BestTime, label: STAT_LABELS.BestTime, value: statsManager._formatTime(statsManager.bestTime) },
-            { lang: LanguageConfig.AvgTime, label: STAT_LABELS.AverageTime, value: statsManager._formatTime(statsManager.avgTimePlayed) },
+    private createXButton(): void {
+        this.prompt_close = this.add.image(170, -170, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.prompt_close.on('pointerdown', () => this.remove());
+        this.menuContainer.add(this.prompt_close);
+    }
+
+    private createSections(): void {
+        const labelX = -170;
+        const valueX = 170;
+        const sectionStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+            fontFamily: 'Open Sans', fontSize: '20px', color: '#000000', fontStyle: 'bold',
+        };
+        const rowStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+            fontFamily: 'Open Sans', fontSize: '18px', color: '#000000',
+        };
+        const valueStyle: Phaser.Types.GameObjects.Text.TextStyle = { ...rowStyle };
+
+        const spielen = this.add.text(labelX, -135, Language.getTranslation(LanguageConfig.Spielen), sectionStyle).setOrigin(0, 0);
+        this.menuContainer.add(spielen);
+
+        const spielenRows = [
+            { label: LanguageConfig.GamesPlayed, value: '' + statsManager.gamesPlayed },
+            { label: LanguageConfig.GamesWon, value: '' + statsManager.gamesWon },
+            { label: LanguageConfig.WinPercentage, value: statsManager.winPercentage + '%' },
         ];
 
-        statsData.forEach(element => {
-            const value = localStorage.getItem(element.label);
-            // element.value = parseInt(value !== null ? value : '0');
-            element.label = Language.getTranslation(element.lang);
+        let y = -105;
+        spielenRows.forEach(r => {
+            const labelTxt = this.add.text(labelX, y, Language.getTranslation(r.label), rowStyle).setOrigin(0, 0);
+            const valueTxt = this.add.text(valueX, y, r.value, valueStyle).setOrigin(1, 0);
+            this.menuContainer.add([labelTxt, valueTxt]);
+            y += 28;
         });
 
-        let offsetY = -185+10;
-        const labelStyle = { fontFamily: 'Open Sans', fontSize: '25px', color: '#000000' };
-        const valueStyle = { ...labelStyle, fontStyle: 'bold' };
+        const leistung = this.add.text(labelX, y + 8, Language.getTranslation(LanguageConfig.Leistung), sectionStyle).setOrigin(0, 0);
+        this.menuContainer.add(leistung);
+        y += 38;
 
-        statsData.forEach(stat => {
-            const label = this.add.text(-165, offsetY, `${stat.label}: `, labelStyle).setOrigin(0);
-            const value = this.add.text(-165 + this.measureTextWidth(stat.label, labelStyle) + 14, offsetY, `${stat.value}`, valueStyle).setOrigin(0);
-            this.menuContainer.add([label, value]);
-            offsetY += 44; // Adjust vertical spacing as needed
+        const leistungRows = [
+            { label: LanguageConfig.TopScore, value: '' + statsManager.topScore },
+            { label: LanguageConfig.BestTime, value: statsManager._formatTime(statsManager.bestTime) },
+        ];
+        leistungRows.forEach(r => {
+            const labelTxt = this.add.text(labelX, y, Language.getTranslation(r.label), rowStyle).setOrigin(0, 0);
+            const valueTxt = this.add.text(valueX, y, r.value, valueStyle).setOrigin(1, 0);
+            this.menuContainer.add([labelTxt, valueTxt]);
+            y += 28;
         });
-
-        this.totalOffsetY = offsetY
     }
 
-    private measureTextWidth(text: string, style: Phaser.Types.GameObjects.Text.TextStyle): number {
-        const dummyText = this.add.text(0, 0, text, style);
-        const width = dummyText.width;
-        dummyText.destroy(); // We don't need to keep it after measuring
-        return width;
-    }
-
-    createXButton()
-    {
-        this.prompt_close = this.add.image(175, -225, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
-        this.prompt_close.on('pointerdown', () => {
-            this.remove()
-        })
-        this.menuContainer.add(this.prompt_close)
-    }
-
-    private createButtons(): void {
-        // this.closeButton = new ButtonWithColorBackground(this, 0, 125, Language.getTranslation(LanguageConfig.Close), () => {
-        //     this.scene.stop('Statistics');
-        // }, {
-        //     color: 0x668b9e, 
-        //     textColor: '#ffffff', 
-        //     width: 338,
-        //     height: 62,
-        //     fontSize: '26px',
-        //     fontStyle: "bold",
-        //     parentContainer: this.menuContainer
-        // });
-
-        // this.resetButton = new ButtonWithColorBackground(this, 0, 205, Language.getTranslation(LanguageConfig.ResetStats), () => {
-        // this.resetButton = new ButtonWithColorBackground(this, 0, 190, Language.getTranslation(LanguageConfig.ResetStats), () => {
-        this.resetButton = new ButtonWithColorBackground(this, 0, this.totalOffsetY+37, Language.getTranslation(LanguageConfig.ResetStats), () => {
-            statsManager.resetStats()
-            this.scene.restart()
+    private createResetButton(): void {
+        this.resetButton = new ButtonWithColorBackground(this, 0, 165, Language.getTranslation(LanguageConfig.ResetStats), () => {
+            statsManager.resetStats();
+            this.scene.restart();
         }, {
-            color: 0x668b9e, 
-            textColor: '#ffffff', 
-            width: 338,
-            height: 62,
-            fontSize: '26px',
-            fontStyle: "bold",
-            parentContainer: this.menuContainer
+            color: 0x568234,
+            textColor: '#ffffff',
+            width: 320,
+            height: 44,
+            fontSize: '20px',
+            fontStyle: 'bold',
+            parentContainer: this.menuContainer,
         });
     }
-
 
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
-        // Use provided gameSize or current game size
-        // 
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
-    
-        // Calculate scale based on a 1600x900 design, trying to fill as much as possible
+
         const scaleX = width / 600;
         const scaleY = height / 600;
-        // Use the larger scale factor that maintains aspect ratio without exceeding screen dimensions
         const scale = Math.min(1, Math.max(scaleX, scaleY));
-    
-        // Check if scaling exceeds screen dimensions and adjust if necessary
+
         const effectiveWidth = 600 * scale;
         const effectiveHeight = 600 * scale;
         if (effectiveWidth > width || effectiveHeight > height) {
-            // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
             this.menuContainer.setScale(Math.min(scaleX, scaleY));
         } else {
-            // Otherwise, apply the calculated scale to maximize screen usage
             this.menuContainer.setScale(scale);
         }
-
-
     }
 }
 
-// Export the class if needed
 export default Statistics;

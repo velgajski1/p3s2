@@ -1,91 +1,41 @@
 import Phaser from 'phaser';
 import Button from '../ui/ButtonWithColorBackground';
-import { RadioButtonSingle } from '../ui/RadioButtonSingle';
-import {LanguageConfig} from '../config/Language';
+import { SettingsToggle } from '../ui/SettingsToggle';
+import { LanguageConfig } from '../config/Language';
 import { Language } from '../utils/Language';
 import { BaseMenuScene } from './BaseMenuScene';
-import { AUTOFINISH_MODE_ACTIVE, RIGHT_HANDED_MODE_ACTIVE, SOUND_ACTIVE, toggleAutofinishActive, toggleRightHandedActive, toggleSoundActive, toggleThreeModeActive } from '../config/Config';
-import UndoManager from '../managers/UndoManager';
-import { GameManager } from '../managers/GameManager';
+import { AUTOFINISH_MODE_ACTIVE, RIGHT_HANDED_MODE_ACTIVE, SOUND_ACTIVE, toggleAutofinishActive, toggleRightHandedActive, toggleSoundActive } from '../config/Config';
 
 export class Settings extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
     private whiteBg!: Phaser.GameObjects.Graphics;
     prompt_close: Phaser.GameObjects.Image;
-    soundButton: RadioButtonSingle;
-    autofinishButton: RadioButtonSingle;
-    rightHAndedButton: RadioButtonSingle;
-
-    deltaX = 15;
+    autofinishToggle: SettingsToggle;
+    soundToggle: SettingsToggle;
+    rightHandedToggle: SettingsToggle;
 
     constructor() {
         super('Settings');
     }
 
     create(): void {
-        super.create()
+        super.create();
         this.createMenuContainer();
         this.createWhiteBackground();
         this.createTitle();
-        this.createGameActionButtons();
-        this.createRadioButtons();
-        this.createCancelButton();
-        this.scaleMenuContainer();
+        this.createToggles();
+        this.createCloseButton();
         this.createXButton();
+        this.scaleMenuContainer();
 
-        // Listen for resize events to dynamically adjust the layout
         this.scale.on('resize', this.scaleMenuContainer, this);
     }
 
-    update(time: number, delta: number): void
-    {
-        toggleAutofinishActive(this.autofinishButton.isOn)
-        toggleRightHandedActive(this.rightHAndedButton.isOn)
-        toggleSoundActive(this.soundButton.isOn)
+    update(time: number, delta: number): void {
+        toggleAutofinishActive(this.autofinishToggle.isOn);
+        toggleSoundActive(this.soundToggle.isOn);
+        toggleRightHandedActive(this.rightHandedToggle.isOn);
     }
-
-    createXButton()
-    {
-        this.prompt_close = this.add.image(170, -460, 'prompt_close').setOrigin(0.5).setInteractive({useHandCursor: true});
-        this.prompt_close.on('pointerdown', () => {
-            this.remove()
-        })
-        this.menuContainer.add(this.prompt_close)
-    }
-
-    private createGameActionButtons(): void {
-        const w = 320;
-        const h = 44;
-        const fontSize = '20px';
-        const color = 0x668b9e;
-
-        new Button(this, 0, -400, Language.getTranslation(LanguageConfig.RestartGame), () => {
-            const state = UndoManager.getInstance().undoFully();
-            const gManager: GameManager = this.registry.get('gameManager');
-            gManager.reset();
-            if (state) {
-                gManager.pileManager.setToGameState(state);
-            }
-            this.remove();
-        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
-
-        new Button(this, 0, -345, Language.getTranslation(LanguageConfig.NewGameTurn1), () => {
-            toggleThreeModeActive(false);
-            this.restartGame();
-        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
-
-        new Button(this, 0, -290, Language.getTranslation(LanguageConfig.NewGameTurn3), () => {
-            toggleThreeModeActive(true);
-            this.restartGame();
-        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
-
-        new Button(this, 0, -235, Language.getTranslation(LanguageConfig.AllGames), () => {
-            const url = '/solitaire-games';
-            const win = window.open(url, '_blank');
-            if (!win) window.location.href = url;
-        }, { color, textColor: '#ffffff', width: w, height: h, fontSize, fontStyle: 'bold', parentContainer: this.menuContainer });
-    }
-
 
     private createMenuContainer(): void {
         this.menuContainer = this.add.container(this.scale.width / 2, this.scale.height / 2);
@@ -93,111 +43,79 @@ export class Settings extends BaseMenuScene {
 
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-200, -490, 400, 620, 12);
+        // Modal: 400 wide x 380 tall, top-left at (-200, -190)
+        this.whiteBg.fillRoundedRect(-200, -190, 400, 380, 12);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTitle(): void {
-        const titleTxt = this.add.text(-150-this.deltaX, -190, Language.getTranslation(LanguageConfig.GameSettings), {
-            fontFamily: 'Open Sans', fontSize: '32px', color: '#000000', align: 'center'
-        }).setOrigin(0).setFontStyle("bold");
+        const titleTxt = this.add.text(-170, -165, Language.getTranslation(LanguageConfig.Settings), {
+            fontFamily: 'Open Sans', fontSize: '28px', color: '#000000', align: 'left'
+        }).setOrigin(0, 0).setFontStyle('bold');
         this.menuContainer.add(titleTxt);
     }
 
-    private createRadioButtons(): void {
-        // Example positions and initial states are placeholders
-        this.soundButton = new RadioButtonSingle(this, -134-this.deltaX, -120,  Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
-            parentContainer: this.menuContainer,
-            // Additional RadioButtonSingle configuration here
-        });
-
-        this.autofinishButton = new RadioButtonSingle(this, -134-this.deltaX, -60,  Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
-            parentContainer: this.menuContainer,
-            // Additional RadioButtonSingle configuration here
-        });
-
-        this.rightHAndedButton = new RadioButtonSingle(this, -134-this.deltaX, 0,  Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
-            parentContainer: this.menuContainer,
-            // Additional RadioButtonSingle configuration here
-        });
-        addEventListener('radioToggle', () => { 
-            setTimeout(()=> {
-                dispatchEvent(new Event('rightHandedEvent'))
-            },100);
-            this.update(0,0)
-         })
+    private createXButton(): void {
+        this.prompt_close = this.add.image(170, -150, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.prompt_close.on('pointerdown', () => this.remove());
+        this.menuContainer.add(this.prompt_close);
     }
 
-    private createCancelButton(): void {
-        new Button(this, 0, 80,  Language.getTranslation(LanguageConfig.SaveExit), () => {
-           this.remove();
+    private createToggles(): void {
+        const rowWidth = 320;
+        const rowX = -160;
+
+        this.autofinishToggle = new SettingsToggle(this, rowX, -80, Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
+            parentContainer: this.menuContainer,
+            rowWidth,
+        });
+
+        this.soundToggle = new SettingsToggle(this, rowX, -25, Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
+            parentContainer: this.menuContainer,
+            rowWidth,
+        });
+
+        this.rightHandedToggle = new SettingsToggle(this, rowX, 30, Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
+            parentContainer: this.menuContainer,
+            rowWidth,
+        });
+
+        addEventListener('radioToggle', () => {
+            setTimeout(() => dispatchEvent(new Event('rightHandedEvent')), 100);
+            this.update(0, 0);
+        });
+    }
+
+    private createCloseButton(): void {
+        new Button(this, 0, 130, Language.getTranslation(LanguageConfig.SaveExit), () => {
+            this.remove();
         }, {
-            color: 0x668b9e, 
-            textColor: '#ffffff', 
-            width: 338,
-            height: 62,
-            fontSize: '26px',
-            fontStyle: "bold",
-            parentContainer: this.menuContainer
+            color: 0x568234,
+            textColor: '#ffffff',
+            width: 320,
+            height: 48,
+            fontSize: '22px',
+            fontStyle: 'bold',
+            parentContainer: this.menuContainer,
         });
     }
-
-    // private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
-    //     const { width, height } = gameSize || this.scale;
-    //     this.menuContainer.setPosition(width / 2, height / 2);
-
-    //     let scaleXDivider = 600;
-    //     let scaleYDivider = 600;
-
-    //     // Calculate scale based on a 1600x900 design, trying to fill as much as possible
-    //     const scaleX = width / scaleXDivider;
-    //     const scaleY = height / scaleYDivider;
-    //     // Use the larger scale factor that maintains aspect ratio without exceeding screen dimensions
-    //     const scale = Math.min(1, Math.max(scaleX, scaleY));
-
-    //     
-    
-    //     // Check if scaling exceeds screen dimensions and adjust if necessary
-    //     const effectiveWidth = scaleXDivider * scale;
-    //     const effectiveHeight = scaleYDivider * scale;
-    //     if (effectiveWidth > width || effectiveHeight > height) {
-    //         // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
-    //         this.menuContainer.setScale(Math.min(scaleX, scaleY));
-    //         
-    //     } else {
-    //         // Otherwise, apply the calculated scale to maximize screen usage
-    //         this.menuContainer.setScale(scale);
-    //         
-    //     }
-    
-    //     
-    //     this.menuContainer.setScale(scale);
-    //     this.modalBackground.clear().fillRect(0, 0, width, height);
-
-    // }
 
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
-        // Use provided gameSize or current game size
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
 
-        let scaleXDivider = 600;
-        let scaleYDivider = 850;
+        const scaleXDivider = 600;
+        const scaleYDivider = 600;
 
-        // Calculate scale based on a 1600x900 design, trying to fill as much as possible
         const scaleX = width / scaleXDivider;
         const scaleY = height / scaleYDivider;
-        // Use the larger scale factor that maintains aspect ratio without exceeding screen dimensions
         const scale = Math.min(1, Math.max(scaleX, scaleY));
 
-        // Check if scaling exceeds screen dimensions and adjust if necessary
         const effectiveWidth = scaleXDivider * scale;
         const effectiveHeight = scaleYDivider * scale;
         if (effectiveWidth > width || effectiveHeight > height) {
-            // If the scaled size exceeds the screen size in either dimension, use the smaller scale factor
             this.menuContainer.setScale(Math.min(scaleX, scaleY));
         } else {
-            // Otherwise, apply the calculated scale to maximize screen usage
             this.menuContainer.setScale(scale);
         }
     }
