@@ -95,15 +95,15 @@ export class Preloader extends Scene {
 
         
 
-        this.load.image('holder_foundation_cards', 'holder_foundation_cards.png');
-        this.load.image('holder_stock_cards', 'holder_stock_cards.png');
-        this.load.image('holder_tableau_cards', 'holder_tableau_cards.png');
+        this.load.image('holder_foundation_cards', 'placeholders/foundation-empty.png');
+        this.load.image('holder_stock_cards', 'placeholders/redeal-stock.png');
+        this.load.image('holder_tableau_cards', 'placeholders/tableau-empty.png');
         this.load.image('prompt_btn_left', 'prompt_btn_left.png');
         this.load.image('prompt_btn_right', 'prompt_btn_right.png');
         this.load.image('prompt_close', 'prompt_close.png');
         this.load.image('prompt_radio_off', 'prompt_radio_off.png');
         this.load.image('prompt_radio_on', 'prompt_radio_on.png');
-        this.load.image('reddish_glow_outline', 'hint-overlay.png');
+        this.load.image('reddish_glow_outline', 'placeholders/card-hint-overlay.png');
         this.load.image('backside', 'backside.png');
 
         // Wood backgrounds (light = normal mode, dark = night mode)
