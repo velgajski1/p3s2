@@ -107,8 +107,8 @@ export class Preloader extends Scene {
         this.load.image('backside', 'backside.png');
 
         // Wood backgrounds (light = normal mode, dark = night mode)
-        this.load.image('bg-light', 'bg-light.jpg');
-        this.load.image('bg-dark', 'bg-dark.jpg');
+        this.load.image('bg-light', 'hintergrund-helles-holz.jpg');
+        this.load.image('bg-dark', 'hintergrund-dunkles-holz.jpg');
 
         // Toolbar buttons — desktop art
         this.load.image('btn-1-card-off', 'menu/btn-1-card-off.png');
