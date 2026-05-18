@@ -1,6 +1,3 @@
-import { GameManager } from "../managers/GameManager";
-import Preloader from "../scenes/Preloader";
-
 const STORAGE_PREFIX = 'solkost_klondike_';
 const k = (key: string) => STORAGE_PREFIX + key;
 
@@ -11,10 +8,6 @@ export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
 export var NIGHT_MODE_ACTIVE : boolean = false;
 export var DRAG_ACTIVE : boolean = true;
-
-function isMobileDevice() {
-    return /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
 
 export function loadDefaultSettings(isMobile : boolean = false) {
     if (RIGHT_HANDED_MODE_ACTIVE == undefined || RIGHT_HANDED_MODE_ACTIVE == null) {
@@ -65,7 +58,7 @@ export function toggleThreeModeActive(params: boolean) {
     localStorage.setItem(k('STOCK_THREE_MODE_ACTIVE'), JSON.stringify(params));
 }
 
-export function toggleRightHandedActive(params: boolean, skipDispatch: boolean = false) {
+export function toggleRightHandedActive(params: boolean) {
     RIGHT_HANDED_MODE_ACTIVE = params;
     RIGHT_HANDED_MODE_IDX = params ? 1 : 0;
     localStorage.setItem(k('RIGHT_HANDED_MODE_ACTIVE'), JSON.stringify(params));

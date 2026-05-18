@@ -10,7 +10,6 @@ export class Statistics extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
     private whiteBg!: Phaser.GameObjects.Graphics;
     private titleTxt!: Phaser.GameObjects.Text;
-    private resetButton: ButtonWithColorBackground;
     prompt_close: Phaser.GameObjects.Image;
 
     constructor() {
@@ -114,7 +113,7 @@ export class Statistics extends BaseMenuScene {
     }
 
     private createResetButton(): void {
-        this.resetButton = new ButtonWithColorBackground(this, 0, 220, Language.getTranslation(LanguageConfig.ResetStats), () => {
+        new ButtonWithColorBackground(this, 0, 220, Language.getTranslation(LanguageConfig.ResetStats), () => {
             statsManager.resetStats();
             this.scene.restart();
         }, {

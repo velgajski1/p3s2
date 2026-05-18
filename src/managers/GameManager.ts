@@ -5,12 +5,9 @@ import CardLayoutManager from './CardLayoutManager';
 import { Rank, Suit } from './CardNameManager';
 import ControlManager from './ControlManager';
 import UndoManager from './UndoManager';
-import { STOCK_COORDS } from '../config/Consts';
-import { AUTOFINISH_MODE_ACTIVE, loadSettings, setDragActive } from '../config/Config';
+import { AUTOFINISH_MODE_ACTIVE, setDragActive } from '../config/Config';
 import statsManager from './StatsManager';
-import StatsManager from './StatsManager';
 import { UIScene } from '../scenes/UIScene';
-import { SoundManager } from './SoundManager';
 import { claimTopbarOwner, getActiveTopbarOwnerId, releaseTopbarOwner, topbarDebugLog } from '../utils/Debug';
 
 function resumeSoundContext()
@@ -334,7 +331,7 @@ export class GameManager
             {
                 if (this.pileManager.moveCardToFoundationIfPossible(wasteTop, -1, true)) return;
             }
-            this.pileManager.getTableauPiles().some((pile, index) =>
+            this.pileManager.getTableauPiles().some((_pile, index) =>
             {
                 if (this.pileManager.moveTopCardTableauToFoundation(index)) return true;
             });
@@ -475,8 +472,6 @@ export class GameManager
         this.layoutManager.addStockIndicator(this.pileManager, this.gameScene, this.gameplayContainer)
 
         this.pileManager.distributeCardsToPiles(this.deck);
-        // this.pileManager.distributeCardsToPilesEndGame(this.deck)
-
         this.layoutManager.layoutTableauPiles(this.pileManager.getTableauPiles());
         this.layoutManager.layoutFoundationPiles(this.pileManager.getFoundationPiles());
         this.layoutManager.layoutStockPile(this.pileManager.getStockPile())

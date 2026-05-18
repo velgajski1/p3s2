@@ -8,10 +8,7 @@ import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
 import ButtonWithColorBackground from '../ui/ButtonWithColorBackground';
 import { DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleNightModeActive, toggleThreeModeActive } from '../config/Config';
-import CardLayoutManager from '../managers/CardLayoutManager';
-import UndoManager from '../managers/UndoManager';
 import HintManager from '../managers/HintManager';
-import ControlManager from '../managers/ControlManager';
 import { getActiveTopbarOwnerId, topbarDebugLog } from '../utils/Debug';
 
 export class UIScene extends Phaser.Scene {
@@ -68,13 +65,6 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer = this.add.container(0, 0);
         this.elementsContainer2 = this.add.container(0, 0);
         this.elementsContainer3 = this.add.container(0, 0);
-        const textStyle: Phaser.Types.GameObjects.Text.TextStyle = { 
-            fontSize: '18px', 
-            color: '#FFFFFF', 
-            fontFamily: 'Inter',
-        };
-  
-
         this.createTextElements();
         this.textContainer.setVisible(false);
         this.htmlScore = document.querySelector('.stat-score');
@@ -288,7 +278,7 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer2.visible = this.elementsContainer3.visible = false;
     }
 
-    update(time: number, delta: number): void
+    update(time: number): void
     {
         this.elementsContainer3.visible = this.elementsContainer2.visible
         this.elementsContainer3.setScale(this.elementsContainer2.scale)
@@ -627,10 +617,6 @@ export class UIScene extends Phaser.Scene {
         
 
         return isTabletAspectRatio && (this.game.device.os.android || this.game.device.os.iOS);
-    }
-
-    public setTime(time: number) : void {
-
     }
 
     private toggleNightMode(): void {

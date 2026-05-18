@@ -55,8 +55,6 @@ export class Preloader extends Scene {
 
     createProgressBar() {
         // Create a simple progress bar
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
         const centerX = this.cameras.main.centerX;
         const centerY = this.cameras.main.centerY;
 

@@ -1,13 +1,10 @@
-import { RIGHT_HANDED_MODE_IDX, SOUND_ACTIVE, STOCK_THREE_MODE_ACTIVE } from '../config/Config';
-import { CARD_SCALE, getCardScale, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X } from '../config/Consts';
+import { RIGHT_HANDED_MODE_IDX, SOUND_ACTIVE } from '../config/Config';
+import { getCardScale, PileType, STOCK_COORDS, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, TABLEU_STACK_TWEEN_DURATION, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import Card from '../elements/Card'; // Adjust import path as needed
 import { getTweensForObject } from '../utils/Utils';
 import { SoundManager } from './SoundManager';
 
 class CardTransitionManager {
-
-
-    private scene: Phaser.Scene;
 
     constructor( ) { }
 
@@ -116,7 +113,7 @@ class CardTransitionManager {
     }
 
     // Move a card to the foundation with a visual transition
-    moveCardToFoundation(card: Card, targetX: number, targetY: number, foundationPile: Card[], pileIndex: number, gameplayContainer : Phaser.GameObjects.Container, onComplete?: () => void) {
+    moveCardToFoundation(card: Card, targetX: number, targetY: number, gameplayContainer : Phaser.GameObjects.Container, onComplete?: () => void) {
         // Temporarily disable interaction during the transition
         card.setInteractive(false);
         // getTweensForObject(card.scene, card).forEach(x => x.complete());
@@ -150,7 +147,7 @@ class CardTransitionManager {
     }
   
 
-    moveTopCardStockToWaste(card: Card, index : number, stockPile: any[], wastePile: any[], gameplayContainer: Phaser.GameObjects.Container, onComplete?: () => void) 
+    moveTopCardStockToWaste(card: Card, gameplayContainer: Phaser.GameObjects.Container, onComplete?: () => void) 
     {
 
         SOUND_ACTIVE && SoundManager.instance.valid.play()

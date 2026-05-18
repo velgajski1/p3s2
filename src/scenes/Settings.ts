@@ -31,7 +31,7 @@ export class Settings extends BaseMenuScene {
         this.scale.on('resize', this.scaleMenuContainer, this);
     }
 
-    update(time: number, delta: number): void {
+    update(): void {
         toggleAutofinishActive(this.autofinishToggle.isOn);
         toggleSoundActive(this.soundToggle.isOn);
         toggleRightHandedActive(this.rightHandedToggle.isOn);
@@ -82,7 +82,7 @@ export class Settings extends BaseMenuScene {
 
         addEventListener('radioToggle', () => {
             setTimeout(() => dispatchEvent(new Event('rightHandedEvent')), 100);
-            this.update(0, 0);
+            this.update();
         });
     }
 

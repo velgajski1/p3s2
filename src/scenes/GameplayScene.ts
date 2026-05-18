@@ -1,12 +1,9 @@
 import Phaser from 'phaser';
 import { GameManager } from '../managers/GameManager';
 import Registry from '../config/Registry';
-import Card from '../elements/Card';
-import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
-import { PileType, TABLEU_COORDS_DELTA } from '../config/Consts';
+import { TABLEU_COORDS_DELTA } from '../config/Consts';
 import BaseScene from './BaseScene';
 import { SoundManager } from '../managers/SoundManager';
-import { loadDefaultSettings, loadSettings } from '../config/Config';
 
 export class GameplayScene extends BaseScene {
     private gameplayContainer!: Phaser.GameObjects.Container;

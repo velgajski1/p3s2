@@ -1,4 +1,4 @@
-import { loadDefaultSettings, loadSettings, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
+import { STOCK_THREE_MODE_ACTIVE } from "../config/Config";
 
 class StatsManager {
     private static instance: StatsManager;
@@ -260,20 +260,6 @@ class StatsManager {
             this._saveStatToLocalStorage(`${this.getModePrefix()}currentScore`, this._currentScore);
             this._saveStatToLocalStorage(`${this.getModePrefix()}currentTimePlayed`, this._currentTimePlayed);
         }
-    }
-
-    // Method to log all stats to the console
-    public logAllStats(): void {
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
     }
 }
 

@@ -1,17 +1,10 @@
 // CardLayoutManager.ts
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
-import { CARD_SCALE, FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, getCardScale, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
+import { FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, getCardScale, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
-import { Rank, Suit } from "./CardNameManager";
-import CardTransitionManager from "./CardTransitionManager";
-import ControlManager from "./ControlManager";
 import { GameManager } from "./GameManager";
 import PileManager from "./PileManager";
 class CardLayoutManager {
-
-    private static readonly HINT_OVERLAY_DURATION: number = 5000; // Example duration
-    private static readonly TEXTURE_KEY: string = 'generated_outline';
-    private static textureGenerated: boolean = false;
 
     stockpile: Card[];
     wastepile: Card[];
@@ -184,16 +177,15 @@ class CardLayoutManager {
     // Add more layout methods for additional pile types or special layouts...
     // Layout method for the tableau piles
     layoutTableauPiles(tableauPiles: Array<Array<Card>>, withTween : boolean = false) {
-        tableauPiles.forEach((pile, pileIndex) => {
+        tableauPiles.forEach((_pile, pileIndex) => {
             this.layoutTableauPile(tableauPiles, pileIndex, withTween);
         });
     }
     
 
     // Layout method for the foundation piles
-    layoutFoundationPiles(foundationPiles: Array<Array<Card>>, baseX: number = 700, baseY: number = 100, horizontalOffset: number = 150) {
+    layoutFoundationPiles(foundationPiles: Array<Array<Card>>) {
         foundationPiles.forEach((pile, pileIndex) => {
-            const x = baseX + pileIndex * horizontalOffset; // Adjust horizontal spacing
             pile.forEach((card, cardIndex) => {
                 card.removeTweens()
                 card.x = FOUNDATION_COORDS_INIT.x[RIGHT_HANDED_MODE_IDX] + pileIndex * FOUNDATION_COORDS_DELTA.x[RIGHT_HANDED_MODE_IDX];
@@ -223,7 +215,7 @@ class CardLayoutManager {
         }
     }
 
-    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = 0.2, width = 178, height = 251) {
+    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = 0.2) {
         
         this.removeHintOutline()
         this.outline = scene.add.sprite(sprite.x, sprite.y, 'reddish_glow_outline' ).setScale(sprite.scale)
@@ -309,7 +301,7 @@ class CardLayoutManager {
             fPile[0].startHintAnim(0)
         } else {
             let spr = this.foundIndicators[idx]
-            this.addHintOutline(spr.scene, spr, 0, 0, 0.2, 181, 254);
+            this.addHintOutline(spr.scene, spr, 0, 0, 0.2);
         }
 
 
@@ -320,7 +312,7 @@ class CardLayoutManager {
         
         let wastePileLen = this.pileManager.getWastePile().length;
         if (wastePileLen==0) {
-            this.addHintOutline(spr.scene, spr, 0, 0, 0.2, 181, 254);
+            this.addHintOutline(spr.scene, spr, 0, 0, 0.2);
             // this.addHintOutline(spr.scene, spr, 1, 1);
         }
         else {

@@ -1,5 +1,3 @@
-import { GameManager } from "../managers/GameManager";
-
 export enum PileType
 {
     Tableau = 'Tableau',

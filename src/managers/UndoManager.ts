@@ -11,7 +11,6 @@ export default class UndoManager {
     private static instance: UndoManager | null = null;
     private states: GameState[] = [];
     public enabled = true;
-    private static scene: Phaser.Scene;
     static gameManager: GameManager;
 
     private constructor() {}
@@ -19,7 +18,6 @@ export default class UndoManager {
     public static init(scene: Phaser.Scene, gameManager : GameManager) : void {
         if (!UndoManager.instance) {
             UndoManager.instance = new UndoManager();
-            UndoManager.scene = scene;
             SoundManager.init(scene);
             UndoManager.gameManager = gameManager;
         }

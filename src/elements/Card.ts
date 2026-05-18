@@ -2,10 +2,9 @@
 import Phaser from 'phaser';
 import { HINT_OVERLAY_DURATION, PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
-import { GameManager } from '../managers/GameManager';
 import ControlManager from '../managers/ControlManager';
 import { getTweensForObject } from '../utils/Utils';
-import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX } from '../config/Config';
+import { RIGHT_HANDED_MODE_IDX } from '../config/Config';
 
 
 export default class Card extends Phaser.GameObjects.Sprite {
@@ -55,13 +54,6 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
         this.textures = this.scene.textures;
 
-    }
-
-    private isMobile() {
-        const userAgent = navigator.userAgent
-        // 
-        return this.scene.sys.game.device.os.android || 
-               this.scene.sys.game.device.os.iOS;
     }
 
     disbleInteractiveTemporarily(arg0: number)
@@ -278,7 +270,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
         this.pileIndex = pileIndex;
     }
 
-    addOutline(scene: Phaser.Scene, cropY:number): void{
+    addOutline(scene: Phaser.Scene, _cropY:number): void{
         if (!scene) return;
        this.outline = scene.add.sprite(this.x-1, this.y-1, 'reddish_glow_outline' ).setScale(this.scale)
        scene.add.existing(this.outline)

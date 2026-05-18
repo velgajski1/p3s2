@@ -13,7 +13,7 @@ export class BaseMenuScene extends Phaser.Scene {
         this.createModalBackground()
     }
 
-    update(time: number, delta: number): void {
+    update(): void {
         // Check if the scene is currently active
         this.isActive = this.scene.isActive(this.scene.key);
 

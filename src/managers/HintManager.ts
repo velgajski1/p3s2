@@ -1,7 +1,6 @@
 import PileManager from './PileManager';
 import Card from '../elements/Card';
-import { HINT_NEXT_OVERLAY_DELTA, PileType } from '../config/Consts';
-import { Rank, Suit } from './CardNameManager';
+import { HINT_NEXT_OVERLAY_DELTA } from '../config/Consts';
 import CardLayoutManager from './CardLayoutManager';
 import { SoundManager } from './SoundManager';
 import { SOUND_ACTIVE } from '../config/Config';
@@ -42,7 +41,6 @@ export default class HintManager
     {
         const sourcePile = this.pileManager.getTableauPiles()[sourceIndex];
         const targetPile = this.pileManager.getTableauPiles()[targetIndex];
-        const targetCard: Card = targetPile[targetPile.length - 1];
         const belowCard = sourcePile[sourcePile.indexOf(card) - 1];
         if (sourcePile.length < 2 || belowCard == null)
         {

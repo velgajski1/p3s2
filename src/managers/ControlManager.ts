@@ -1,8 +1,7 @@
-import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
+import { RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK, CARD_MOVE_BEFORE_DRAG_AND_DROP } from "../config/Consts";
 import Card from "../elements/Card";
 import { UIScene } from "../scenes/UIScene";
-import CardLayoutManager from "./CardLayoutManager";
 import getRankValue, { Rank } from "./CardNameManager";
 import { GameManager } from "./GameManager";
 import HintManager from "./HintManager";
@@ -149,7 +148,7 @@ class ControlManager
             this.initialPosition = { x: card.x, y: card.y };
             clearTimeout(this.substackClearTimeout);
             this.substack = this.pileManager.getSubstack(card)
-            this.substack.forEach((c, index) =>
+            this.substack.forEach((c) =>
             {
                 c.setData('substackoffsetY', c.y - card.y);
             });
@@ -651,7 +650,7 @@ class ControlManager
     {
         SOUND_ACTIVE && SoundManager.instance.invalid.play()
         this.resetCardDragState(activeCard);
-        this.substack.forEach(card =>
+        substack.forEach(card =>
         {
             if (card === activeCard) return;
             this.resetCardDragState(card);
@@ -848,7 +847,7 @@ class ControlManager
     {
 
         this.pileManager.addCardToTableuPile(activeCard, targetPileIndex, true);
-        this.pileManager.getTableauPiles().forEach((pile, index) =>
+        this.pileManager.getTableauPiles().forEach((_pile, index) =>
         {
             this.pileManager.uncoverTableuPile(index)
         })
@@ -946,13 +945,13 @@ class ControlManager
 
         this.isClickEnabled = true; // Assuming this is defined somewhere in your class
     }
-    handleHKey(arg0: string, handleHKey: any, arg2: this)
+    handleHKey()
     {
         if (!this.enabled) return;
         if (this.activeCard) return;
         HintManager.getInstance().getHint(this.pileManager)
     }
-    handleRKey(arg0: string, handleRKey: any, arg2: this)
+    handleRKey()
     {
         if (!this.enabled) return;
         if (this.activeCard) return;
@@ -1071,8 +1070,6 @@ class ControlManager
 
                 // Example: Attempt to move the card to another pile if possible
                 ret = this.pileManager.handleWasteClicked(card);
-
-                // this.pileManager.listTableauCardsWithDepthAndName();
                 this.pileManager.gameplayContainer.sort("depth");
                 break;
 
