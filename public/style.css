@@ -53,3 +53,8 @@ body {
     color: #ecebe7;
     white-space: nowrap;
 }
+
+/* Hide brand when viewport is too narrow to fit it alongside stats; .game-stats stays visible */
+@media (max-width: 449px) {
+    .brand { display: none; }
+}

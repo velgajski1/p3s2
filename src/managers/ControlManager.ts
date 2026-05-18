@@ -80,7 +80,7 @@ class ControlManager
         card.on('pointerdown', (pointer: Phaser.Input.Pointer) =>
         {
 
-            this.pileManager.gameManager.firstClickDone = true;
+            this.pileManager.gameManager.markFirstInteraction(`card:pointerdown:${card.pileType}`);
             if (!this.enabled) return;
 
 
@@ -967,6 +967,7 @@ class ControlManager
         if (!this.enabled) return;
         if (this.isClickEnabled)
         {
+            this.pileManager.gameManager.markFirstInteraction('keyboard:stock');
             if (this.pileManager.getTopStockCard() === undefined)
             {
                 this.pileManager.moveAllCardsFromWasteToStock();

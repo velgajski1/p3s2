@@ -12,6 +12,7 @@ import CardLayoutManager from '../managers/CardLayoutManager';
 import UndoManager from '../managers/UndoManager';
 import HintManager from '../managers/HintManager';
 import ControlManager from '../managers/ControlManager';
+import { getActiveTopbarOwnerId, topbarDebugLog } from '../utils/Debug';
 
 export class UIScene extends Phaser.Scene {
     textContainer: Phaser.GameObjects.Container;
@@ -27,6 +28,8 @@ export class UIScene extends Phaser.Scene {
 
     private htmlScore: HTMLElement | null = null;
     private htmlTime: HTMLElement | null = null;
+    private topbarDebugLastSnapshot = '';
+    private topbarDebugLastLogTime = 0;
 
     desktopUI: {
         toggle: ToggleSwitch;
@@ -76,6 +79,12 @@ export class UIScene extends Phaser.Scene {
         this.textContainer.setVisible(false);
         this.htmlScore = document.querySelector('.stat-score');
         this.htmlTime = document.querySelector('.stat-time');
+        topbarDebugLog('UIScene.create', {
+            hasHtmlScore: !!this.htmlScore,
+            hasHtmlTime: !!this.htmlTime,
+            scoreTextContent: this.htmlScore?.textContent || '',
+            timeTextContent: this.htmlTime?.textContent || '',
+        });
         this.createUIElements()
         this.createUIElementsMobile()
         this.gameManager = this.registry.get('gameManager');
@@ -284,25 +293,31 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer3.visible = this.elementsContainer2.visible
         this.elementsContainer3.setScale(this.elementsContainer2.scale)
 
+        const currentGameManager = this.registry.get('gameManager') as GameManager | undefined;
+        if (currentGameManager) {
+            this.gameManager = currentGameManager;
+        }
+        if (!this.gameManager) return;
+
         const scoreStr = translate(LanguageConfig.Score) + this.gameManager.getCurrentScore();
         const timeStr = formatTime(this.gameManager.getElapsedTime());
         this.scoreText.text = scoreStr;
         this.timeText.text = ' | ' + timeStr;
         this.movesText.text = '';
-        if (this.htmlScore) this.htmlScore.textContent = scoreStr;
-        if (this.htmlTime) this.htmlTime.textContent = '| ' + timeStr;
+        if (!this.htmlScore || !this.htmlScore.isConnected) this.htmlScore = document.querySelector('.stat-score');
+        if (!this.htmlTime || !this.htmlTime.isConnected) this.htmlTime = document.querySelector('.stat-time');
+        const canWriteTopbar = this.gameManager.canWriteTopbar();
+        if (canWriteTopbar) {
+            if (this.htmlScore) this.htmlScore.textContent = scoreStr;
+            if (this.htmlTime) this.htmlTime.textContent = '| ' + timeStr;
+        }
+        this.logTopbarDebug(time, scoreStr, timeStr, canWriteTopbar, currentGameManager);
         this.updateTextPos()
 
         this.inputEnabled = true
 
         const modalOpen = this.scene.isActive('Settings') || this.scene.isActive('Statistics') || this.scene.isActive('WonScene');
         if (modalOpen) this.inputEnabled = false;
-
-        // Swap 1/3 toggle with NEUSTART while a modal is open
-        this.desktopUI.toggle.setVisible(!modalOpen);
-        this.desktopUI.neustart.setVisible(modalOpen);
-        this.mobileUI.toggle.setVisible(!modalOpen);
-        this.mobileUI.neustart.setVisible(modalOpen);
 
         const ui = this.elementsContainer.visible ? this.desktopUI : this.mobileUI;
         const buttons: ImageButton[] = [ui.settings, ui.help, ui.stats, ui.night, ui.hint, ui.undo];
@@ -338,6 +353,51 @@ export class UIScene extends Phaser.Scene {
         this.textContainer.add(this.timeText)
         this.textContainer.add(this.movesText)
    
+    }
+
+    private logTopbarDebug(updateTime: number, scoreStr: string, timeStr: string, canWriteTopbar: boolean, registryGameManager?: GameManager): void {
+        const domScore = this.htmlScore?.textContent || '';
+        const domTime = this.htmlTime?.textContent || '';
+        const ownerId = this.gameManager.getTopbarOwnerId();
+        const activeOwnerId = getActiveTopbarOwnerId();
+        const snapshot = [
+            ownerId,
+            activeOwnerId || '',
+            canWriteTopbar,
+            this.gameManager.getCurrentScore(),
+            this.gameManager.getElapsedTime(),
+            scoreStr,
+            timeStr,
+            domScore,
+            domTime,
+            !!registryGameManager,
+            registryGameManager === this.gameManager,
+            !!this.htmlScore,
+            !!this.htmlTime,
+        ].join('|');
+
+        if (snapshot === this.topbarDebugLastSnapshot && updateTime - this.topbarDebugLastLogTime < 1000) return;
+
+        this.topbarDebugLastSnapshot = snapshot;
+        this.topbarDebugLastLogTime = updateTime;
+        topbarDebugLog('UIScene.update topbar', {
+            score: this.gameManager.getCurrentScore(),
+            elapsedTime: this.gameManager.getElapsedTime(),
+            scoreStr,
+            timeStr,
+            domScore,
+            domTime,
+            ownerId,
+            activeOwnerId,
+            canWriteTopbar,
+            hasHtmlScore: !!this.htmlScore,
+            hasHtmlTime: !!this.htmlTime,
+            scoreSpanConnected: !!this.htmlScore?.isConnected,
+            timeSpanConnected: !!this.htmlTime?.isConnected,
+            hasRegistryGameManager: !!registryGameManager,
+            sameGameManager: registryGameManager === this.gameManager,
+            uiSceneActive: this.scene.isActive('UIScene'),
+        });
     }
 
     private resize(gameSize: Phaser.Structs.Size): void {

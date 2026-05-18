@@ -11,11 +11,12 @@ import statsManager from './StatsManager';
 import StatsManager from './StatsManager';
 import { UIScene } from '../scenes/UIScene';
 import { SoundManager } from './SoundManager';
+import { claimTopbarOwner, getActiveTopbarOwnerId, releaseTopbarOwner, topbarDebugLog } from '../utils/Debug';
 
 function resumeSoundContext()
 {
-    const { context } = GameManager.gameScene.game.sound as Phaser.Sound.WebAudioSoundManager;
-    if (context.state === "suspended")
+    const context = (GameManager.gameScene?.game.sound as Phaser.Sound.WebAudioSoundManager | undefined)?.context;
+    if (context?.state === "suspended")
     {
         context.resume();
     }
@@ -26,6 +27,8 @@ export class GameManager
 {
 
     private static instance: GameManager | null = null;
+    private static instanceCounter = 0;
+    private readonly topbarOwnerId: string;
     private score: number = 0;
     private startTime: number;
     private elapsedTime: number = 0;
@@ -51,6 +54,7 @@ export class GameManager
     static isPotrait: boolean = false;
     scaleRefreshing: boolean = false;
     gameBlurred: boolean = false;
+    private topbarDebugLastTimerBlock = '';
 
 
 
@@ -60,6 +64,7 @@ export class GameManager
 
 
 
+        this.topbarOwnerId = `gm-${Date.now().toString(36)}-${GameManager.instanceCounter++}`;
         GameManager.instance = this;
         UndoManager.init(gameScene, this)
         UndoManager.getInstance().enableUndo()
@@ -67,6 +72,10 @@ export class GameManager
         this.startTime = Date.now();
         this.gameplayContainer = gameplayContainer;
         GameManager.gameScene = gameScene;
+        topbarDebugLog('GameManager.constructor', {
+            ownerId: this.topbarOwnerId,
+            sceneKey: this.gameScene.scene.key,
+        });
 
         // Initialize the managers responsible for handling piles and layout
         statsManager.startGame()
@@ -159,6 +168,35 @@ export class GameManager
         this.score = score;
     }
 
+    markFirstInteraction(source = 'unknown'): void
+    {
+        this.claimTopbar(`first-interaction:${source}`);
+        if (this.firstClickDone) return;
+        this.firstClickDone = true;
+        this.startTime = Date.now();
+        topbarDebugLog('GameManager.markFirstInteraction', {
+            ownerId: this.topbarOwnerId,
+            source,
+            startTime: this.startTime,
+        });
+    }
+
+    getTopbarOwnerId(): string
+    {
+        return this.topbarOwnerId;
+    }
+
+    canWriteTopbar(): boolean
+    {
+        const activeOwnerId = getActiveTopbarOwnerId();
+        return activeOwnerId === undefined || activeOwnerId === this.topbarOwnerId;
+    }
+
+    claimTopbar(reason: string): void
+    {
+        claimTopbarOwner(this.topbarOwnerId, reason);
+    }
+
     public static getInstance(scene: Phaser.Scene, container: Phaser.GameObjects.Container): GameManager
     {
         if (this.instance == null)
@@ -180,6 +218,13 @@ export class GameManager
         this.moves = 0;
         this.startTime = Date.now();
         this.elapsedTime = 0;
+        this.topbarDebugLastTimerBlock = '';
+        topbarDebugLog('GameManager.startGame', {
+            ownerId: this.topbarOwnerId,
+            score: this.score,
+            elapsedTime: this.elapsedTime,
+            firstClickDone: this.firstClickDone,
+        });
 
         // Reset other game states and initialize the deck
         this.createAndShuffleDeck();
@@ -189,7 +234,15 @@ export class GameManager
 
     incrementScore(amount: number): void
     {
+        const previousScore = this.score;
         this.score += amount;
+        topbarDebugLog('GameManager.incrementScore', {
+            ownerId: this.topbarOwnerId,
+            amount,
+            previousScore,
+            nextScore: this.score,
+            elapsedTime: this.elapsedTime,
+        });
     }
 
     incrementMoves(): void
@@ -200,14 +253,33 @@ export class GameManager
     updateTimer(): void
     {
 
-        if (this.gameBlurred) return;
-        if (this.scaleRefreshing) return;
+        if (this.gameBlurred)
+        {
+            this.logTimerBlocked('gameBlurred');
+            return;
+        }
+        if (this.scaleRefreshing)
+        {
+            this.logTimerBlocked('scaleRefreshing');
+            return;
+        }
         if (this.gameOverFlag || !this.firstClickDone)
         {
+            this.logTimerBlocked(this.gameOverFlag ? 'gameOverFlag' : 'waitingForFirstClick');
             if (!this.firstClickDone) { this.startTime = Date.now() }
             return;
         }
-        this.elapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+        const nextElapsedTime = Math.floor((Date.now() - this.startTime) / 1000);
+        if (nextElapsedTime !== this.elapsedTime)
+        {
+            this.elapsedTime = nextElapsedTime;
+            topbarDebugLog('GameManager.updateTimer', {
+                ownerId: this.topbarOwnerId,
+                score: this.score,
+                elapsedTime: this.elapsedTime,
+                firstClickDone: this.firstClickDone,
+            });
+        }
         statsManager.updateCurrentGame(this.score, this.elapsedTime);
 
 
@@ -290,6 +362,7 @@ export class GameManager
     restart()
     {
 
+        releaseTopbarOwner(this.topbarOwnerId, 'restart');
         GameManager.removeInstance();
         UndoManager.removeInstance()
         GameManager.instance = null;
@@ -328,6 +401,31 @@ export class GameManager
         this.startTime = Date.now()
         this.gameOverFlag = false;
         this.firstClickDone = false;
+        this.topbarDebugLastTimerBlock = '';
+        topbarDebugLog('GameManager.reset', {
+            ownerId: this.topbarOwnerId,
+            score: this.score,
+            elapsedTime: this.elapsedTime,
+            firstClickDone: this.firstClickDone,
+        });
+    }
+
+    private logTimerBlocked(reason: string): void
+    {
+        const signature = `${reason}:${this.score}:${this.elapsedTime}:${this.firstClickDone}`;
+        if (signature === this.topbarDebugLastTimerBlock) return;
+        this.topbarDebugLastTimerBlock = signature;
+        topbarDebugLog('GameManager.updateTimer blocked', {
+            ownerId: this.topbarOwnerId,
+            activeOwnerId: getActiveTopbarOwnerId(),
+            reason,
+            score: this.score,
+            elapsedTime: this.elapsedTime,
+            firstClickDone: this.firstClickDone,
+            gameOverFlag: this.gameOverFlag,
+            gameBlurred: this.gameBlurred,
+            scaleRefreshing: this.scaleRefreshing,
+        });
     }
 
     // Create and shuffle the deck

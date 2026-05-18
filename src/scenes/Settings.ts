@@ -42,28 +42,28 @@ export class Settings extends BaseMenuScene {
     }
 
     private createWhiteBackground(): void {
-        this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        // Modal: 400 wide x 380 tall, top-left at (-200, -190)
-        this.whiteBg.fillRoundedRect(-200, -190, 400, 380, 12);
+        this.whiteBg = this.add.graphics({ fillStyle: { color: 0xf8f5f0, alpha: 1 } });
+        // Modal: 565 wide x 380 tall, top-left at (-282, -190)
+        this.whiteBg.fillRect(-282, -190, 565, 380);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTitle(): void {
-        const titleTxt = this.add.text(-170, -165, Language.getTranslation(LanguageConfig.Settings), {
-            fontFamily: 'Inter', fontSize: '28px', color: '#000000', align: 'left'
+        const titleTxt = this.add.text(-252, -165, Language.getTranslation(LanguageConfig.Settings), {
+            fontFamily: 'Inter', fontSize: '30px', color: '#000000', align: 'left'
         }).setOrigin(0, 0).setFontStyle('bold');
         this.menuContainer.add(titleTxt);
     }
 
     private createXButton(): void {
-        this.prompt_close = this.add.image(170, -150, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.prompt_close = this.add.image(252, -150, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
         this.prompt_close.on('pointerdown', () => this.remove());
         this.menuContainer.add(this.prompt_close);
     }
 
     private createToggles(): void {
-        const rowWidth = 320;
-        const rowX = -160;
+        const rowWidth = 505;
+        const rowX = -242;
 
         this.autofinishToggle = new SettingsToggle(this, rowX, -80, Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
@@ -92,10 +92,11 @@ export class Settings extends BaseMenuScene {
         }, {
             color: 0x568234,
             textColor: '#ffffff',
-            width: 320,
-            height: 48,
-            fontSize: '22px',
+            width: 417,
+            height: 61,
+            fontSize: '26px',
             fontStyle: 'bold',
+            cornerRadius: 0,
             parentContainer: this.menuContainer,
         });
     }
@@ -104,7 +105,7 @@ export class Settings extends BaseMenuScene {
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
 
-        const scaleXDivider = 600;
+        const scaleXDivider = 700;
         const scaleYDivider = 600;
 
         const scaleX = width / scaleXDivider;

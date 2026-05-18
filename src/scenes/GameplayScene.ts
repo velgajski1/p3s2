@@ -55,6 +55,12 @@ export class GameplayScene extends BaseScene {
         SoundManager.instance.silence.play()
         // SoundManager.instance.test.play()
 
+        // DEBUG: press 'W' to open WonScene with mock data for layout testing — remove before ship
+        this.input.keyboard?.on('keydown-W', () => {
+            if (this.scene.isActive('WonScene')) return;
+            this.scene.launch('WonScene', { score: 232, timeplayed: 34, timebonus: 7543, totalscore: 8789 });
+            this.scene.bringToTop('WonScene');
+        });
     }
 
     private resize(gameSize: Phaser.Structs.Size): void {

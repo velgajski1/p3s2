@@ -61,60 +61,66 @@ export class WonScene extends BaseMenuScene {
     }
 
     private createWhiteBackground(): void {
-        this.whiteBg = this.add.graphics({ fillStyle: { color: 0xffffff, alpha: 1 } });
-        this.whiteBg.fillRoundedRect(-200, -160, 400, 320, 8);
+        // 565 wide x 415 tall, top-left at (-282, -207)
+        this.whiteBg = this.add.graphics({ fillStyle: { color: 0xf8f5f0, alpha: 1 } });
+        this.whiteBg.fillRect(-282, -207, 565, 415);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTextElements(): void {
-        const title = this.add.text(0, -130, this.titleText, {
+        const title = this.add.text(0, -182, this.titleText, {
             fontFamily: 'Inter',
-            fontSize: '26px',
-            color: '#568234',
+            fontSize: '30px',
+            color: '#547e2f',
             align: 'center',
             fontStyle: 'bold',
         }).setOrigin(0.5, 0);
         this.menuContainer.add(title);
 
         const rows = [
-            { label: translate(LanguageConfig.Score), value: '' + this.score, bold: false },
-            { label: translate(LanguageConfig.TimePlayed), value: formatTime(this.timePlayed, 'hh:mm:ss'), bold: false },
-            { label: translate(LanguageConfig.TimeBonus), value: '' + this.timeBonus, bold: false },
-            { label: translate(LanguageConfig.TotalScore), value: '' + this.totalScore, bold: true },
+            { label: translate(LanguageConfig.Score), value: '' + this.score, big: false },
+            { label: translate(LanguageConfig.TimePlayed), value: formatTime(this.timePlayed, 'hh:mm:ss'), big: false },
+            { label: translate(LanguageConfig.TimeBonus), value: '' + this.timeBonus, big: false },
+            { label: translate(LanguageConfig.TotalScore), value: '' + this.totalScore, big: true },
         ];
 
-        const labelX = -170;
-        const valueX = 170;
-        let y = -70;
+        const labelX = -252;
+        const valueX = 252;
+        let y = -115;
+        const rowGap = 50;
 
         rows.forEach(r => {
+            const size = r.big ? '30px' : '26px';
             const labelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
                 fontFamily: 'Inter',
-                fontSize: r.bold ? '22px' : '20px',
+                fontSize: size,
                 color: '#000000',
-                fontStyle: r.bold ? 'bold' : 'normal',
+                fontStyle: r.big ? 'bold' : '400',
             };
             const valueStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-                ...labelStyle,
+                fontFamily: 'Inter',
+                fontSize: size,
+                color: '#000000',
                 fontStyle: 'bold',
             };
             const labelEl = this.add.text(labelX, y, r.label, labelStyle).setOrigin(0, 0);
             const valueEl = this.add.text(valueX, y, r.value, valueStyle).setOrigin(1, 0);
             this.menuContainer.add([labelEl, valueEl]);
-            y += r.bold ? 36 : 32;
+            y += rowGap;
         });
     }
 
     private createNewGameButton(): void {
-        this.newGameButton = new ButtonWithColorBackground(this, 0, 115, translate(LanguageConfig.NewGame), () => {
+        this.newGameButton = new ButtonWithColorBackground(this, 0, 145, translate(LanguageConfig.NewGame), () => {
             this.restartGame(true);
         }, {
             color: 0x568234,
             textColor: '#ffffff',
-            width: 320,
-            height: 44,
-            fontSize: '20px',
+            width: 417,
+            height: 61,
+            fontSize: '26px',
             fontStyle: 'bold',
+            cornerRadius: 0,
             parentContainer: this.menuContainer,
         });
         this.menuContainer.add(this.newGameButton);
@@ -124,11 +130,11 @@ export class WonScene extends BaseMenuScene {
         const { width, height } = gameSize || this.scale;
         this.menuContainer.setPosition(width / 2, height / 2);
 
-        const scaleX = width / 600;
+        const scaleX = width / 700;
         const scaleY = height / 600;
         const scale = Math.min(1, Math.max(scaleX, scaleY));
 
-        const effectiveWidth = 600 * scale;
+        const effectiveWidth = 700 * scale;
         const effectiveHeight = 600 * scale;
         if (effectiveWidth > width || effectiveHeight > height) {
             this.menuContainer.setScale(Math.min(scaleX, scaleY));

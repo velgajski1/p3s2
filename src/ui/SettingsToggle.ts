@@ -21,7 +21,8 @@ export class SettingsToggle extends Phaser.GameObjects.Container {
 
         this.label = scene.add.text(0, 0, text, {
             fontFamily: 'Inter',
-            fontSize: '22px',
+            fontSize: '26px',
+            fontStyle: '500',
             color: '#000'
         }).setOrigin(0, 0.5);
         this.add(this.label);

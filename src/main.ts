@@ -9,6 +9,12 @@ import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
 
+declare global {
+    interface Window {
+        __solitaireGame?: Game;
+    }
+}
+
 const config: Types.Core.GameConfig = {
     type: Phaser.AUTO,
     width: 1024,
@@ -37,4 +43,7 @@ const config: Types.Core.GameConfig = {
     ]
 };
 
-export default new Game(config);
+window.__solitaireGame?.destroy(true);
+window.__solitaireGame = new Game(config);
+
+export default window.__solitaireGame;

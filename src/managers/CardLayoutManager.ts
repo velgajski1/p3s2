@@ -385,6 +385,7 @@ class CardLayoutManager {
         // Make the indicator interactive and listen for clicks
         this.stockIndicator.setInteractive();
         this.stockIndicator.on('pointerdown', () => {
+            pileManager.gameManager.markFirstInteraction('stock-indicator');
             pileManager.moveAllCardsFromWasteToStock(); // Move all cards from waste back to stock
         });
     }
