@@ -20,7 +20,7 @@ export class SettingsToggle extends Phaser.GameObjects.Container {
         const rowWidth = options?.rowWidth ?? 300;
 
         this.label = scene.add.text(0, 0, text, {
-            fontFamily: 'Open Sans',
+            fontFamily: 'Inter',
             fontSize: '22px',
             color: '#000'
         }).setOrigin(0, 0.5);

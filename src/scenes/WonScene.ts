@@ -68,7 +68,7 @@ export class WonScene extends BaseMenuScene {
 
     private createTextElements(): void {
         const title = this.add.text(0, -130, this.titleText, {
-            fontFamily: 'Open Sans',
+            fontFamily: 'Inter',
             fontSize: '26px',
             color: '#568234',
             align: 'center',
@@ -89,7 +89,7 @@ export class WonScene extends BaseMenuScene {
 
         rows.forEach(r => {
             const labelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-                fontFamily: 'Open Sans',
+                fontFamily: 'Inter',
                 fontSize: r.bold ? '22px' : '20px',
                 color: '#000000',
                 fontStyle: r.bold ? 'bold' : 'normal',

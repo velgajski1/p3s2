@@ -24,7 +24,7 @@ export class ButtonWithColorBackground extends Phaser.GameObjects.Container {
             color = 0x0000ff,
             textColor = '#ffffff',
             fontSize = '32px',
-            fontFamily = 'Open Sans',
+            fontFamily = 'Inter',
             fontStyle = 'regular',
             cornerRadius = 10,
             onHover,

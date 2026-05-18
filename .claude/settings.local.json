@@ -9,7 +9,8 @@
       "Bash(mkdir -p /d/Projects/p3s2/public/assets/menu && mv \"/d/Projects/p3s2/newassets/menu/btn-1-card-off.hover.png\" \"/d/Projects/p3s2/newassets/menu/btn-1-card-off-hover.png\" && mv /d/Projects/p3s2/newassets/menu/*.png /d/Projects/p3s2/public/assets/menu/ && ls /d/Projects/p3s2/public/assets/menu)",
       "Bash(mkdir -p /d/Projects/p3s2/public/assets/menu && mv /d/Projects/p3s2/newassets/menu/*.png /d/Projects/p3s2/public/assets/menu/ && ls /d/Projects/p3s2/public/assets/menu/)",
       "Bash(file /d/Projects/p3s2/newassets/cards/placeholders/*.png)",
-      "Bash(mkdir -p /d/Projects/p3s2/public/assets/prompts && mv /d/Projects/p3s2/newassets/prompts/*.png /d/Projects/p3s2/public/assets/prompts/ && ls /d/Projects/p3s2/public/assets/prompts/ && echo \"---\" && ls /d/Projects/p3s2/newassets/prompts/ 2>&1)"
+      "Bash(mkdir -p /d/Projects/p3s2/public/assets/prompts && mv /d/Projects/p3s2/newassets/prompts/*.png /d/Projects/p3s2/public/assets/prompts/ && ls /d/Projects/p3s2/public/assets/prompts/ && echo \"---\" && ls /d/Projects/p3s2/newassets/prompts/ 2>&1)",
+      "Bash(npx tsc *)"
     ],
     "additionalDirectories": [
       "d:\\Projects\\p3s2\\.claude",

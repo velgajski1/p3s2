@@ -77,7 +77,7 @@ export class Preloader extends Scene {
         const centerY = this.cameras.main.centerY;
 
         this.errorMessage = this.add.text(centerX, centerY + 50, '', {
-            fontFamily: 'Open Sans', fontSize: '32px', color: '#ff0000', align: 'center'
+            fontFamily: 'Inter', fontSize: '32px', color: '#ff0000', align: 'center'
         }).setOrigin(0.5, 0.5);
     }
 

@@ -50,7 +50,7 @@ export class Settings extends BaseMenuScene {
 
     private createTitle(): void {
         const titleTxt = this.add.text(-170, -165, Language.getTranslation(LanguageConfig.Settings), {
-            fontFamily: 'Open Sans', fontSize: '28px', color: '#000000', align: 'left'
+            fontFamily: 'Inter', fontSize: '28px', color: '#000000', align: 'left'
         }).setOrigin(0, 0).setFontStyle('bold');
         this.menuContainer.add(titleTxt);
     }

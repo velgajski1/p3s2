@@ -47,7 +47,7 @@ export class Statistics extends BaseMenuScene {
             ? translate(LanguageConfig.Stats3)
             : translate(LanguageConfig.Stats1);
         this.titleTxt = this.add.text(-170, -178, statTitle, {
-            fontFamily: 'Open Sans',
+            fontFamily: 'Inter',
             fontSize: '24px',
             color: '#000000',
             align: 'center',
@@ -66,10 +66,10 @@ export class Statistics extends BaseMenuScene {
         const labelX = -170;
         const valueX = 170;
         const sectionStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-            fontFamily: 'Open Sans', fontSize: '20px', color: '#000000', fontStyle: 'bold',
+            fontFamily: 'Inter', fontSize: '20px', color: '#000000', fontStyle: 'bold',
         };
         const rowStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-            fontFamily: 'Open Sans', fontSize: '18px', color: '#000000',
+            fontFamily: 'Inter', fontSize: '18px', color: '#000000',
         };
         const valueStyle: Phaser.Types.GameObjects.Text.TextStyle = { ...rowStyle };
 

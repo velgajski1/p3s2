@@ -68,7 +68,7 @@ export class UIScene extends Phaser.Scene {
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = { 
             fontSize: '18px', 
             color: '#FFFFFF', 
-            fontFamily: 'Open Sans',
+            fontFamily: 'Inter',
         };
   
 
@@ -322,7 +322,7 @@ export class UIScene extends Phaser.Scene {
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
             fontSize: '19px',
             color: '#FFFFFF',
-            fontFamily: 'Open Sans',
+            fontFamily: 'Inter',
         };
 
         // Score text
@@ -363,7 +363,7 @@ export class UIScene extends Phaser.Scene {
         const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
             fontSize: fontsize+'px',
             color: '#FFFFFF',
-            fontFamily: 'Open Sans',
+            fontFamily: 'Inter',
         };
 
         this.scoreText.setStyle(textStyle)
