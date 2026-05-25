@@ -94,14 +94,9 @@ export class Preloader extends Scene {
         
 
         this.load.atlas('placeholders', 'cards/placeholders/newassets_placeholders.png', 'cards/placeholders/newassets_placeholders.json');
-        this.load.image('prompt_btn_left', 'prompt_btn_left.png');
-        this.load.image('prompt_btn_right', 'prompt_btn_right.png');
         this.load.image('prompt_close', 'prompts/icon-close.png');
-        this.load.image('prompt_radio_off', 'prompt_radio_off.png');
-        this.load.image('prompt_radio_on', 'prompt_radio_on.png');
         this.load.image('toggle-on', 'prompts/toggle-on.png');
         this.load.image('toggle-off', 'prompts/toggle-off.png');
-        this.load.image('backside', 'backside.png');
 
         // Wood backgrounds (light = normal mode, dark = night mode)
         this.load.image('bg-light', 'hintergrund-helles-holz.jpg');
