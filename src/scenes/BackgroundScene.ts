@@ -33,8 +33,10 @@ export class BackgroundScene extends Phaser.Scene {
         if (!this.bgImage || !this.bgTile) return;
         const { width, height } = gameSize;
         const isLandscape = width >= height;
-        if (isLandscape) {
-            // Cover-fit: scale image to fill viewport, may crop on the long axis
+        // Dark bg is portrait-oriented and small (709x1226); cover-fit upscales it badly.
+        // Always tile the dark bg. Light bg keeps cover in landscape, tile in portrait.
+        const useCover = isLandscape && this.currentKey() === 'bg-light';
+        if (useCover) {
             this.bgTile.setVisible(false);
             this.bgImage.setVisible(true);
             const src = this.bgImage.texture.getSourceImage();
@@ -44,7 +46,6 @@ export class BackgroundScene extends Phaser.Scene {
             this.bgImage.setScale(scale);
             this.bgImage.setPosition((width - sw * scale) / 2, (height - sh * scale) / 2);
         } else {
-            // Tile at native resolution
             this.bgImage.setVisible(false);
             this.bgTile.setVisible(true);
             this.bgTile.setSize(width, height);

@@ -1,0 +1,188 @@
+{
+	"textures": [
+		{
+			"image": "newassets_placeholders.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1456,
+				"h": 255
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "card-hint-overlay.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "foundation-clubs.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 183,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "foundation-diamonds.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 365,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "foundation-empty.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 547,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "foundation-hearts.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 729,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "foundation-spades.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 911,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "redeal-stock.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 1093,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				},
+				{
+					"filename": "tableau-empty.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 1275,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:8a632b6529445c17b2026c38d42ca919:808f132f85b65aa52a77a47a37cc26e4:0621a1bba3f99bb9fbc20a0226c7d972$"
+	}
+}

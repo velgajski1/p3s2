@@ -93,9 +93,7 @@ export class Preloader extends Scene {
 
         
 
-        this.load.image('holder_foundation_cards', 'placeholders/foundation-empty.png');
-        this.load.image('holder_stock_cards', 'placeholders/redeal-stock.png');
-        this.load.image('holder_tableau_cards', 'placeholders/tableau-empty.png');
+        this.load.atlas('placeholders', 'cards/placeholders/newassets_placeholders.png', 'cards/placeholders/newassets_placeholders.json');
         this.load.image('prompt_btn_left', 'prompt_btn_left.png');
         this.load.image('prompt_btn_right', 'prompt_btn_right.png');
         this.load.image('prompt_close', 'prompts/icon-close.png');
@@ -103,7 +101,6 @@ export class Preloader extends Scene {
         this.load.image('prompt_radio_on', 'prompt_radio_on.png');
         this.load.image('toggle-on', 'prompts/toggle-on.png');
         this.load.image('toggle-off', 'prompts/toggle-off.png');
-        this.load.image('reddish_glow_outline', 'placeholders/card-hint-overlay.png');
         this.load.image('backside', 'backside.png');
 
         // Wood backgrounds (light = normal mode, dark = night mode)
@@ -163,18 +160,18 @@ export class Preloader extends Scene {
 
         // locationBase = 'http://gamestest.net/';
         if (window.location.hostname == 'localhost' ) {
-            this.load.json('cardData', 'assets.json');
+            this.load.json('cardData', 'cards/desktop/newassets_desktop.json');
             if (isMobile) {
-                this.load.multiatlas('cards', 'assets_mobile1.json', 'assets');
+                this.load.multiatlas('cards', 'cards/mobile/newassets_mobile.json', 'assets/cards/mobile');
             } else {
-                this.load.multiatlas('cards', 'assets.json', 'assets');
-                
+                this.load.multiatlas('cards', 'cards/desktop/newassets_desktop.json', 'assets/cards/desktop');
+
             }
             this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
             this.load.audio('click', '/sounds/click.mp3');
             this.load.audio('deal_cards', '/sounds/deal-cards.mp3');
             this.load.audio('end_3', '/sounds/end_3.mp3');
-            this.load.audio('flip_back_to_stock', '/sounds/flip-back-to-stock.mp3');
+            this.load.audio('flip_back_to_stock', '/sounds/stock-flip-back.mp3');
             this.load.audio('grab_card', '/sounds/grab-card.mp3');
             this.load.audio('hint', '/sounds/hint.mp3');
             this.load.audio('invalid', '/sounds/invalid.mp3');
@@ -191,24 +188,24 @@ export class Preloader extends Scene {
                 console.log(locationToLoad)
                 if (isMobile) {
 
-                    locationToLoad += 'cards_mobile/assets_mobile1.json'
+                    locationToLoad += 'cards_mobile/newassets_mobile.json'
                     console.log(locationToLoad)
 
                     this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_mobile');
                 } else {
-                    locationToLoad += 'cards_desktop/assets.json'
+                    locationToLoad += 'cards_desktop/newassets_desktop.json'
                     console.log(locationToLoad)
                     this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_desktop');
                     console.log(locationToLoad)
                 }
-                this.load.json('cardData', locationBase + 'shared/cards_desktop' + '/assets.json');
+                this.load.json('cardData', locationBase + 'shared/cards_desktop' + '/newassets_desktop.json');
                 locationToLoad = locationBase + 'shared'
                 
                 this.load.audio('card_to_foundation', locationToLoad + '/sounds/card-to-foundation.mp3');
                 this.load.audio('click', locationToLoad + '/sounds/click.mp3');
                 this.load.audio('deal_cards', locationToLoad + '/sounds/deal-cards.mp3');
                 this.load.audio('end_3', locationToLoad + '/sounds/end_3.mp3');
-                this.load.audio('flip_back_to_stock', locationToLoad + '/sounds/flip-back-to-stock.mp3');
+                this.load.audio('flip_back_to_stock', locationToLoad + '/sounds/stock-flip-back.mp3');
                 this.load.audio('grab_card', locationToLoad + '/sounds/grab-card.mp3');
                 this.load.audio('hint', locationToLoad + '/sounds/hint.mp3');
                 this.load.audio('invalid', locationToLoad + '/sounds/invalid.mp3');

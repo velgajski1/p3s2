@@ -205,7 +205,7 @@ class CardLayoutManager {
             const y = FOUNDATION_COORDS_INIT.y;
 
             // Create a sprite for the foundation indicator
-            const foundationIndicator = scene.add.sprite(x, y, 'holder_foundation_cards');
+            const foundationIndicator = scene.add.sprite(x, y, 'placeholders', 'foundation-empty.png');
             foundationIndicator.setDepth(9000); // Ensure the indicator is below cards
             cont.add(foundationIndicator);
             // Optionally, customize the indicator with scale or tint
@@ -218,7 +218,7 @@ class CardLayoutManager {
     addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = 0.2) {
         
         this.removeHintOutline()
-        this.outline = scene.add.sprite(sprite.x, sprite.y, 'reddish_glow_outline' ).setScale(sprite.scale)
+        this.outline = scene.add.sprite(sprite.x, sprite.y, 'placeholders', 'card-hint-overlay.png').setScale(sprite.scale)
         scene.add.existing(this.outline)
         this.outline.setDepth(100000)
         sprite.parentContainer.add(this.outline)
@@ -343,7 +343,7 @@ class CardLayoutManager {
             const y = TABLEU_COORDS_INIT.y;
 
             // Create a sprite for the foundation indicator
-            const tabIndicator = scene.add.sprite(x, y, 'holder_tableau_cards'); //
+            const tabIndicator = scene.add.sprite(x, y, 'placeholders', 'tableau-empty.png'); //
             tabIndicator.setDepth(-100); // Ensure the indicator is below cards
             cont.add(tabIndicator);
             // Optionally, customize the indicator with scale or tint
@@ -360,7 +360,7 @@ class CardLayoutManager {
     // Add a visual indicator for the waste pile
     addWasteIndicator(scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        this.wasteIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'holder_foundation_cards');
+        this.wasteIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX]+WASTE_DELTA_FROM_STOCK[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'placeholders', 'foundation-empty.png');
         this.wasteIndicator.setDepth(-9000); // Ensure the indicator is below cards
         this.wasteIndicator.setScale(getCardScale());
         cont.add(this.wasteIndicator);
@@ -369,7 +369,7 @@ class CardLayoutManager {
     // Add a visual indicator for the stock pile
     addStockIndicator(pileManager: PileManager, scene: Phaser.Scene, cont: Phaser.GameObjects.Container) {
         // Create a sprite for the waste pile indicator
-        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'holder_stock_cards');
+        this.stockIndicator = scene.add.sprite(STOCK_COORDS.x[RIGHT_HANDED_MODE_IDX], STOCK_COORDS.y, 'placeholders', 'redeal-stock.png');
         this.stockIndicator.setDepth(-9000); // Ensure the indicator is below cards
         this.stockIndicator.setScale(getCardScale());
         cont.add(this.stockIndicator);

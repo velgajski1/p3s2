@@ -32,6 +32,8 @@ body {
     padding: 0 16px;
     z-index: 10;
     font-family: 'Inter', sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .game-stats {

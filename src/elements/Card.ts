@@ -35,7 +35,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
         let faceTexture = CardNameManager.Instance.getCardName(suit, rank);
 
-        super(scene, x, y, 'cards', 'cards/backside.png');
+        super(scene, x, y, 'cards', 'card-back.png');
         if (isFaceUp)
         {
             this.setTexture2(faceTexture);
@@ -46,7 +46,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
         
         this.faceTexture = faceTexture;
-        this.backTexture =  'backside';
+        this.backTexture =  'card-back';
         this.isFaceUp = isFaceUp; // Initially, cards are face down
 
         // Add this card to the scene
@@ -272,7 +272,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     addOutline(scene: Phaser.Scene, _cropY:number): void{
         if (!scene) return;
-       this.outline = scene.add.sprite(this.x-1, this.y-1, 'reddish_glow_outline' ).setScale(this.scale)
+       this.outline = scene.add.sprite(this.x-1, this.y-1, 'placeholders', 'card-hint-overlay.png').setScale(this.scale)
        scene.add.existing(this.outline)
        if (this.pileType == PileType.Tableau) {
         this.outline.setDepth(this.depth)
@@ -316,7 +316,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
 
     setTexture2(frame: string) : this
     {
-        super.setTexture('cards', 'cards/' + frame + '.png')
+        super.setTexture('cards', frame + '.png')
         return this;
     }
 
