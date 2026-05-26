@@ -142,79 +142,27 @@ export class Preloader extends Scene {
         // loadDefaultSettings()
         
         
-        let locationBase;
-        try {
-             locationBase = '' + window.location.origin+'/';
-             
-        } catch (e) {
-            this.displayErrorMessage('Error loading assets: ' + e);
-            
-        }
-
-        console.log(locationBase, window.location.hostname)
-
-        // locationBase = 'http://gamestest.net/';
-        if (window.location.hostname == 'localhost' ) {
-            this.load.json('cardData', 'cards/desktop/newassets_desktop.json');
-            if (isMobile) {
-                this.load.multiatlas('cards', 'cards/mobile/newassets_mobile.json', 'assets/cards/mobile');
-            } else {
-                this.load.multiatlas('cards', 'cards/desktop/newassets_desktop.json', 'assets/cards/desktop');
-
-            }
-            this.load.audio('card_to_foundation', '/sounds/card-to-foundation.mp3');
-            this.load.audio('click', '/sounds/click.mp3');
-            this.load.audio('deal_cards', '/sounds/deal-cards.mp3');
-            this.load.audio('end_3', '/sounds/end_3.mp3');
-            this.load.audio('flip_back_to_stock', '/sounds/stock-flip-back.mp3');
-            this.load.audio('grab_card', '/sounds/grab-card.mp3');
-            this.load.audio('hint', '/sounds/hint.mp3');
-            this.load.audio('invalid', '/sounds/invalid.mp3');
-            this.load.audio('no_hint', '/sounds/no-hint.mp3');
-            this.load.audio('silence', '/sounds/silence.mp3');
-            // this.load.audio('test', '/sounds/test.mp3');
-            this.load.audio('undo', '/sounds/undo.mp3');
-            this.load.audio('valid', '/sounds/valid.mp3');
-            this.load.audio('won', '/sounds/won.mp3');
-
+        // All assets are self-contained under this game's /assets/ folder (set via this.load.setPath('assets') above).
+        // Both localhost and production deployments load from the same relative paths.
+        this.load.json('cardData', 'cards/desktop/newassets_desktop.json');
+        if (isMobile) {
+            this.load.multiatlas('cards', 'cards/mobile/newassets_mobile.json', 'assets/cards/mobile');
         } else {
-            try {
-                let locationToLoad = locationBase + 'shared/'
-                console.log(locationToLoad)
-                if (isMobile) {
-
-                    locationToLoad += 'cards_mobile/newassets_mobile.json'
-                    console.log(locationToLoad)
-
-                    this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_mobile');
-                } else {
-                    locationToLoad += 'cards_desktop/newassets_desktop.json'
-                    console.log(locationToLoad)
-                    this.load.multiatlas('cards', locationToLoad, locationBase + 'shared/cards_desktop');
-                    console.log(locationToLoad)
-                }
-                this.load.json('cardData', locationBase + 'shared/cards_desktop' + '/newassets_desktop.json');
-                locationToLoad = locationBase + 'shared'
-                
-                this.load.audio('card_to_foundation', locationToLoad + '/sounds/card-to-foundation.mp3');
-                this.load.audio('click', locationToLoad + '/sounds/click.mp3');
-                this.load.audio('deal_cards', locationToLoad + '/sounds/deal-cards.mp3');
-                this.load.audio('end_3', locationToLoad + '/sounds/end_3.mp3');
-                this.load.audio('flip_back_to_stock', locationToLoad + '/sounds/stock-flip-back.mp3');
-                this.load.audio('grab_card', locationToLoad + '/sounds/grab-card.mp3');
-                this.load.audio('hint', locationToLoad + '/sounds/hint.mp3');
-                this.load.audio('invalid', locationToLoad + '/sounds/invalid.mp3');
-                this.load.audio('no_hint', locationToLoad + '/sounds/no-hint.mp3');
-                this.load.audio('silence', locationToLoad + '/sounds/silence.mp3');
-                // this.load.audio('test', '/sounds/test.mp3');
-                this.load.audio('undo', locationToLoad + '/sounds/undo.mp3');
-                this.load.audio('valid', locationToLoad + '/sounds/valid.mp3');
-                this.load.audio('won', locationToLoad + '/sounds/won.mp3');
-            } catch (error) {
-                this.displayErrorMessage('Error loading assets: ' + error);
-                console.error('Error loading assets:', error);
-            }
+            this.load.multiatlas('cards', 'cards/desktop/newassets_desktop.json', 'assets/cards/desktop');
         }
+        this.load.audio('card_to_foundation', 'sounds/card-to-foundation.mp3');
+        this.load.audio('click', 'sounds/click.mp3');
+        this.load.audio('deal_cards', 'sounds/deal-cards.mp3');
+        this.load.audio('end_3', 'sounds/end_3.mp3');
+        this.load.audio('flip_back_to_stock', 'sounds/stock-flip-back.mp3');
+        this.load.audio('grab_card', 'sounds/grab-card.mp3');
+        this.load.audio('hint', 'sounds/hint.mp3');
+        this.load.audio('invalid', 'sounds/invalid.mp3');
+        this.load.audio('no_hint', 'sounds/no-hint.mp3');
+        this.load.audio('silence', 'sounds/silence.mp3');
+        this.load.audio('undo', 'sounds/undo.mp3');
+        this.load.audio('valid', 'sounds/valid.mp3');
+        this.load.audio('won', 'sounds/won.mp3');
     }
 
     create() {

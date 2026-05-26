@@ -2,9 +2,9 @@
 <data version="1.0">
     <struct type="Settings">
         <key>fileFormatVersion</key>
-        <int>5</int>
+        <int>6</int>
         <key>texturePackerVersion</key>
-        <string>6.0.0</string>
+        <string>7.0.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -43,22 +43,12 @@
         <uint>2</uint>
         <key>basisUniversalQualityLevel</key>
         <uint>2</uint>
-        <key>atfCompressData</key>
-        <false/>
-        <key>mipMapMinSize</key>
-        <uint>32768</uint>
         <key>etc1QualityLevel</key>
         <uint>70</uint>
         <key>etc2QualityLevel</key>
         <uint>70</uint>
         <key>dxtCompressionMode</key>
         <enum type="SettingsBase::DxtCompressionMode">DXT_PERCEPTUAL</enum>
-        <key>jxrColorFormat</key>
-        <enum type="SettingsBase::JpegXrColorMode">JXR_YUV444</enum>
-        <key>jxrTrimFlexBits</key>
-        <uint>0</uint>
-        <key>jxrCompressionLevel</key>
-        <uint>0</uint>
         <key>ditherType</key>
         <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
         <key>backgroundColor</key>
@@ -82,8 +72,6 @@
         <key>webpQualityLevel</key>
         <uint>101</uint>
         <key>textureSubPath</key>
-        <string></string>
-        <key>atfFormats</key>
         <string></string>
         <key>textureFormat</key>
         <enum type="SettingsBase::TextureFormat">png</enum>
@@ -136,11 +124,11 @@
             <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../public/assets/assets_mobile1.json</filename>
+                <filename>../public/assets/newassets_mobile.json</filename>
             </struct>
         </map>
-        <key>multiPack</key>
-        <false/>
+        <key>multiPackMode</key>
+        <enum type="SettingsBase::MultiPackMode">MultiPackOff</enum>
         <key>forceIdenticalLayout</key>
         <false/>
         <key>outputFormat</key>
@@ -185,59 +173,59 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../assets/cards_mobile/cards/backside.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_10.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_2.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_3.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_4.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_5.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_6.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_7.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_8.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_9.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_ace.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_jack.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_king.png</key>
-            <key type="filename">../assets/cards_mobile/cards/clubs_queen.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_10.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_2.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_3.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_4.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_5.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_6.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_7.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_8.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_9.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_ace.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_jack.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_king.png</key>
-            <key type="filename">../assets/cards_mobile/cards/diamonds_queen.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_10.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_2.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_3.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_4.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_5.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_6.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_7.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_8.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_9.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_ace.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_jack.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_king.png</key>
-            <key type="filename">../assets/cards_mobile/cards/hearts_queen.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_10.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_2.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_3.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_4.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_5.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_6.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_7.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_8.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_9.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_ace.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_jack.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_king.png</key>
-            <key type="filename">../assets/cards_mobile/cards/spades_queen.png</key>
+            <key type="filename">../newassets/cards/mobile/c10.png</key>
+            <key type="filename">../newassets/cards/mobile/c2.png</key>
+            <key type="filename">../newassets/cards/mobile/c3.png</key>
+            <key type="filename">../newassets/cards/mobile/c4.png</key>
+            <key type="filename">../newassets/cards/mobile/c5.png</key>
+            <key type="filename">../newassets/cards/mobile/c6.png</key>
+            <key type="filename">../newassets/cards/mobile/c7.png</key>
+            <key type="filename">../newassets/cards/mobile/c8.png</key>
+            <key type="filename">../newassets/cards/mobile/c9.png</key>
+            <key type="filename">../newassets/cards/mobile/ca.png</key>
+            <key type="filename">../newassets/cards/mobile/card-back.png</key>
+            <key type="filename">../newassets/cards/mobile/cj.png</key>
+            <key type="filename">../newassets/cards/mobile/ck.png</key>
+            <key type="filename">../newassets/cards/mobile/cq.png</key>
+            <key type="filename">../newassets/cards/mobile/d10.png</key>
+            <key type="filename">../newassets/cards/mobile/d2.png</key>
+            <key type="filename">../newassets/cards/mobile/d3.png</key>
+            <key type="filename">../newassets/cards/mobile/d4.png</key>
+            <key type="filename">../newassets/cards/mobile/d5.png</key>
+            <key type="filename">../newassets/cards/mobile/d6.png</key>
+            <key type="filename">../newassets/cards/mobile/d7.png</key>
+            <key type="filename">../newassets/cards/mobile/d8.png</key>
+            <key type="filename">../newassets/cards/mobile/d9.png</key>
+            <key type="filename">../newassets/cards/mobile/da.png</key>
+            <key type="filename">../newassets/cards/mobile/dj.png</key>
+            <key type="filename">../newassets/cards/mobile/dk.png</key>
+            <key type="filename">../newassets/cards/mobile/dq.png</key>
+            <key type="filename">../newassets/cards/mobile/h10.png</key>
+            <key type="filename">../newassets/cards/mobile/h2.png</key>
+            <key type="filename">../newassets/cards/mobile/h3.png</key>
+            <key type="filename">../newassets/cards/mobile/h4.png</key>
+            <key type="filename">../newassets/cards/mobile/h5.png</key>
+            <key type="filename">../newassets/cards/mobile/h6.png</key>
+            <key type="filename">../newassets/cards/mobile/h7.png</key>
+            <key type="filename">../newassets/cards/mobile/h8.png</key>
+            <key type="filename">../newassets/cards/mobile/h9.png</key>
+            <key type="filename">../newassets/cards/mobile/ha.png</key>
+            <key type="filename">../newassets/cards/mobile/hj.png</key>
+            <key type="filename">../newassets/cards/mobile/hk.png</key>
+            <key type="filename">../newassets/cards/mobile/hq.png</key>
+            <key type="filename">../newassets/cards/mobile/s10.png</key>
+            <key type="filename">../newassets/cards/mobile/s2.png</key>
+            <key type="filename">../newassets/cards/mobile/s3.png</key>
+            <key type="filename">../newassets/cards/mobile/s4.png</key>
+            <key type="filename">../newassets/cards/mobile/s5.png</key>
+            <key type="filename">../newassets/cards/mobile/s6.png</key>
+            <key type="filename">../newassets/cards/mobile/s7.png</key>
+            <key type="filename">../newassets/cards/mobile/s8.png</key>
+            <key type="filename">../newassets/cards/mobile/s9.png</key>
+            <key type="filename">../newassets/cards/mobile/sa.png</key>
+            <key type="filename">../newassets/cards/mobile/sj.png</key>
+            <key type="filename">../newassets/cards/mobile/sk.png</key>
+            <key type="filename">../newassets/cards/mobile/sq.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -253,10 +241,16 @@
                 <false/>
             </struct>
         </map>
-        <key>fileList</key>
-        <array>
-            <filename>../assets/cards_mobile</filename>
-        </array>
+        <key>fileLists</key>
+        <map type="SpriteSheetMap">
+            <key>default</key>
+            <struct type="SpriteSheet">
+                <key>files</key>
+                <array>
+                    <filename>../newassets/cards/mobile</filename>
+                </array>
+            </struct>
+        </map>
         <key>ignoreFileList</key>
         <array/>
         <key>replaceList</key>

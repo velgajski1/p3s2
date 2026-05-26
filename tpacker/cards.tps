@@ -2,9 +2,9 @@
 <data version="1.0">
     <struct type="Settings">
         <key>fileFormatVersion</key>
-        <int>5</int>
+        <int>6</int>
         <key>texturePackerVersion</key>
-        <string>6.0.0</string>
+        <string>7.0.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -43,22 +43,12 @@
         <uint>2</uint>
         <key>basisUniversalQualityLevel</key>
         <uint>2</uint>
-        <key>atfCompressData</key>
-        <false/>
-        <key>mipMapMinSize</key>
-        <uint>32768</uint>
         <key>etc1QualityLevel</key>
         <uint>70</uint>
         <key>etc2QualityLevel</key>
         <uint>70</uint>
         <key>dxtCompressionMode</key>
         <enum type="SettingsBase::DxtCompressionMode">DXT_PERCEPTUAL</enum>
-        <key>jxrColorFormat</key>
-        <enum type="SettingsBase::JpegXrColorMode">JXR_YUV444</enum>
-        <key>jxrTrimFlexBits</key>
-        <uint>0</uint>
-        <key>jxrCompressionLevel</key>
-        <uint>0</uint>
         <key>ditherType</key>
         <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
         <key>backgroundColor</key>
@@ -82,8 +72,6 @@
         <key>webpQualityLevel</key>
         <uint>101</uint>
         <key>textureSubPath</key>
-        <string></string>
-        <key>atfFormats</key>
         <string></string>
         <key>textureFormat</key>
         <enum type="SettingsBase::TextureFormat">png</enum>
@@ -136,11 +124,11 @@
             <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename></filename>
+                <filename>../public/assets/newassets_desktop.json</filename>
             </struct>
         </map>
-        <key>multiPack</key>
-        <false/>
+        <key>multiPackMode</key>
+        <enum type="SettingsBase::MultiPackMode">MultiPackOff</enum>
         <key>forceIdenticalLayout</key>
         <false/>
         <key>outputFormat</key>
@@ -157,7 +145,7 @@
         <key>trimSpriteNames</key>
         <false/>
         <key>prependSmartFolderName</key>
-        <true/>
+        <false/>
         <key>autodetectAnimations</key>
         <true/>
         <key>globalSpriteSettings</key>
@@ -185,62 +173,59 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">../assets/cards/backside.png</key>
-            <key type="filename">../assets/cards/clubs_10.png</key>
-            <key type="filename">../assets/cards/clubs_2.png</key>
-            <key type="filename">../assets/cards/clubs_3.png</key>
-            <key type="filename">../assets/cards/clubs_4.png</key>
-            <key type="filename">../assets/cards/clubs_5.png</key>
-            <key type="filename">../assets/cards/clubs_6.png</key>
-            <key type="filename">../assets/cards/clubs_7.png</key>
-            <key type="filename">../assets/cards/clubs_8.png</key>
-            <key type="filename">../assets/cards/clubs_9.png</key>
-            <key type="filename">../assets/cards/clubs_ace.png</key>
-            <key type="filename">../assets/cards/clubs_jack.png</key>
-            <key type="filename">../assets/cards/clubs_king.png</key>
-            <key type="filename">../assets/cards/clubs_queen.png</key>
-            <key type="filename">../assets/cards/diamonds_10.png</key>
-            <key type="filename">../assets/cards/diamonds_2.png</key>
-            <key type="filename">../assets/cards/diamonds_3.png</key>
-            <key type="filename">../assets/cards/diamonds_4.png</key>
-            <key type="filename">../assets/cards/diamonds_5.png</key>
-            <key type="filename">../assets/cards/diamonds_6.png</key>
-            <key type="filename">../assets/cards/diamonds_7.png</key>
-            <key type="filename">../assets/cards/diamonds_8.png</key>
-            <key type="filename">../assets/cards/diamonds_9.png</key>
-            <key type="filename">../assets/cards/diamonds_ace.png</key>
-            <key type="filename">../assets/cards/diamonds_jack.png</key>
-            <key type="filename">../assets/cards/diamonds_king.png</key>
-            <key type="filename">../assets/cards/diamonds_queen.png</key>
-            <key type="filename">../assets/cards/hearts_10.png</key>
-            <key type="filename">../assets/cards/hearts_2.png</key>
-            <key type="filename">../assets/cards/hearts_3.png</key>
-            <key type="filename">../assets/cards/hearts_4.png</key>
-            <key type="filename">../assets/cards/hearts_5.png</key>
-            <key type="filename">../assets/cards/hearts_6.png</key>
-            <key type="filename">../assets/cards/hearts_7.png</key>
-            <key type="filename">../assets/cards/hearts_8.png</key>
-            <key type="filename">../assets/cards/hearts_9.png</key>
-            <key type="filename">../assets/cards/hearts_ace.png</key>
-            <key type="filename">../assets/cards/hearts_jack.png</key>
-            <key type="filename">../assets/cards/hearts_king.png</key>
-            <key type="filename">../assets/cards/hearts_queen.png</key>
-            <key type="filename">../assets/cards/holder_foundation_cards.png</key>
-            <key type="filename">../assets/cards/holder_stock_cards.png</key>
-            <key type="filename">../assets/cards/holder_tableau_cards.png</key>
-            <key type="filename">../assets/cards/spades_10.png</key>
-            <key type="filename">../assets/cards/spades_2.png</key>
-            <key type="filename">../assets/cards/spades_3.png</key>
-            <key type="filename">../assets/cards/spades_4.png</key>
-            <key type="filename">../assets/cards/spades_5.png</key>
-            <key type="filename">../assets/cards/spades_6.png</key>
-            <key type="filename">../assets/cards/spades_7.png</key>
-            <key type="filename">../assets/cards/spades_8.png</key>
-            <key type="filename">../assets/cards/spades_9.png</key>
-            <key type="filename">../assets/cards/spades_ace.png</key>
-            <key type="filename">../assets/cards/spades_jack.png</key>
-            <key type="filename">../assets/cards/spades_king.png</key>
-            <key type="filename">../assets/cards/spades_queen.png</key>
+            <key type="filename">../newassets/cards/desktop/c10.png</key>
+            <key type="filename">../newassets/cards/desktop/c2.png</key>
+            <key type="filename">../newassets/cards/desktop/c3.png</key>
+            <key type="filename">../newassets/cards/desktop/c4.png</key>
+            <key type="filename">../newassets/cards/desktop/c5.png</key>
+            <key type="filename">../newassets/cards/desktop/c6.png</key>
+            <key type="filename">../newassets/cards/desktop/c7.png</key>
+            <key type="filename">../newassets/cards/desktop/c8.png</key>
+            <key type="filename">../newassets/cards/desktop/c9.png</key>
+            <key type="filename">../newassets/cards/desktop/ca.png</key>
+            <key type="filename">../newassets/cards/desktop/card-back.png</key>
+            <key type="filename">../newassets/cards/desktop/cj.png</key>
+            <key type="filename">../newassets/cards/desktop/ck.png</key>
+            <key type="filename">../newassets/cards/desktop/cq.png</key>
+            <key type="filename">../newassets/cards/desktop/d10.png</key>
+            <key type="filename">../newassets/cards/desktop/d2.png</key>
+            <key type="filename">../newassets/cards/desktop/d3.png</key>
+            <key type="filename">../newassets/cards/desktop/d4.png</key>
+            <key type="filename">../newassets/cards/desktop/d5.png</key>
+            <key type="filename">../newassets/cards/desktop/d6.png</key>
+            <key type="filename">../newassets/cards/desktop/d7.png</key>
+            <key type="filename">../newassets/cards/desktop/d8.png</key>
+            <key type="filename">../newassets/cards/desktop/d9.png</key>
+            <key type="filename">../newassets/cards/desktop/da.png</key>
+            <key type="filename">../newassets/cards/desktop/dj.png</key>
+            <key type="filename">../newassets/cards/desktop/dk.png</key>
+            <key type="filename">../newassets/cards/desktop/dq.png</key>
+            <key type="filename">../newassets/cards/desktop/h10.png</key>
+            <key type="filename">../newassets/cards/desktop/h2.png</key>
+            <key type="filename">../newassets/cards/desktop/h3.png</key>
+            <key type="filename">../newassets/cards/desktop/h4.png</key>
+            <key type="filename">../newassets/cards/desktop/h5.png</key>
+            <key type="filename">../newassets/cards/desktop/h6.png</key>
+            <key type="filename">../newassets/cards/desktop/h7.png</key>
+            <key type="filename">../newassets/cards/desktop/h8.png</key>
+            <key type="filename">../newassets/cards/desktop/h9.png</key>
+            <key type="filename">../newassets/cards/desktop/ha.png</key>
+            <key type="filename">../newassets/cards/desktop/hj.png</key>
+            <key type="filename">../newassets/cards/desktop/hk.png</key>
+            <key type="filename">../newassets/cards/desktop/hq.png</key>
+            <key type="filename">../newassets/cards/desktop/s10.png</key>
+            <key type="filename">../newassets/cards/desktop/s2.png</key>
+            <key type="filename">../newassets/cards/desktop/s3.png</key>
+            <key type="filename">../newassets/cards/desktop/s4.png</key>
+            <key type="filename">../newassets/cards/desktop/s5.png</key>
+            <key type="filename">../newassets/cards/desktop/s6.png</key>
+            <key type="filename">../newassets/cards/desktop/s7.png</key>
+            <key type="filename">../newassets/cards/desktop/s8.png</key>
+            <key type="filename">../newassets/cards/desktop/s9.png</key>
+            <key type="filename">../newassets/cards/desktop/sa.png</key>
+            <key type="filename">../newassets/cards/desktop/sj.png</key>
+            <key type="filename">../newassets/cards/desktop/sk.png</key>
+            <key type="filename">../newassets/cards/desktop/sq.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -256,10 +241,16 @@
                 <false/>
             </struct>
         </map>
-        <key>fileList</key>
-        <array>
-            <filename>../assets/cards</filename>
-        </array>
+        <key>fileLists</key>
+        <map type="SpriteSheetMap">
+            <key>default</key>
+            <struct type="SpriteSheet">
+                <key>files</key>
+                <array>
+                    <filename>../newassets/cards/desktop</filename>
+                </array>
+            </struct>
+        </map>
         <key>ignoreFileList</key>
         <array/>
         <key>replaceList</key>
