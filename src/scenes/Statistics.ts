@@ -37,7 +37,7 @@ export class Statistics extends BaseMenuScene {
     private createWhiteBackground(): void {
         // 565 wide x 540 tall, top-left at (-282, -270)
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xf8f5f0, alpha: 1 } });
-        this.whiteBg.fillRect(-282, -270, 565, 540);
+        this.whiteBg.fillRect(-282, -270, 565, 574);
         this.menuContainer.add(this.whiteBg);
     }
 
@@ -76,7 +76,7 @@ export class Statistics extends BaseMenuScene {
 
         const rowGap = 53;
         const sectionToRowsGap = 55;
-        const betweenSectionsGap = 30;
+        const betweenSectionsGap = 1;
 
         const spielen = this.add.text(labelX, -187, Language.getTranslation(LanguageConfig.Spielen), sectionStyle).setOrigin(0, 0);
         this.menuContainer.add(spielen);
@@ -113,7 +113,7 @@ export class Statistics extends BaseMenuScene {
     }
 
     private createResetButton(): void {
-        new ButtonWithColorBackground(this, 0, 228, Language.getTranslation(LanguageConfig.ResetStats), () => {
+        new ButtonWithColorBackground(this, 0, 230, Language.getTranslation(LanguageConfig.ResetStats), () => {
             statsManager.resetStats();
             this.scene.restart();
         }, {
@@ -130,7 +130,7 @@ export class Statistics extends BaseMenuScene {
 
     private scaleMenuContainer(gameSize?: Phaser.Structs.Size): void {
         const { width, height } = gameSize || this.scale;
-        this.menuContainer.setPosition(width / 2, height / 2);
+        this.menuContainer.setPosition(width / 2, height / 2 - 15);
 
         const scaleX = width / 700;
         const scaleY = height / 700;
