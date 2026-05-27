@@ -556,7 +556,7 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer2.y = topUI*this.scale.height
         this.elementsContainer3.y = topUI*this.scale.height
 
-        this.registry.set("uiBottomPx", this.textContainer.y + this.scoreText.height*1.5)
+        this.registry.set("uiBottomPx", this.textContainer.y + this.scoreText.height*1.5 - 15)
 
         
         if ((this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) || this.registry.get("isFullscreen") || ( !this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape)) {

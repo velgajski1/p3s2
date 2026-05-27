@@ -206,7 +206,7 @@ class CardLayoutManager {
 
             // Create a sprite for the foundation indicator
             const foundationIndicator = scene.add.sprite(x, y, 'placeholders', 'foundation-empty.png');
-            foundationIndicator.setDepth(9000); // Ensure the indicator is below cards
+            foundationIndicator.setDepth(-9000); // Ensure the indicator is below cards
             cont.add(foundationIndicator);
             // Optionally, customize the indicator with scale or tint
             foundationIndicator.setScale(getCardScale());
