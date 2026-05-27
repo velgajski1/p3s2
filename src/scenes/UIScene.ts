@@ -489,17 +489,18 @@ export class UIScene extends Phaser.Scene {
     private applyMobileLandscapeLayout()
     {
         if (!this.mobileUI) return;
-        // ec3 left column (4 icons stacked vertically at x=20)
+        // 11px gap between non-toggle neighbors; 1-card/3-card are flush (0 gap). Icons are 54px tall → 54 + 11 = 65 stride.
+        // ec3 left column (settings/help/stats/night at x=20)
         this.mobileUI.settings.setXY(20, 0);
-        this.mobileUI.help.setXY(20, 55);
-        this.mobileUI.stats.setXY(20, 110);
-        this.mobileUI.night.setXY(20, 165);
-        // ec2 right column (toggle stacked vertically, then hint/undo)
+        this.mobileUI.help.setXY(20, 65);
+        this.mobileUI.stats.setXY(20, 130);
+        this.mobileUI.night.setXY(20, 195);
+        // ec2 right column (toggle flush, then 11px gaps to hint/undo)
         this.mobileUI.toggle.setPosition(-80, 0);
         this.mobileUI.toggle.icon1.setPosition(0, 0);
-        this.mobileUI.toggle.icon2.setPosition(0, 55);
-        this.mobileUI.hint.setXY(-80, 164);
-        this.mobileUI.undo.setXY(-80, 219);
+        this.mobileUI.toggle.icon2.setPosition(0, 54);
+        this.mobileUI.hint.setXY(-80, 119);
+        this.mobileUI.undo.setXY(-80, 184);
     }
 
     private applyMobilePortraitLayout()
@@ -571,11 +572,11 @@ export class UIScene extends Phaser.Scene {
 
             if (this.game.device.os.android || this.game.device.os.iOS) {
                 this.elementsContainer.y = this.scale.height *0.9
-                this.elementsContainer2.y = this.scale.height *0.07
-                this.elementsContainer3.y = this.scale.height *0.07
+                this.elementsContainer2.y = this.scale.height *0.17
+                this.elementsContainer3.y = this.scale.height *0.17
                 if (!this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape && !this.registry.get("isFullscreen")) {
-                    this.elementsContainer2.y = this.scale.height *0.09
-                    this.elementsContainer3.y = this.scale.height *0.09
+                    this.elementsContainer2.y = this.scale.height *0.19
+                    this.elementsContainer3.y = this.scale.height *0.19
                 }
                 this.textContainer.y = this.scale.height * 0.9 
                 // this.textContainer.y = this.scale.height * 0.525

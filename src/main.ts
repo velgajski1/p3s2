@@ -29,7 +29,8 @@ const config: Types.Core.GameConfig = {
     },
     scale: {
         mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        fullscreenTarget: 'app'
     },
     scene: [
         Boot,
