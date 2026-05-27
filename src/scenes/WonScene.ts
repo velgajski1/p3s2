@@ -63,12 +63,12 @@ export class WonScene extends BaseMenuScene {
     private createWhiteBackground(): void {
         // 565 wide x 415 tall, top-left at (-282, -207)
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xf8f5f0, alpha: 1 } });
-        this.whiteBg.fillRect(-282, -207, 565, 415);
+        this.whiteBg.fillRect(-282, -207, 565, 418);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTextElements(): void {
-        const title = this.add.text(0, -182, this.titleText, {
+        const title = this.add.text(0, -178, this.titleText, {
             fontFamily: 'Inter',
             fontSize: '30px',
             color: '#547e2f',
@@ -84,10 +84,10 @@ export class WonScene extends BaseMenuScene {
             { label: translate(LanguageConfig.TotalScore), value: '' + this.totalScore, big: true },
         ];
 
-        const labelX = -252;
-        const valueX = 252;
-        let y = -115;
-        const rowGap = 50;
+        const labelX = -208;
+        const valueX = 208;
+        let y = -121;
+        const rowGap = 53;
 
         rows.forEach(r => {
             const size = r.big ? '30px' : '26px';
@@ -101,7 +101,7 @@ export class WonScene extends BaseMenuScene {
                 fontFamily: 'Inter',
                 fontSize: size,
                 color: '#000000',
-                fontStyle: 'bold',
+                fontStyle: r.big ? 'bold' : '600',
             };
             const labelEl = this.add.text(labelX, y, r.label, labelStyle).setOrigin(0, 0);
             const valueEl = this.add.text(valueX, y, r.value, valueStyle).setOrigin(1, 0);
@@ -111,7 +111,7 @@ export class WonScene extends BaseMenuScene {
     }
 
     private createNewGameButton(): void {
-        this.newGameButton = new ButtonWithColorBackground(this, 0, 145, translate(LanguageConfig.NewGame), () => {
+        this.newGameButton = new ButtonWithColorBackground(this, 0, 137, translate(LanguageConfig.NewGame), () => {
             this.restartGame(true);
         }, {
             color: 0x618b3c,
