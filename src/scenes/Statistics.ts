@@ -45,40 +45,40 @@ export class Statistics extends BaseMenuScene {
         const statTitle = STOCK_THREE_MODE_ACTIVE
             ? translate(LanguageConfig.Stats3)
             : translate(LanguageConfig.Stats1);
-        this.titleTxt = this.add.text(-252, -248, statTitle, {
+        this.titleTxt = this.add.text(0, -241, statTitle, {
             fontFamily: 'Inter',
-            fontSize: '28px',
+            fontSize: '30px',
             color: '#000000',
             align: 'center',
             fontStyle: 'bold',
-        }).setOrigin(0, 0);
+        }).setOrigin(0.5, 0);
         this.menuContainer.add(this.titleTxt);
     }
 
     private createXButton(): void {
-        this.prompt_close = this.add.image(252, -240, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.prompt_close = this.add.image(251, -238, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
         this.prompt_close.on('pointerdown', () => this.remove());
         this.menuContainer.add(this.prompt_close);
     }
 
     private createSections(): void {
-        const labelX = -252;
-        const valueX = 252;
+        const labelX = -208;
+        const valueX = 208;
         const sectionStyle: Phaser.Types.GameObjects.Text.TextStyle = {
             fontFamily: 'Inter', fontSize: '28px', fontStyle: '600', color: '#000000',
         };
         const rowLabelStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-            fontFamily: 'Inter', fontSize: '28px', fontStyle: '400', color: '#000000',
+            fontFamily: 'Inter', fontSize: '26px', fontStyle: '400', color: '#000000',
         };
         const rowValueStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-            fontFamily: 'Inter', fontSize: '28px', color: '#000000', fontStyle: '400',
+            fontFamily: 'Inter', fontSize: '26px', color: '#000000', fontStyle: '600',
         };
 
-        const rowGap = 45;
-        const sectionToRowsGap = 50;
+        const rowGap = 53;
+        const sectionToRowsGap = 55;
         const betweenSectionsGap = 30;
 
-        const spielen = this.add.text(labelX, -195, Language.getTranslation(LanguageConfig.Spielen), sectionStyle).setOrigin(0, 0);
+        const spielen = this.add.text(labelX, -187, Language.getTranslation(LanguageConfig.Spielen), sectionStyle).setOrigin(0, 0);
         this.menuContainer.add(spielen);
 
         const spielenRows = [
@@ -87,7 +87,7 @@ export class Statistics extends BaseMenuScene {
             { label: LanguageConfig.WinPercentage, value: statsManager.winPercentage + '%' },
         ];
 
-        let y = -195 + sectionToRowsGap;
+        let y = -187 + sectionToRowsGap;
         spielenRows.forEach(r => {
             const labelTxt = this.add.text(labelX, y, Language.getTranslation(r.label), rowLabelStyle).setOrigin(0, 0);
             const valueTxt = this.add.text(valueX, y, r.value, rowValueStyle).setOrigin(1, 0);
@@ -113,11 +113,11 @@ export class Statistics extends BaseMenuScene {
     }
 
     private createResetButton(): void {
-        new ButtonWithColorBackground(this, 0, 220, Language.getTranslation(LanguageConfig.ResetStats), () => {
+        new ButtonWithColorBackground(this, 0, 228, Language.getTranslation(LanguageConfig.ResetStats), () => {
             statsManager.resetStats();
             this.scene.restart();
         }, {
-            color: 0x568234,
+            color: 0x618b3c,
             textColor: '#ffffff',
             width: 417,
             height: 61,

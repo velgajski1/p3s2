@@ -19,7 +19,7 @@ export class SettingsToggle extends Phaser.GameObjects.Container {
         this.isOn = initialState;
         const rowWidth = options?.rowWidth ?? 300;
 
-        this.label = scene.add.text(0, 0, text, {
+        this.label = scene.add.text(34, 0, text, {
             fontFamily: 'Inter',
             fontSize: '26px',
             fontStyle: '500',
@@ -27,8 +27,8 @@ export class SettingsToggle extends Phaser.GameObjects.Container {
         }).setOrigin(0, 0.5);
         this.add(this.label);
 
-        this.toggleOff = scene.add.image(rowWidth, 0, 'toggle-off').setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
-        this.toggleOn = scene.add.image(rowWidth, 0, 'toggle-on').setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+        this.toggleOff = scene.add.image(rowWidth - 54, 0, 'toggle-off').setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
+        this.toggleOn = scene.add.image(rowWidth - 54, 0, 'toggle-on').setOrigin(1, 0.5).setInteractive({ useHandCursor: true });
         this.toggleOff.setVisible(!this.isOn);
         this.toggleOn.setVisible(this.isOn);
 

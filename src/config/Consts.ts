@@ -23,7 +23,7 @@ export const getCardScale = () =>
 
 export const CARD_SCALE = 0.8;
 export const WASTE_DELTA_FROM_STOCK = [160, -160];
-export const STOCK_COORDS = { x: [-488, -488 + 6 * WASTE_DELTA_FROM_STOCK[0]], y: 80 };
+export const STOCK_COORDS = { x: [-480, -480 + 6 * WASTE_DELTA_FROM_STOCK[0]], y: 80 };
 export const WASTE_OVERLAP = 0;
 export const WASTE_DELTA_X = [30, 30];
 export const TABLEU_COORDS_INIT = { x: STOCK_COORDS.x[0], y: 290 }

@@ -114,7 +114,7 @@ export class WonScene extends BaseMenuScene {
         this.newGameButton = new ButtonWithColorBackground(this, 0, 145, translate(LanguageConfig.NewGame), () => {
             this.restartGame(true);
         }, {
-            color: 0x568234,
+            color: 0x618b3c,
             textColor: '#ffffff',
             width: 417,
             height: 61,

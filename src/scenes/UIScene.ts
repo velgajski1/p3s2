@@ -135,7 +135,7 @@ export class UIScene extends Phaser.Scene {
             gm.updateStats();
             gm.restart();
         }, {
-            color: 0x568234,
+            color: 0x618b3c,
             textColor: '#ffffff',
             width: 220,
             height: 54,
@@ -213,7 +213,7 @@ export class UIScene extends Phaser.Scene {
             gm.updateStats();
             gm.restart();
         }, {
-            color: 0x568234,
+            color: 0x618b3c,
             textColor: '#ffffff',
             width: 54,
             height: 110,

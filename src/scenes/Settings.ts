@@ -44,19 +44,19 @@ export class Settings extends BaseMenuScene {
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xf8f5f0, alpha: 1 } });
         // Modal: 565 wide x 380 tall, top-left at (-282, -190)
-        this.whiteBg.fillRect(-282, -190, 565, 380);
+        this.whiteBg.fillRect(-282, -190, 565, 366);
         this.menuContainer.add(this.whiteBg);
     }
 
     private createTitle(): void {
-        const titleTxt = this.add.text(-252, -165, Language.getTranslation(LanguageConfig.Settings), {
+        const titleTxt = this.add.text(-210, -161, Language.getTranslation(LanguageConfig.Settings), {
             fontFamily: 'Inter', fontSize: '30px', color: '#000000', align: 'left'
         }).setOrigin(0, 0).setFontStyle('bold');
         this.menuContainer.add(titleTxt);
     }
 
     private createXButton(): void {
-        this.prompt_close = this.add.image(252, -150, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
+        this.prompt_close = this.add.image(251, -158, 'prompt_close').setOrigin(0.5).setInteractive({ useHandCursor: true });
         this.prompt_close.on('pointerdown', () => this.remove());
         this.menuContainer.add(this.prompt_close);
     }
@@ -65,17 +65,17 @@ export class Settings extends BaseMenuScene {
         const rowWidth = 505;
         const rowX = -242;
 
-        this.autofinishToggle = new SettingsToggle(this, rowX, -80, Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
+        this.autofinishToggle = new SettingsToggle(this, rowX, -86, Language.getTranslation(LanguageConfig.AutoFinish), AUTOFINISH_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
             rowWidth,
         });
 
-        this.soundToggle = new SettingsToggle(this, rowX, -25, Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
+        this.soundToggle = new SettingsToggle(this, rowX, -31, Language.getTranslation(LanguageConfig.SoundOnOff), SOUND_ACTIVE, {
             parentContainer: this.menuContainer,
             rowWidth,
         });
 
-        this.rightHandedToggle = new SettingsToggle(this, rowX, 30, Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
+        this.rightHandedToggle = new SettingsToggle(this, rowX, 24, Language.getTranslation(LanguageConfig.RightHanded), RIGHT_HANDED_MODE_ACTIVE, {
             parentContainer: this.menuContainer,
             rowWidth,
         });
@@ -87,10 +87,10 @@ export class Settings extends BaseMenuScene {
     }
 
     private createCloseButton(): void {
-        new Button(this, 0, 130, Language.getTranslation(LanguageConfig.SaveExit), () => {
+        new Button(this, 0, 103, Language.getTranslation(LanguageConfig.SaveExit), () => {
             this.remove();
         }, {
-            color: 0x568234,
+            color: 0x618b3c,
             textColor: '#ffffff',
             width: 417,
             height: 61,
