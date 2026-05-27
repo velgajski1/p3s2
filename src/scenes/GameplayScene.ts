@@ -81,20 +81,17 @@ export class GameplayScene extends BaseScene {
         let top = this.registry.get("uiBottomPx")
         
         
-        if ( (this.scale.isFullscreen || this.game.device.os.iOS ) && this.isLandscape()) {
+        // iOS landscape uses a compact gameplay layout. Fullscreen toggling (desktop/mobile)
+        // intentionally does NOT trigger a reposition — keep the same layout in and out of fullscreen.
+        if (this.game.device.os.iOS && this.isLandscape() && !this.scale.isFullscreen) {
             top = 20;
             let delta = Math.max(0, 2 - this.scale.gameSize.aspectRatio)
-            
-            scale *= (1 +0.2 - delta); 
+
+            scale *= (1 +0.2 - delta);
             this.gameplayContainer.setScale(scale);
-            // this.scene.launch("UIScene");
             this.registry.set("isFullscreen", true);
         } else {
             this.registry.set("isFullscreen", false);
-
-            if (this.scale.isFullscreen) {
-                this.scale.stopFullscreen()
-            }
         }
 
 
@@ -109,6 +106,15 @@ export class GameplayScene extends BaseScene {
         if (this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) {
             this.gameplayContainer.setScale(scale*1.3);
             this.gameplayContainer.setPosition(width / 2, 3*top);
+        }
+
+        // Hard floor: never let the card area extend into the 44px HTML top bar.
+        // Cards have center origin and extend ~50px above the container origin (half card height),
+        // so container y must clear bar (44) + that upward extent at current scale.
+        const TOP_BAR_HEIGHT = 44;
+        const minContainerY = TOP_BAR_HEIGHT + 50 * this.gameplayContainer.scaleY;
+        if (this.gameplayContainer.y < minContainerY) {
+            this.gameplayContainer.y = minContainerY;
         }
 
 

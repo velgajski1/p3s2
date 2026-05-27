@@ -102,6 +102,13 @@ body {
     .brand { display: none; }
 }
 
+/* Smaller mobile landscape: shrink top-bar height and fonts by ~20% */
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
+    .top-bar { height: 36px; }
+    .game-stats { font-size: 16px; }
+    .game-links { font-size: 16px; }
+}
+
 /* Hide links on narrow viewports too — stats + brand take priority */
 @media (max-width: 700px) {
     .game-links { display: none; }
