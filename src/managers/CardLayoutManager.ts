@@ -17,7 +17,7 @@ class CardLayoutManager {
     foundIndicators: Phaser.GameObjects.Sprite[];
     outline: Phaser.GameObjects.Sprite;
     hintTimerEvent: any;
-    timeout: NodeJS.Timeout;
+    timeout: ReturnType<typeof setTimeout>;
 
     init(pileManager : PileManager)
     {
@@ -205,7 +205,7 @@ class CardLayoutManager {
             const y = FOUNDATION_COORDS_INIT.y;
 
             // Create a sprite for the foundation indicator
-            const foundationIndicator = scene.add.sprite(x, y, 'placeholders', 'foundation-empty.png');
+            const foundationIndicator = scene.add.sprite(x, y, 'placeholders', 'foundation-A.png');
             foundationIndicator.setDepth(-9000); // Ensure the indicator is below cards
             cont.add(foundationIndicator);
             // Optionally, customize the indicator with scale or tint

@@ -489,18 +489,18 @@ export class UIScene extends Phaser.Scene {
     private applyMobileLandscapeLayout()
     {
         if (!this.mobileUI) return;
-        // 11px gap between non-toggle neighbors; 1-card/3-card are flush (0 gap). Icons are 54px tall → 54 + 11 = 65 stride.
+        // Uniform 75px stride between all buttons (54 + 21 gap).
         // ec3 left column (settings/help/stats/night at x=20)
         this.mobileUI.settings.setXY(20, 0);
-        this.mobileUI.help.setXY(20, 65);
-        this.mobileUI.stats.setXY(20, 130);
-        this.mobileUI.night.setXY(20, 195);
-        // ec2 right column (toggle flush, then 11px gaps to hint/undo)
+        this.mobileUI.help.setXY(20, 75);
+        this.mobileUI.stats.setXY(20, 150);
+        this.mobileUI.night.setXY(20, 225);
+        // ec2 right column (toggle 1+3, then hint, undo — all 75px stride)
         this.mobileUI.toggle.setPosition(-80, 0);
         this.mobileUI.toggle.icon1.setPosition(0, 0);
-        this.mobileUI.toggle.icon2.setPosition(0, 54);
-        this.mobileUI.hint.setXY(-80, 119);
-        this.mobileUI.undo.setXY(-80, 184);
+        this.mobileUI.toggle.icon2.setPosition(0, 75);
+        this.mobileUI.hint.setXY(-80, 150);
+        this.mobileUI.undo.setXY(-80, 225);
     }
 
     private applyMobilePortraitLayout()

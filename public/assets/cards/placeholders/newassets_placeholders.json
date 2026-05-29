@@ -1,10 +1,10 @@
 {
 	"textures": [
 		{
-			"image": "newassets_placeholders.png",
+			"image": "placeholders.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 1456,
+				"w": 1638,
 				"h": 255
 			},
 			"scale": 1,
@@ -31,7 +31,7 @@
 					}
 				},
 				{
-					"filename": "foundation-clubs.png",
+					"filename": "foundation-A.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "foundation-diamonds.png",
+					"filename": "foundation-clubs.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "foundation-empty.png",
+					"filename": "foundation-diamonds.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -94,7 +94,7 @@
 					}
 				},
 				{
-					"filename": "foundation-hearts.png",
+					"filename": "foundation-empty.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -115,7 +115,7 @@
 					}
 				},
 				{
-					"filename": "foundation-spades.png",
+					"filename": "foundation-hearts.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -136,7 +136,7 @@
 					}
 				},
 				{
-					"filename": "redeal-stock.png",
+					"filename": "foundation-spades.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -157,7 +157,7 @@
 					}
 				},
 				{
-					"filename": "tableau-empty.png",
+					"filename": "redeal-stock.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -176,6 +176,27 @@
 						"w": 180,
 						"h": 253
 					}
+				},
+				{
+					"filename": "tableau-empty.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 1457,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
 				}
 			]
 		}
@@ -183,6 +204,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:8a632b6529445c17b2026c38d42ca919:808f132f85b65aa52a77a47a37cc26e4:0621a1bba3f99bb9fbc20a0226c7d972$"
+		"smartupdate": "$TexturePacker:SmartUpdate:9c0ad0b7b8302ec51ef8ee8ee837aba8:16d12d02b5b8ed50884bfaeb80d7ca95:e30d442f7ee011cdf0833022ab455ff2$"
 	}
 }

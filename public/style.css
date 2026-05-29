@@ -102,14 +102,28 @@ body {
     .brand { display: none; }
 }
 
-/* Smaller mobile landscape: shrink top-bar height and fonts by ~20% */
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {
-    .top-bar { height: 36px; }
-    .game-stats { font-size: 16px; }
-    .game-links { font-size: 16px; }
-}
 
 /* Hide links on narrow viewports too — stats + brand take priority */
 @media (max-width: 700px) {
     .game-links { display: none; }
+}
+
+/* Mobile portrait: drop the optional links (Spider, Freecell) so Solitaire + Mahjong fit */
+@media (pointer: coarse) and (orientation: portrait) {
+    .game-link-optional { display: none; }
+}
+
+/* Mobile portrait: bring links back on the right, shrink bar + fonts */
+@media (pointer: coarse) and (orientation: portrait) {
+    .top-bar { height: 36px; }
+    .game-stats { font-size: 14px; }
+    .game-links { display: flex; font-size: 14px; }
+    .game-link:not(:last-child)::after { padding: 0 6px; }
+}
+
+/* Very small portrait phones (≤380px wide): even smaller fonts */
+@media (pointer: coarse) and (orientation: portrait) and (max-width: 380px) {
+    .game-stats { font-size: 12px; }
+    .game-links { font-size: 12px; }
+    .game-link:not(:last-child)::after { padding: 0 4px; }
 }
