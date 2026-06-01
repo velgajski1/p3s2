@@ -93,14 +93,15 @@ export class Preloader extends Scene {
 
         
 
-        this.load.atlas('placeholders', 'cards/placeholders/newassets_placeholders.png', 'cards/placeholders/newassets_placeholders.json');
+        this.load.atlas('placeholders', 'cards/placeholders/placeholders.png', 'cards/placeholders/placeholders.json');
         this.load.image('prompt_close', 'prompts/icon-close.png');
         this.load.image('toggle-on', 'prompts/toggle-on.png');
         this.load.image('toggle-off', 'prompts/toggle-off.png');
 
-        // Wood backgrounds (light = normal mode, dark = night mode)
+        // Wood/color backgrounds cycled by the moon button
         this.load.image('bg-light', 'hintergrund-helles-holz.jpg');
         this.load.image('bg-dark', 'hintergrund-dunkles-holz.jpg');
+        this.load.image('bg-green', 'hintergrund-grun.jpg');
 
         // Toolbar buttons — desktop art
         this.load.image('btn-1-card-off', 'menu/btn-1-card-off.png');

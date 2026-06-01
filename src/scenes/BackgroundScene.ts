@@ -18,24 +18,29 @@ export class BackgroundScene extends Phaser.Scene {
         this.scale.on('resize', this.applyMode, this);
     }
 
-    public setNightMode(night: boolean): void {
-        const key = night ? 'bg-dark' : 'bg-light';
-        this.bgImage.setTexture(key);
-        this.bgTile.setTexture(key);
+    public refreshBackground(): void {
         this.applyMode(this.scale.gameSize);
     }
 
     private currentKey(): string {
-        return NIGHT_MODE_ACTIVE ? 'bg-dark' : 'bg-light';
+        switch (NIGHT_MODE_ACTIVE) {
+            case 1: return 'bg-dark';
+            case 2: return 'bg-green';
+            default: return 'bg-light';
+        }
     }
 
     private applyMode(gameSize: Phaser.Structs.Size): void {
         if (!this.bgImage || !this.bgTile) return;
         const { width, height } = gameSize;
+        const key = this.currentKey();
+        this.bgImage.setTexture(key);
+        this.bgTile.setTexture(key);
+
         const isLandscape = width >= height;
-        // Dark bg is portrait-oriented and small (709x1226); cover-fit upscales it badly.
-        // Always tile the dark bg. Light bg keeps cover in landscape, tile in portrait.
-        const useCover = isLandscape && this.currentKey() === 'bg-light';
+        // Cover-fit only the light wood in landscape. Dark and green always tile at native size
+        // (CSS-equivalent: background-repeat: repeat; background-size: auto; background-position: top left).
+        const useCover = isLandscape && key === 'bg-light';
         if (useCover) {
             this.bgTile.setVisible(false);
             this.bgImage.setVisible(true);

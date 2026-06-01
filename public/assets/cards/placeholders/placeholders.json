@@ -4,13 +4,13 @@
 			"image": "placeholders.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 1638,
+				"w": 1820,
 				"h": 255
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "card-hint-overlay.png",
+					"filename": "card-hint-overlay-on-wood.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -31,7 +31,7 @@
 					}
 				},
 				{
-					"filename": "foundation-A.png",
+					"filename": "card-hint-overlay.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -52,7 +52,7 @@
 					}
 				},
 				{
-					"filename": "foundation-clubs.png",
+					"filename": "foundation-A.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -73,7 +73,7 @@
 					}
 				},
 				{
-					"filename": "foundation-diamonds.png",
+					"filename": "foundation-clubs.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -94,7 +94,7 @@
 					}
 				},
 				{
-					"filename": "foundation-empty.png",
+					"filename": "foundation-diamonds.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -115,7 +115,7 @@
 					}
 				},
 				{
-					"filename": "foundation-hearts.png",
+					"filename": "foundation-empty.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -136,7 +136,7 @@
 					}
 				},
 				{
-					"filename": "foundation-spades.png",
+					"filename": "foundation-hearts.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -157,7 +157,7 @@
 					}
 				},
 				{
-					"filename": "redeal-stock.png",
+					"filename": "foundation-spades.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -178,7 +178,7 @@
 					}
 				},
 				{
-					"filename": "tableau-empty.png",
+					"filename": "redeal-stock.png",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -197,6 +197,27 @@
 						"w": 180,
 						"h": 253
 					}
+				},
+				{
+					"filename": "tableau-empty.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 180,
+						"h": 253
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 180,
+						"h": 253
+					},
+					"frame": {
+						"x": 1639,
+						"y": 1,
+						"w": 180,
+						"h": 253
+					}
 				}
 			]
 		}
@@ -204,6 +225,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:9c0ad0b7b8302ec51ef8ee8ee837aba8:16d12d02b5b8ed50884bfaeb80d7ca95:e30d442f7ee011cdf0833022ab455ff2$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a8da8059395098442b34e9c34e3b40c9:d0cec74df2b2fdbbede96bf71da53cac:e30d442f7ee011cdf0833022ab455ff2$"
 	}
 }

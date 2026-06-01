@@ -39,4 +39,7 @@ export const TABLEU_FOLD_HEIGHT = 700;
 export const FOLD_PIXELS_RATE = 20;
 export const HINT_OVERLAY_DURATION = 600
 export const HINT_NEXT_OVERLAY_DELTA = 250;
+export const HINT_ALPHA = 0.25;                  // default hint overlay alpha (tableau / non-empty foundation / stock / non-empty waste)
+export const HINT_ALPHA_WASTE_EMPTY = 0.45;     // alpha for the wood-friendly variant used on empty waste
+export const HINT_ALPHA_FOUNDATION_EMPTY = 0.35; // alpha for the wood-friendly variant used on empty foundation + empty stock
 export const TAB_DELTA_Y_MOBILE_EXTRA = 31;

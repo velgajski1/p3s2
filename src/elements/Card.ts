@@ -1,6 +1,6 @@
 // Card.ts
 import Phaser from 'phaser';
-import { HINT_OVERLAY_DURATION, PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
+import { HINT_ALPHA, HINT_OVERLAY_DURATION, PileType, STOCK_COORDS, WASTE_DELTA_FROM_STOCK } from '../config/Consts';
 import { CardNameManager, Rank, Suit } from '../managers/CardNameManager';
 import ControlManager from '../managers/ControlManager';
 import { getTweensForObject } from '../utils/Utils';
@@ -282,7 +282,7 @@ export default class Card extends Phaser.GameObjects.Sprite {
        }
        
        this.parentContainer.add(this.outline)
-       this.outline.alpha = 0.3
+       this.outline.alpha = HINT_ALPHA
 
     //    if (cropY > 0) {
     //     this.outline.setCrop(0,0,this.outline.width, cropY/this.scale)

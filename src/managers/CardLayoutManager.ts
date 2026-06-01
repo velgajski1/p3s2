@@ -1,6 +1,6 @@
 // CardLayoutManager.ts
 import { RIGHT_HANDED_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, STOCK_THREE_MODE_ACTIVE } from "../config/Config";
-import { FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, getCardScale, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
+import { FOUNDATION_COORDS_DELTA, FOUNDATION_COORDS_INIT, getCardScale, HINT_ALPHA, HINT_ALPHA_FOUNDATION_EMPTY, HINT_ALPHA_WASTE_EMPTY, HINT_OVERLAY_DURATION, STOCK_COORDS, TAB_DELTA_Y_MOBILE_EXTRA, TABLEU_COORDS_DELTA, TABLEU_COORDS_INIT, WASTE_DELTA_FROM_STOCK, WASTE_DELTA_X, WASTE_OVERLAP } from "../config/Consts";
 import Card from "../elements/Card";
 import { GameManager } from "./GameManager";
 import PileManager from "./PileManager";
@@ -215,10 +215,10 @@ class CardLayoutManager {
         }
     }
 
-    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = 0.2) {
-        
+    addHintOutline(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite, deltaX : number = 0, deltaY : number = 0,  alpha = HINT_ALPHA, frame: string = 'card-hint-overlay.png') {
+
         this.removeHintOutline()
-        this.outline = scene.add.sprite(sprite.x, sprite.y, 'placeholders', 'card-hint-overlay.png').setScale(sprite.scale)
+        this.outline = scene.add.sprite(sprite.x, sprite.y, 'placeholders', frame).setScale(sprite.scale)
         scene.add.existing(this.outline)
         this.outline.setDepth(100000)
         sprite.parentContainer.add(this.outline)
@@ -301,7 +301,8 @@ class CardLayoutManager {
             fPile[0].startHintAnim(0)
         } else {
             let spr = this.foundIndicators[idx]
-            this.addHintOutline(spr.scene, spr, 0, 0, 0.2);
+            // Empty foundation: wood-friendly overlay at foundation-specific alpha
+            this.addHintOutline(spr.scene, spr, 0, 0, HINT_ALPHA_FOUNDATION_EMPTY, 'card-hint-overlay-on-wood.png');
         }
 
 
@@ -309,11 +310,11 @@ class CardLayoutManager {
 
     hintWaste() {
         let spr = this.wasteIndicator
-        
+
         let wastePileLen = this.pileManager.getWastePile().length;
         if (wastePileLen==0) {
-            this.addHintOutline(spr.scene, spr, 0, 0, 0.2);
-            // this.addHintOutline(spr.scene, spr, 1, 1);
+            // Empty waste: use the wood-friendly variant at higher alpha
+            this.addHintOutline(spr.scene, spr, 0, 0, HINT_ALPHA_WASTE_EMPTY, 'card-hint-overlay-on-wood.png');
         }
         else {
             this.pileManager.getTopCardFromWaste()?.startHintAnim(0)
@@ -326,12 +327,13 @@ class CardLayoutManager {
         let stockPileLen = this.pileManager.getStockPile().length
 
         if (stockPileLen > 0) {
-            
-            this.addHintOutline(spr.scene, spr, 0, 0, 0.3);
+
+            this.addHintOutline(spr.scene, spr, 0, 0, HINT_ALPHA);
         } else {
-            this.addHintOutline(spr.scene, spr, 0,0, 0.2);
+            // Empty stock: wood-friendly overlay at the same alpha as empty foundation
+            this.addHintOutline(spr.scene, spr, 0, 0, HINT_ALPHA_FOUNDATION_EMPTY, 'card-hint-overlay-on-wood.png');
         }
-        
+
     }
 
 

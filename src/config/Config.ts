@@ -6,8 +6,15 @@ export var RIGHT_HANDED_MODE_ACTIVE: boolean;
 export var RIGHT_HANDED_MODE_IDX : number;
 export var AUTOFINISH_MODE_ACTIVE: boolean = true;
 export var SOUND_ACTIVE: boolean = true;
-export var NIGHT_MODE_ACTIVE : boolean = false;
+export var NIGHT_MODE_ACTIVE : number = 0; // 0=light wood, 1=dark wood, 2=solid green (#3c663c)
+export const NIGHT_MODE_COUNT = 3;
 export var DRAG_ACTIVE : boolean = true;
+export var CHEAT_MODE_ACTIVE : boolean = false; // DEBUG: T-key toggle — any card on any other.
+
+export function toggleCheatModeActive(params?: boolean) {
+    CHEAT_MODE_ACTIVE = params === undefined ? !CHEAT_MODE_ACTIVE : params;
+    console.log('[CHEAT] CHEAT_MODE_ACTIVE =', CHEAT_MODE_ACTIVE);
+}
 
 export function loadDefaultSettings(isMobile : boolean = false) {
     if (RIGHT_HANDED_MODE_ACTIVE == undefined || RIGHT_HANDED_MODE_ACTIVE == null) {
@@ -49,7 +56,9 @@ export function loadSettings() {
 
     const nightMode = localStorage.getItem(k('NIGHT_MODE_ACTIVE'));
     if (nightMode !== null) {
-        NIGHT_MODE_ACTIVE = JSON.parse(nightMode);
+        const parsed = JSON.parse(nightMode);
+        // legacy boolean → numeric (true→1, false→0)
+        NIGHT_MODE_ACTIVE = typeof parsed === 'boolean' ? (parsed ? 1 : 0) : parsed;
     }
 }
 
@@ -75,9 +84,9 @@ export function toggleSoundActive(params: boolean) {
     localStorage.setItem(k('SOUND_ACTIVE'), JSON.stringify(params));
 }
 
-export function toggleNightModeActive(params: boolean) {
-    NIGHT_MODE_ACTIVE = params;
-    localStorage.setItem(k('NIGHT_MODE_ACTIVE'), JSON.stringify(params));
+export function cycleNightMode() {
+    NIGHT_MODE_ACTIVE = (NIGHT_MODE_ACTIVE + 1) % NIGHT_MODE_COUNT;
+    localStorage.setItem(k('NIGHT_MODE_ACTIVE'), JSON.stringify(NIGHT_MODE_ACTIVE));
 }
 
 export function setDragActive(val:boolean) {

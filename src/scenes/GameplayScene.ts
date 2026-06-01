@@ -108,12 +108,13 @@ export class GameplayScene extends BaseScene {
             this.gameplayContainer.setPosition(width / 2, 3*top);
         }
 
-        // Hard floor: never let the card area extend into the 44px HTML top bar.
-        // Cards have center origin and extend ~50px above the container origin (half card height),
-        // so container y must clear bar (44) + that upward extent at current scale.
+        // Hard floor: keep cards from extending into the 44px HTML top bar.
+        // Desktop is intentionally placed 18px ABOVE the clamp (tighter against the bar).
         const TOP_BAR_HEIGHT = 44;
         const minContainerY = TOP_BAR_HEIGHT + 50 * this.gameplayContainer.scaleY;
-        if (this.gameplayContainer.y < minContainerY) {
+        if (this.game.device.os.desktop) {
+            this.gameplayContainer.y = minContainerY - 18;
+        } else if (this.gameplayContainer.y < minContainerY) {
             this.gameplayContainer.y = minContainerY;
         }
 

@@ -2,9 +2,9 @@
 <data version="1.0">
     <struct type="Settings">
         <key>fileFormatVersion</key>
-        <int>5</int>
+        <int>6</int>
         <key>texturePackerVersion</key>
-        <string>6.0.0</string>
+        <string>7.0.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -43,22 +43,12 @@
         <uint>2</uint>
         <key>basisUniversalQualityLevel</key>
         <uint>2</uint>
-        <key>atfCompressData</key>
-        <false/>
-        <key>mipMapMinSize</key>
-        <uint>32768</uint>
         <key>etc1QualityLevel</key>
         <uint>70</uint>
         <key>etc2QualityLevel</key>
         <uint>70</uint>
         <key>dxtCompressionMode</key>
         <enum type="SettingsBase::DxtCompressionMode">DXT_PERCEPTUAL</enum>
-        <key>jxrColorFormat</key>
-        <enum type="SettingsBase::JpegXrColorMode">JXR_YUV444</enum>
-        <key>jxrTrimFlexBits</key>
-        <uint>0</uint>
-        <key>jxrCompressionLevel</key>
-        <uint>0</uint>
         <key>ditherType</key>
         <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
         <key>backgroundColor</key>
@@ -82,8 +72,6 @@
         <key>webpQualityLevel</key>
         <uint>101</uint>
         <key>textureSubPath</key>
-        <string></string>
-        <key>atfFormats</key>
         <string></string>
         <key>textureFormat</key>
         <enum type="SettingsBase::TextureFormat">png</enum>
@@ -139,8 +127,8 @@
                 <filename>../public/assets/placeholders.json</filename>
             </struct>
         </map>
-        <key>multiPack</key>
-        <false/>
+        <key>multiPackMode</key>
+        <enum type="SettingsBase::MultiPackMode">MultiPackOff</enum>
         <key>forceIdenticalLayout</key>
         <false/>
         <key>outputFormat</key>
@@ -184,11 +172,42 @@
             <false/>
         </struct>
         <key>individualSpriteSettings</key>
-        <map type="IndividualSpriteSettingsMap"/>
-        <key>fileList</key>
-        <array>
-            <filename>../newassets/cards/placeholders</filename>
-        </array>
+        <map type="IndividualSpriteSettingsMap">
+            <key type="filename">../newassets/cards/placeholders/card-hint-overlay-on-wood.png</key>
+            <key type="filename">../newassets/cards/placeholders/card-hint-overlay.png</key>
+            <key type="filename">../newassets/cards/placeholders/foundation-A.png</key>
+            <key type="filename">../newassets/cards/placeholders/foundation-clubs.png</key>
+            <key type="filename">../newassets/cards/placeholders/foundation-diamonds.png</key>
+            <key type="filename">../newassets/cards/placeholders/foundation-empty.png</key>
+            <key type="filename">../newassets/cards/placeholders/foundation-hearts.png</key>
+            <key type="filename">../newassets/cards/placeholders/foundation-spades.png</key>
+            <key type="filename">../newassets/cards/placeholders/redeal-stock.png</key>
+            <key type="filename">../newassets/cards/placeholders/tableau-empty.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>45,63,90,127</rect>
+                <key>scale9Paddings</key>
+                <rect>45,63,90,127</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+        </map>
+        <key>fileLists</key>
+        <map type="SpriteSheetMap">
+            <key>default</key>
+            <struct type="SpriteSheet">
+                <key>files</key>
+                <array>
+                    <filename>../newassets/cards/placeholders</filename>
+                </array>
+            </struct>
+        </map>
         <key>ignoreFileList</key>
         <array/>
         <key>replaceList</key>

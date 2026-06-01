@@ -7,7 +7,7 @@ import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
 import ButtonWithColorBackground from '../ui/ButtonWithColorBackground';
-import { DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleNightModeActive, toggleThreeModeActive } from '../config/Config';
+import { cycleNightMode, DRAG_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
 import HintManager from '../managers/HintManager';
 import { getActiveTopbarOwnerId, topbarDebugLog } from '../utils/Debug';
 
@@ -621,9 +621,8 @@ export class UIScene extends Phaser.Scene {
     }
 
     private toggleNightMode(): void {
-        const next = !NIGHT_MODE_ACTIVE;
-        toggleNightModeActive(next);
+        cycleNightMode();
         const bg = this.scene.get('BackgroundScene') as any;
-        if (bg && bg.setNightMode) bg.setNightMode(next);
+        if (bg && bg.refreshBackground) bg.refreshBackground();
     }
 }
