@@ -11,6 +11,26 @@
 <script defer src="./bundle.min.js"></script>
 </head>
 <body>
+<!-- ===== NEW CODE: apply saved night-mode class before Phaser loads ===== -->
+<script>
+    // Apply the saved night-mode class to body BEFORE Phaser loads so the right CSS background
+    // shows from the first paint — no flash. Mirrors NIGHT_MODE_ACTIVE values in src/config/Config.ts.
+    (function () {
+        var classes = ['bg-light', 'bg-dark', 'bg-green'];
+        var raw = null;
+        try { raw = localStorage.getItem('solkost_klondike_NIGHT_MODE_ACTIVE'); } catch (e) {}
+        var idx = 0;
+        if (raw !== null) {
+            try {
+                var parsed = JSON.parse(raw);
+                idx = typeof parsed === 'boolean' ? (parsed ? 1 : 0) : (parsed | 0);
+            } catch (e) {}
+        }
+        if (idx < 0 || idx >= classes.length) idx = 0;
+        document.body.classList.add(classes[idx]);
+    })();
+</script>
+<!-- ===== END NEW CODE ===== -->
 <div id="app">
   <div class="top-bar">
     <div class="game-stats">

@@ -98,10 +98,7 @@ export class Preloader extends Scene {
         this.load.image('toggle-on', 'prompts/toggle-on.png');
         this.load.image('toggle-off', 'prompts/toggle-off.png');
 
-        // Wood/color backgrounds cycled by the moon button
-        this.load.image('bg-light', 'hintergrund-helles-holz.jpg');
-        this.load.image('bg-dark', 'hintergrund-dunkles-holz.jpg');
-        this.load.image('bg-green', 'hintergrund-grun.jpg');
+        // Wood/green backgrounds are rendered by CSS on the <body> — no Phaser preload needed.
 
         // Toolbar buttons — desktop art
         this.load.image('btn-1-card-off', 'menu/btn-1-card-off.png');
@@ -184,8 +181,7 @@ export class Preloader extends Scene {
             this.cardManager = CardNameManager.Instance;
             this.cardManager.loadCardData(frames);
 
-            this.scene.start('BackgroundScene');
-            this.scene.launch('GameplayScene');
+            this.scene.start('GameplayScene');
         } else {
             this.displayErrorMessage('Error: Invalid card data.');
         }

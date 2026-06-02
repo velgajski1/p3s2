@@ -1,4 +1,3 @@
-import { BackgroundScene } from './scenes/BackgroundScene';
 import { Boot } from './scenes/Boot';
 import { GameplayScene } from './scenes/GameplayScene';
 import { Preloader } from './scenes/Preloader';
@@ -20,7 +19,7 @@ const config: Types.Core.GameConfig = {
     width: 1024,
     height: 768,
     parent: 'game-container',
-    backgroundColor: '#3b3b3b',
+    transparent: true, // canvas is transparent so the CSS body background can show through when needed
     roundPixels: true,
     input: {
         mouse: {
@@ -34,7 +33,6 @@ const config: Types.Core.GameConfig = {
     },
     scene: [
         Boot,
-        BackgroundScene,
         Preloader,
         Settings,
         Statistics,

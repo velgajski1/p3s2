@@ -7,7 +7,7 @@ import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
 import ButtonWithColorBackground from '../ui/ButtonWithColorBackground';
-import { cycleNightMode, DRAG_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
+import { cycleNightMode, DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
 import HintManager from '../managers/HintManager';
 import { getActiveTopbarOwnerId, topbarDebugLog } from '../utils/Debug';
 
@@ -622,7 +622,9 @@ export class UIScene extends Phaser.Scene {
 
     private toggleNightMode(): void {
         cycleNightMode();
-        const bg = this.scene.get('BackgroundScene') as any;
-        if (bg && bg.refreshBackground) bg.refreshBackground();
+        // Background is rendered by CSS now; just swap the body class.
+        const classes = ['bg-light', 'bg-dark', 'bg-green'];
+        document.body.classList.remove(...classes);
+        document.body.classList.add(classes[NIGHT_MODE_ACTIVE] || classes[0]);
     }
 }
