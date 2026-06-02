@@ -162,9 +162,7 @@ export class UIScene extends Phaser.Scene {
 
         this.desktopUI.help = new ImageButton(this, 372, 0, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            const url = '/howtoplay';
-            const w = window.open(url, '_blank');
-            if (!w) window.location.href = url;
+            window.location.hash = '#spielanleitung';
         });
         this.desktopUI.help.setOrigin(0, 0);
         this.elementsContainer.add(this.desktopUI.help);
@@ -254,9 +252,7 @@ export class UIScene extends Phaser.Scene {
 
         this.mobileUI.help = new ImageButton(this, colLeftX, 55, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            const url = '/howtoplay';
-            const w = window.open(url, '_blank');
-            if (!w) window.location.href = url;
+            window.location.hash = '#spielanleitung';
         });
         this.mobileUI.help.setOrigin(0, 0);
         this.elementsContainer3.add(this.mobileUI.help);

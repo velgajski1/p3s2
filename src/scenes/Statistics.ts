@@ -117,7 +117,7 @@ export class Statistics extends BaseMenuScene {
             statsManager.resetStats();
             this.scene.restart();
         }, {
-            color: 0x618b3c,
+            color: 0xaa4c4d,
             textColor: '#ffffff',
             width: 417,
             height: 61,

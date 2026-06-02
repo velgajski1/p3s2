@@ -368,7 +368,9 @@ export class GameManager
 
     updateStats()
     {
-
+        // Only count a game as "played" if the user actually interacted with a card.
+        // Hitting "New Game" repeatedly without playing should NOT add to gamesPlayed.
+        if (!this.firstClickDone) return;
         statsManager.updateStatsAfterGame(false, this.getCurrentScore(), this.getElapsedTime());
     }
 
