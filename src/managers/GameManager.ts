@@ -171,6 +171,7 @@ export class GameManager
         if (this.firstClickDone) return;
         this.firstClickDone = true;
         this.startTime = Date.now();
+        statsManager.markGameStarted();
         topbarDebugLog('GameManager.markFirstInteraction', {
             ownerId: this.topbarOwnerId,
             source,

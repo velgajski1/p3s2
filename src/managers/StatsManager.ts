@@ -10,6 +10,7 @@ class StatsManager {
     private _currentWinStreak: number;
     private _longestWinStreak: number;
     private _isGameActive: boolean;
+    private _gameStarted: boolean; // true once the user has actually played the active game
     private _currentScore: number;
     private _currentTimePlayed: number; // Stored in seconds
     private _totalTimePlayed: number;
@@ -35,18 +36,25 @@ class StatsManager {
         this._currentWinStreak = this._getStatFromLocalStorage(`${modePrefix}currentWinStreak`, 0);
         this._longestWinStreak = this._getStatFromLocalStorage(`${modePrefix}longestWinStreak`, 0);
         this._isGameActive = this._getStatFromLocalStorage(`${modePrefix}isGameActive`, false);
+        this._gameStarted = this._getStatFromLocalStorage(`${modePrefix}gameStarted`, false);
         this._currentScore = this._getStatFromLocalStorage(`${modePrefix}currentScore`, 0);
         this._currentTimePlayed = this._getStatFromLocalStorage(`${modePrefix}currentTimePlayed`, 0);
         this._totalTimePlayed = this._getStatFromLocalStorage(`${modePrefix}totalTimePlayed`,0);
 
-        
-        
-       
-        if (this._isGameActive && !skipUpdate) {
-            // If a game was active, mark it as a loss due to refresh
-            
+        if (this._isGameActive && this._gameStarted && !skipUpdate) {
+            // Game was active AND the user actually played: count the refresh as a loss.
             this.updateStatsAfterGame(false, this._currentScore, this._currentTimePlayed);
+        } else if (this._isGameActive && !this._gameStarted && !skipUpdate) {
+            // Game was active but the user never touched it — silently drop so it doesn't accumulate.
+            this._isGameActive = false;
+            this._saveStatToLocalStorage(`${modePrefix}isGameActive`, false);
         }
+    }
+
+    public markGameStarted(): void {
+        if (this._gameStarted) return;
+        this._gameStarted = true;
+        this._saveStatToLocalStorage(`${this.getModePrefix()}gameStarted`, true);
     }
 
     private getModePrefix(): string {
@@ -205,9 +213,11 @@ class StatsManager {
 
         // Reset active game state
         this._isGameActive = false;
+        this._gameStarted = false;
         this._currentScore = 0;
         this._currentTimePlayed = 0;
         this._saveStatToLocalStorage(`${this.getModePrefix()}isGameActive`, this._isGameActive);
+        this._saveStatToLocalStorage(`${this.getModePrefix()}gameStarted`, this._gameStarted);
         this._saveStatToLocalStorage(`${this.getModePrefix()}currentScore`, this._currentScore);
         this._saveStatToLocalStorage(`${this.getModePrefix()}currentTimePlayed`, this._currentTimePlayed);
     }
@@ -224,6 +234,7 @@ class StatsManager {
         this.currentWinStreak = 0;
         this._longestWinStreak = 0;
         this._isGameActive = false;
+        this._gameStarted = false;
         this._currentScore = 0;
         this._currentTimePlayed = 0;
         this._totalTimePlayed = 0;
@@ -237,6 +248,7 @@ class StatsManager {
         localStorage.removeItem(`${modePrefix}currentWinStreak`);
         localStorage.removeItem(`${modePrefix}longestWinStreak`);
         localStorage.removeItem(`${modePrefix}isGameActive`);
+        localStorage.removeItem(`${modePrefix}gameStarted`);
         localStorage.removeItem(`${modePrefix}currentScore`);
         localStorage.removeItem(`${modePrefix}currentTimePlayed`);
         localStorage.removeItem(`${modePrefix}totalTimePlayed`);
@@ -245,9 +257,11 @@ class StatsManager {
     // Method to start a game
     public startGame(): void {
         this._isGameActive = true;
+        this._gameStarted = false; // not yet touched
         this._currentScore = 0;
         this._currentTimePlayed = 0;
         this._saveStatToLocalStorage(`${this.getModePrefix()}isGameActive`, this._isGameActive);
+        this._saveStatToLocalStorage(`${this.getModePrefix()}gameStarted`, this._gameStarted);
         this._saveStatToLocalStorage(`${this.getModePrefix()}currentScore`, this._currentScore);
         this._saveStatToLocalStorage(`${this.getModePrefix()}currentTimePlayed`, this._currentTimePlayed);
     }
