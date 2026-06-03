@@ -62,6 +62,12 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         return icon;
     }
 
+    public setToggleState(stockThreeMode: boolean): void {
+        // External programmatic state setter — flips visuals without firing the callback or playing sound.
+        const targetIcon = stockThreeMode ? this.icon2 : this.icon1;
+        this.toggleIcon(targetIcon, true, true);
+    }
+
     private toggleIcon(icon: Phaser.GameObjects.Image, state: boolean, skipCallback : boolean = false): void {
         const newStateTexture: string = state ? (icon as any).onTexture : (icon as any).offTexture;
         icon.setTexture(newStateTexture);

@@ -117,13 +117,7 @@ export class UIScene extends Phaser.Scene {
             'btn-3-card-on',
             110,
             0,
-            (nextState: boolean) => {
-                if (!this.inputEnabled || this.skipClicks) return;
-                const gamemanager: GameManager = this.registry.get("gameManager");
-                gamemanager.updateStats();
-                toggleThreeModeActive(nextState);
-                gamemanager.restart();
-            },
+            (nextState: boolean) => this.handleStockModeToggle(nextState),
             STOCK_THREE_MODE_ACTIVE
         );
         this.elementsContainer.add(this.desktopUI.toggle);
@@ -193,13 +187,7 @@ export class UIScene extends Phaser.Scene {
             'mobile-btn-3-card-on',
             0,
             55,
-            (nextState: boolean) => {
-                if (!this.inputEnabled || this.skipClicks) return;
-                const gamemanager: GameManager = this.registry.get("gameManager");
-                gamemanager.updateStats();
-                toggleThreeModeActive(nextState);
-                gamemanager.restart();
-            },
+            (nextState: boolean) => this.handleStockModeToggle(nextState),
             STOCK_THREE_MODE_ACTIVE
         );
         this.elementsContainer2.add(this.mobileUI.toggle);
@@ -302,7 +290,7 @@ export class UIScene extends Phaser.Scene {
 
         this.inputEnabled = true
 
-        const modalOpen = this.scene.isActive('Settings') || this.scene.isActive('Statistics') || this.scene.isActive('WonScene');
+        const modalOpen = this.scene.isActive('Settings') || this.scene.isActive('Statistics') || this.scene.isActive('WonScene') || this.scene.isActive('NewGameConfirm');
         if (modalOpen) this.inputEnabled = false;
 
         const ui = this.elementsContainer.visible ? this.desktopUI : this.mobileUI;
@@ -614,6 +602,35 @@ export class UIScene extends Phaser.Scene {
         
 
         return isTabletAspectRatio && (this.game.device.os.android || this.game.device.os.iOS);
+    }
+
+    private handleStockModeToggle(nextState: boolean): void {
+        if (!this.inputEnabled || this.skipClicks) return;
+        const gm: GameManager = this.registry.get('gameManager');
+
+        const applyMode = () => {
+            gm.updateStats();
+            toggleThreeModeActive(nextState);
+            gm.restart();
+        };
+
+        // Untouched game (no card clicked yet) — switch silently.
+        if (!gm || !gm.firstClickDone) {
+            applyMode();
+            return;
+        }
+
+        // Active game in progress — confirm before discarding.
+        const previousState = !nextState;
+        this.scene.launch('NewGameConfirm', {
+            cardCount: nextState ? 3 : 1,
+            onConfirm: () => applyMode(),
+            onCancel: () => {
+                // Revert both toggles' visuals; only one is visible, but keep them in sync.
+                this.desktopUI?.toggle?.setToggleState(previousState);
+                this.mobileUI?.toggle?.setToggleState(previousState);
+            },
+        }).bringToTop('NewGameConfirm');
     }
 
     private toggleNightMode(): void {

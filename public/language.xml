@@ -40,5 +40,11 @@
         <Time> | </Time>
         <Moves> | Züge: </Moves>
         <Neustart>Neustart</Neustart>
+        <ConfirmNewGameTitle>Neue Partie starten?</ConfirmNewGameTitle>
+        <ConfirmNewGameBody1>Neue Partie mit 1 Karte spielen?</ConfirmNewGameBody1>
+        <ConfirmNewGameBody3>Neue Partie mit 3 Karten spielen?</ConfirmNewGameBody3>
+        <ConfirmNewGameNote>Dein aktuelles Spiel wird beendet.</ConfirmNewGameNote>
+        <ConfirmNewGameBack>Zurück zum Spiel</ConfirmNewGameBack>
+        <ConfirmNewGameConfirm>Neue Partie starten</ConfirmNewGameConfirm>
     </language>
 </languages>

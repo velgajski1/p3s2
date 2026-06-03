@@ -7,6 +7,7 @@ import { UIScene } from './scenes/UIScene';
 import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
+import { NewGameConfirmScene } from './scenes/NewGameConfirmScene';
 
 declare global {
     interface Window {
@@ -38,7 +39,8 @@ const config: Types.Core.GameConfig = {
         Statistics,
         GameplayScene,
         UIScene,
-        WonScene
+        WonScene,
+        NewGameConfirmScene
     ]
 };
 

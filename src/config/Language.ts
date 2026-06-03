@@ -39,4 +39,10 @@ export const LanguageConfig = {
     Time: "Time",
     Moves: "Moves",
     Neustart: "Neustart",
+    ConfirmNewGameTitle: "ConfirmNewGameTitle",
+    ConfirmNewGameBody1: "ConfirmNewGameBody1",
+    ConfirmNewGameBody3: "ConfirmNewGameBody3",
+    ConfirmNewGameNote: "ConfirmNewGameNote",
+    ConfirmNewGameBack: "ConfirmNewGameBack",
+    ConfirmNewGameConfirm: "ConfirmNewGameConfirm",
 };
