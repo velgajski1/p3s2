@@ -8,28 +8,13 @@ import statsManager from '../managers/StatsManager';
 import { SoundManager } from '../managers/SoundManager';
 import { SOUND_ACTIVE } from '../config/Config';
 
-const WIN_TITLES_DE = [
-    'Spiel gewonnen!',
-    'Sehr gut gespielt!',
-    'Prima gemacht!',
-    'Gut gemacht!',
-    'Schön gelöst!',
-    'Klasse gespielt!',
-    'Runde gewonnen!',
-    'Geschafft!',
-    'Sie haben gewonnen!',
-    'Das war gut!',
-    'Toll gespielt!',
-    'Sehr schön!',
-    'Glückwunsch!',
-    'Erfolgreich beendet!',
-];
+const WIN_TITLE_COUNT = 14;
 
 export class WonScene extends BaseMenuScene {
     private menuContainer!: Phaser.GameObjects.Container;
     private whiteBg!: Phaser.GameObjects.Graphics;
     private newGameButton!: ButtonWithColorBackground;
-    private titleText: string = WIN_TITLES_DE[0];
+    private titleText: string = '';
 
     constructor(public score: number = 0, public timePlayed: number = 0, public timeBonus: number = 0, public totalScore: number = 0) {
         super('WonScene');
@@ -40,7 +25,8 @@ export class WonScene extends BaseMenuScene {
         this.timePlayed = data.timeplayed;
         this.timeBonus = data.timebonus;
         this.totalScore = data.totalscore;
-        this.titleText = WIN_TITLES_DE[Math.floor(Math.random() * WIN_TITLES_DE.length)];
+        const idx = Math.floor(Math.random() * WIN_TITLE_COUNT) + 1;
+        this.titleText = translate('WinTitle' + String(idx).padStart(2, '0'));
     }
 
     create(): void {

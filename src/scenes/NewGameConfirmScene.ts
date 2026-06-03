@@ -50,7 +50,7 @@ export class NewGameConfirmScene extends BaseMenuScene {
 
     private createWhiteBackground(): void {
         this.whiteBg = this.add.graphics({ fillStyle: { color: 0xf8f5f0, alpha: 1 } });
-        this.whiteBg.fillRect(-282, -190, 565, 380);
+        this.whiteBg.fillRect(-282, -190, 565, 368);
         this.menuContainer.add(this.whiteBg);
     }
 
@@ -68,7 +68,7 @@ export class NewGameConfirmScene extends BaseMenuScene {
         const line2 = translate(LanguageConfig.ConfirmNewGameNote);
         const body = this.add.text(
             0,
-            -90,
+            -104,
             `${line1}\n${line2}`,
             {
                 fontFamily: 'Inter',
@@ -92,7 +92,7 @@ export class NewGameConfirmScene extends BaseMenuScene {
     }
 
     private createButtons(): void {
-        new ButtonWithColorBackground(this, 0, 35, translate(LanguageConfig.ConfirmNewGameBack), () => {
+        new ButtonWithColorBackground(this, 0, 105, translate(LanguageConfig.ConfirmNewGameBack), () => {
             this.resolveCancel();
         }, {
             color: 0x618b3c,
@@ -105,7 +105,7 @@ export class NewGameConfirmScene extends BaseMenuScene {
             parentContainer: this.menuContainer,
         });
 
-        new ButtonWithColorBackground(this, 0, 115, translate(LanguageConfig.ConfirmNewGameConfirm), () => {
+        new ButtonWithColorBackground(this, 0, 25, translate(LanguageConfig.ConfirmNewGameConfirm), () => {
             this.resolveConfirm();
         }, {
             color: 0xaa4c4d,

@@ -46,5 +46,19 @@
         <ConfirmNewGameNote>Dein aktuelles Spiel wird beendet.</ConfirmNewGameNote>
         <ConfirmNewGameBack>Zurück zum Spiel</ConfirmNewGameBack>
         <ConfirmNewGameConfirm>Neue Partie starten</ConfirmNewGameConfirm>
+        <WinTitle01>Spiel gewonnen!</WinTitle01>
+        <WinTitle02>Sehr gut gespielt!</WinTitle02>
+        <WinTitle03>Prima gemacht!</WinTitle03>
+        <WinTitle04>Gut gemacht!</WinTitle04>
+        <WinTitle05>Schön gelöst!</WinTitle05>
+        <WinTitle06>Klasse gespielt!</WinTitle06>
+        <WinTitle07>Runde gewonnen!</WinTitle07>
+        <WinTitle08>Geschafft!</WinTitle08>
+        <WinTitle09>Sie haben gewonnen!</WinTitle09>
+        <WinTitle10>Das war gut!</WinTitle10>
+        <WinTitle11>Toll gespielt!</WinTitle11>
+        <WinTitle12>Sehr schön!</WinTitle12>
+        <WinTitle13>Glückwunsch!</WinTitle13>
+        <WinTitle14>Erfolgreich beendet!</WinTitle14>
     </language>
 </languages>
