@@ -1,4 +1,4 @@
-import { CHEAT_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE, toggleCheatModeActive } from "../config/Config";
+import { RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK, CARD_MOVE_BEFORE_DRAG_AND_DROP } from "../config/Consts";
 import Card from "../elements/Card";
 import { UIScene } from "../scenes/UIScene";
@@ -495,8 +495,8 @@ class ControlManager
                 let currentIndex = tableauIndex[i];
                 let currentPile = this.pileManager.getTableauPiles()[currentIndex];
 
-                // Check if the drop is valid for this pile (any card if cheat is on)
-                if (currentPile.length === 0 && (CHEAT_MODE_ACTIVE || activeCard.rank === Rank.King))
+                // Check if the drop is valid for this pile (Kings only on empty tableau).
+                if (currentPile.length === 0 && activeCard.rank === Rank.King)
                 {
                     // Valid drop on an empty tableau pile (Kings only)
                     if (activeCard.pileType == PileType.Waste)
@@ -758,8 +758,6 @@ class ControlManager
 
     canPlaceCardOnFoundation(card: Card, index: number): boolean
     {
-        if (CHEAT_MODE_ACTIVE) return true;
-
         const foundationPile = this.pileManager.getFoundationPiles()[index];
         if (foundationPile.length == 0)
         {
@@ -827,8 +825,6 @@ class ControlManager
 
     private canPlaceCardOnTableau(activeCard: Card, targetCard: Card): boolean
     {
-        if (CHEAT_MODE_ACTIVE) return true;
-
         // First, find the tableau pile containing the target card
         const targetPile = this.findTableauPileContainingCard(targetCard);
 

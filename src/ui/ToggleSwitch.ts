@@ -54,9 +54,18 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         (icon as any).onTexture = onTexture;
         (icon as any).offTexture = offTexture;
         (icon as any).state = false; // Start as "off"
+        (icon as any).isHovered = false;
 
         icon.on('pointerdown', () => {
             this.toggleIcon(icon, true);
+        });
+        icon.on('pointerover', () => {
+            (icon as any).isHovered = true;
+            this.applyIconTexture(icon);
+        });
+        icon.on('pointerout', () => {
+            (icon as any).isHovered = false;
+            this.applyIconTexture(icon);
         });
 
         return icon;
@@ -68,24 +77,27 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         this.toggleIcon(targetIcon, true, true);
     }
 
+    private applyIconTexture(icon: Phaser.GameObjects.Image): void {
+        const base: string = (icon as any).state ? (icon as any).onTexture : (icon as any).offTexture;
+        const hoverKey = base + '-hover';
+        const texture = (icon as any).isHovered && this.scene.textures.exists(hoverKey) ? hoverKey : base;
+        icon.setTexture(texture);
+    }
+
     private toggleIcon(icon: Phaser.GameObjects.Image, state: boolean, skipCallback : boolean = false): void {
-        const newStateTexture: string = state ? (icon as any).onTexture : (icon as any).offTexture;
-        icon.setTexture(newStateTexture);
         (icon as any).state = state;
+        this.applyIconTexture(icon);
 
         let newState: boolean;
-      
 
         // When one icon is turned on, the other is turned off
         if (icon === this.icon1) {
-            this.icon2.setTexture((this.icon2 as any).offTexture);
             (this.icon2 as any).state = false;
+            this.applyIconTexture(this.icon2);
             newState = false;
-            
-            
         } else {
-            this.icon1.setTexture((this.icon1 as any).offTexture);
             (this.icon1 as any).state = false;
+            this.applyIconTexture(this.icon1);
             newState = true;
         }
 
@@ -94,7 +106,7 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
             this.onToggleCallback(newState);
               SOUND_ACTIVE && SoundManager.instance.click.play()
         }
-        
+
     }
 }
 

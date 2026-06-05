@@ -608,6 +608,10 @@ export class UIScene extends Phaser.Scene {
         if (!this.inputEnabled || this.skipClicks) return;
         const gm: GameManager = this.registry.get('gameManager');
 
+        // Snapshot the actual current mode so cancel always reverts the toggle visual to where it
+        // was before the click — even when the click was on the already-active icon (no real flip).
+        const previousState = STOCK_THREE_MODE_ACTIVE;
+
         const applyMode = () => {
             gm.updateStats();
             toggleThreeModeActive(nextState);
@@ -621,7 +625,6 @@ export class UIScene extends Phaser.Scene {
         }
 
         // Active game in progress — confirm before discarding.
-        const previousState = !nextState;
         this.scene.launch('NewGameConfirm', {
             cardCount: nextState ? 3 : 1,
             onConfirm: () => applyMode(),
