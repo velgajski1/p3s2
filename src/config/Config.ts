@@ -9,6 +9,12 @@ export var SOUND_ACTIVE: boolean = true;
 export var NIGHT_MODE_ACTIVE : number = 0; // 0=light wood, 1=dark wood, 2=solid green (#3c663c)
 export const NIGHT_MODE_COUNT = 3;
 export var DRAG_ACTIVE : boolean = true;
+export var CHEAT_MODE_ACTIVE : boolean = false; // DEBUG: T-key toggle — any card on any other.
+
+export function toggleCheatModeActive(params?: boolean) {
+    CHEAT_MODE_ACTIVE = params === undefined ? !CHEAT_MODE_ACTIVE : params;
+    console.log('[CHEAT] CHEAT_MODE_ACTIVE =', CHEAT_MODE_ACTIVE);
+}
 
 export function loadDefaultSettings(isMobile : boolean = false) {
     if (RIGHT_HANDED_MODE_ACTIVE == undefined || RIGHT_HANDED_MODE_ACTIVE == null) {

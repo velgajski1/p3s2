@@ -291,7 +291,8 @@ class CardLayoutManager {
 
     hintTabIdx(idx : number) {
         let spr = this.tabIndicators[idx]
-        this.addHintOutline(spr.scene, spr);
+        // Empty tableau: wood-friendly overlay, same alpha as empty foundation/stock
+        this.addHintOutline(spr.scene, spr, 0, 0, HINT_ALPHA_FOUNDATION_EMPTY, 'card-hint-overlay-on-wood.png');
     }
 
     hintFoundIdx(idx : number) {

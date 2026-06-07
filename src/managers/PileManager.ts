@@ -429,7 +429,7 @@ export default class PileManager {
         let renderHeight = GameManager.rendererHeight
 
         if (GameManager.isMobile && GameManager.isPotrait) renderHeight *= 0.70;
-        if (GameManager.isMobile && !GameManager.isPotrait) renderHeight *= 0.825;
+        if (GameManager.isMobile && !GameManager.isPotrait) renderHeight *= 0.94; // mobile/tablet landscape: toolbar is on the side, more bottom space available
         if (!GameManager.isMobile) renderHeight *= 0.875; // desktop: reserve ~12.5% bottom margin so fold fires earlier
         let x = (renderHeight - GameManager.gameplayContainerY - GameManager.gameplayContainerScale*height);
 
