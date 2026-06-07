@@ -80,7 +80,7 @@ module.exports = {
                 { from: 'public/assets', to: 'assets' },
                 { from: 'public/favicon.png', to: 'favicon.png' },
                 { from: 'public/style.css', to: 'style.css' },
-                { from: 'public/language.xml', to: 'language.xml' }
+                { from: 'public/language-klondike.xml', to: 'language-klondike.xml' }
             ],
         }),
     ]

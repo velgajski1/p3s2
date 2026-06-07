@@ -504,11 +504,8 @@ export class UIScene extends Phaser.Scene {
     }
 
     private calculateContainerHeightPercentage(screenHeight: number): void {
-        // Assuming original dimensions of the gameplay container (for example purposes)
-          // @ts-ignore
-          
-           // @ts-ignore
-        const originalContainerHeight = this.textContainer.y + window.topBarBottomPosition; // Adjust this to your container's original height
+        const topBarHeight = (document.querySelector('.top-bar') as HTMLElement | null)?.offsetHeight ?? 44;
+        const originalContainerHeight = this.textContainer.y + topBarHeight;
         
         // Get the current scale applied to the container
         const currentScale = this.textContainer.scaleY;

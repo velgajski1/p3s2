@@ -47,15 +47,5 @@
   </div>
   <div id="game-container"></div>
 </div>
-<script>
-    function calculateTopBarPosition() {
-        const topBar = document.querySelector('.top-bar');
-        if (!topBar) return;
-        window.topBarBottomPosition = topBar.offsetHeight;
-    }
-    window.addEventListener('load', calculateTopBarPosition);
-    window.addEventListener('resize', calculateTopBarPosition);
-    setInterval(calculateTopBarPosition, 1000);
-</script>
 </body>
 </html>
