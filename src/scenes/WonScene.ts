@@ -122,10 +122,11 @@ export class WonScene extends BaseMenuScene {
 
         const effectiveWidth = 700 * scale;
         const effectiveHeight = 600 * scale;
+        const responsive = this.getResponsiveModalScale();
         if (effectiveWidth > width || effectiveHeight > height) {
-            this.menuContainer.setScale(Math.min(scaleX, scaleY));
+            this.menuContainer.setScale(Math.min(scaleX, scaleY) * responsive);
         } else {
-            this.menuContainer.setScale(scale);
+            this.menuContainer.setScale(scale * responsive);
         }
     }
 }

@@ -124,6 +124,16 @@ body.bg-green #app {
     top: -2px;
 }
 
+/* Desktop responsiveness — scale the top bar smoothly between widths 800px → 1920px.
+   At ≥1920px the bar stays at its default 44px / 30 / 20. At ≤800px it caps at 50%.
+   `hover: hover` keeps this off mobile/tablet so the mobile rules below stay authoritative. */
+@media (hover: hover) {
+    .top-bar    { height: clamp(22px, calc(1.964vw + 6.29px), 44px); }
+    .brand      { font-size: clamp(15px, calc(1.339vw + 4.29px), 30px); }
+    .game-stats { font-size: clamp(10px, calc(0.893vw + 2.86px), 20px); }
+    .game-links { font-size: clamp(10px, calc(0.893vw + 2.86px), 20px); }
+}
+
 /* Hide brand when viewport is too narrow to fit it alongside stats; .game-stats stays visible */
 @media (max-width: 449px) {
     .brand { display: none; }
