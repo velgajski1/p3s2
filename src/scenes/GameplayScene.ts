@@ -9,6 +9,8 @@ export class GameplayScene extends BaseScene {
     private gameplayContainer!: Phaser.GameObjects.Container;
     gameManager: GameManager;
     soundManager: SoundManager;
+    private orientationRecoveryTimers: ReturnType<typeof setTimeout>[] = [];
+    private orientationRecoveryHandler?: () => void;
 
     constructor() {
         super('GameplayScene');
@@ -50,17 +52,64 @@ export class GameplayScene extends BaseScene {
 
         SoundManager.init(this);
         SoundManager.instance.silence.play()
+
+        this.wireOrientationRecovery();
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.teardownOrientationRecovery, this);
+        this.events.once(Phaser.Scenes.Events.DESTROY, this.teardownOrientationRecovery, this);
+    }
+
+    private wireOrientationRecovery(): void {
+        // Mobile browsers can stabilize at intermediate viewport dimensions during
+        // rotation. Android Chrome also refuses fullscreen until the next user gesture,
+        // so the eventual fullscreenchange needs the same refresh/relayout path.
+        this.orientationRecoveryHandler = () => {
+            // Cancel any pending relayouts from a previous rotation so we don't pile up.
+            this.orientationRecoveryTimers.forEach(t => clearTimeout(t));
+            this.orientationRecoveryTimers = [];
+            [0, 100].forEach(ms => {
+                this.orientationRecoveryTimers.push(
+                    setTimeout(() => this.refreshScaleAndResize(), ms)
+                );
+            });
+        };
+        window.addEventListener('orientationchange', this.orientationRecoveryHandler);
+        window.addEventListener('resize', this.orientationRecoveryHandler);
+        document.addEventListener('fullscreenchange', this.orientationRecoveryHandler);
+        // Visual Viewport reports post-settle dimensions reliably on mobile browsers.
+        window.visualViewport?.addEventListener('resize', this.orientationRecoveryHandler);
+    }
+
+    private teardownOrientationRecovery(): void {
+        if (this.orientationRecoveryHandler) {
+            window.removeEventListener('orientationchange', this.orientationRecoveryHandler);
+            window.removeEventListener('resize', this.orientationRecoveryHandler);
+            document.removeEventListener('fullscreenchange', this.orientationRecoveryHandler);
+            window.visualViewport?.removeEventListener('resize', this.orientationRecoveryHandler);
+            this.orientationRecoveryHandler = undefined;
+        }
+        this.orientationRecoveryTimers.forEach(t => clearTimeout(t));
+        this.orientationRecoveryTimers = [];
     }
 
     private resize(gameSize: Phaser.Structs.Size): void {
         this.doResize(gameSize);
         setTimeout(() => {
-            this.doResize(gameSize);
+            this.doResize(this.scale.gameSize as Phaser.Structs.Size);
         }, 10);
         setTimeout(() => {
-            this.doResize(gameSize);
-        }, 100);
+            this.doResize(this.scale.gameSize as Phaser.Structs.Size);
+        }, 90);
+        // Long-tail pass for slow rotations on iOS/Android (URL bar settling, safe-area shifts).
+        // Reads the latest gameSize from this.scale so we use whatever Phaser sees after settling.
+        // setTimeout(() => {
+        //     this.doResize(this.scale.gameSize as Phaser.Structs.Size);
+        // }, 500);
 
+    }
+
+    private refreshScaleAndResize(): void {
+        this.scale.refresh();
+        this.doResize(this.scale.gameSize as Phaser.Structs.Size);
     }
 
     private doResize(gameSize: Phaser.Structs.Size) : void {
