@@ -1,6 +1,4 @@
 import Phaser from 'phaser';
-import { SoundManager } from '../managers/SoundManager';
-import { SOUND_ACTIVE } from '../config/Config';
 
 interface ToggleOptions {
     parentContainer?: Phaser.GameObjects.Container;
@@ -51,7 +49,6 @@ export class SettingsToggle extends Phaser.GameObjects.Container {
         this.isOn = !this.isOn;
         this.toggleOn.setVisible(this.isOn);
         this.toggleOff.setVisible(!this.isOn);
-        SOUND_ACTIVE && SoundManager.instance.click.play();
         dispatchEvent(new Event('radioToggle'));
     }
 }

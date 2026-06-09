@@ -94,7 +94,6 @@ export class UIScene extends Phaser.Scene {
             this.gameManager = this.registry.get("gameManager");
             this.gameManager.controlManager.handleUKey();
         });
-        this.desktopUI.undo.skipClickSound = true;
         this.desktopUI.undo.setOrigin(0, 0);
         this.elementsContainer.add(this.desktopUI.undo);
 
@@ -103,7 +102,6 @@ export class UIScene extends Phaser.Scene {
             const gamemanager: GameManager = this.registry.get('gameManager');
             HintManager.getInstance().getHint(gamemanager.pileManager);
         });
-        this.desktopUI.hint.skipClickSound = true;
         this.desktopUI.hint.setOrigin(0, 0);
         this.elementsContainer.add(this.desktopUI.hint);
 
@@ -156,7 +154,7 @@ export class UIScene extends Phaser.Scene {
 
         this.desktopUI.help = new ImageButton(this, 372, 0, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            window.location.hash = '#spielanleitung';
+            this.openHelpAnchor();
         });
         this.desktopUI.help.setOrigin(0, 0);
         this.elementsContainer.add(this.desktopUI.help);
@@ -215,7 +213,6 @@ export class UIScene extends Phaser.Scene {
             const gamemanager: GameManager = this.registry.get('gameManager');
             HintManager.getInstance().getHint(gamemanager.pileManager);
         });
-        this.mobileUI.hint.skipClickSound = true;
         this.mobileUI.hint.setOrigin(0, 0);
         this.elementsContainer2.add(this.mobileUI.hint);
 
@@ -224,7 +221,6 @@ export class UIScene extends Phaser.Scene {
             this.gameManager = this.registry.get("gameManager");
             this.gameManager.controlManager.handleUKey();
         });
-        this.mobileUI.undo.skipClickSound = true;
         this.mobileUI.undo.setOrigin(0, 0);
         this.elementsContainer2.add(this.mobileUI.undo);
 
@@ -240,7 +236,7 @@ export class UIScene extends Phaser.Scene {
 
         this.mobileUI.help = new ImageButton(this, colLeftX, 55, 'icon-help', 'icon-help-hover', () => {
             if (!this.inputEnabled || this.skipClicks) return;
-            window.location.hash = '#spielanleitung';
+            this.openHelpAnchor();
         });
         this.mobileUI.help.setOrigin(0, 0);
         this.elementsContainer3.add(this.mobileUI.help);
@@ -631,6 +627,29 @@ export class UIScene extends Phaser.Scene {
                 this.mobileUI?.toggle?.setToggleState(previousState);
             },
         }).bringToTop('NewGameConfirm');
+    }
+
+    private openHelpAnchor(): void {
+        // Try a manual local scroll first — fixes two issues:
+        //   1) Android Chrome (esp. Samsung WebView) sometimes ignores hash-only navigation
+        //      that originates from inside the Phaser canvas / fullscreen context.
+        //   2) Even on browsers that honor it, the hash stays in the URL after the first
+        //      click, so a repeat click is a no-op (browser thinks it's already there).
+        const target = document.getElementById('spielanleitung');
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (window.location.hash) {
+                history.replaceState(null, '', window.location.pathname + window.location.search);
+            }
+            return;
+        }
+        // Fallback: anchor lives outside this document (embedded build on a host page).
+        // Clear an existing hash first so re-setting it fires a real hashchange even on
+        // a repeat click, then set it so the host page can react.
+        if (window.location.hash === '#spielanleitung') {
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+        window.location.hash = '#spielanleitung';
     }
 
     private toggleNightMode(): void {

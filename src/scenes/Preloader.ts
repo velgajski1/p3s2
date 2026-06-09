@@ -149,11 +149,7 @@ export class Preloader extends Scene {
             this.load.multiatlas('cards', 'cards/desktop/newassets_desktop.json', 'assets/cards/desktop');
         }
         this.load.audio('card_to_foundation', 'sounds/card-to-foundation.mp3');
-        this.load.audio('click', 'sounds/click.mp3');
-        this.load.audio('deal_cards', 'sounds/deal-cards.mp3');
-        this.load.audio('end_3', 'sounds/end_3.mp3');
         this.load.audio('flip_back_to_stock', 'sounds/stock-flip-back.mp3');
-        this.load.audio('grab_card', 'sounds/grab-card.mp3');
         this.load.audio('hint', 'sounds/hint.mp3');
         this.load.audio('invalid', 'sounds/invalid.mp3');
         this.load.audio('no_hint', 'sounds/no-hint.mp3');

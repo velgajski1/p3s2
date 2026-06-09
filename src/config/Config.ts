@@ -5,7 +5,7 @@ export var STOCK_THREE_MODE_ACTIVE: boolean = false;
 export var RIGHT_HANDED_MODE_ACTIVE: boolean;
 export var RIGHT_HANDED_MODE_IDX : number;
 export var AUTOFINISH_MODE_ACTIVE: boolean = true;
-export var SOUND_ACTIVE: boolean = true;
+export var SOUND_ACTIVE: boolean = false;
 export var NIGHT_MODE_ACTIVE : number = 0; // 0=light wood, 1=dark wood, 2=solid green (#3c663c)
 export const NIGHT_MODE_COUNT = 3;
 export var DRAG_ACTIVE : boolean = true;

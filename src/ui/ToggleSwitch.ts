@@ -1,6 +1,4 @@
 import Phaser from 'phaser';
-import { SoundManager } from '../managers/SoundManager';
-import { SOUND_ACTIVE } from '../config/Config';
 
 export class ToggleSwitch extends Phaser.GameObjects.Container {
     icon1: Phaser.GameObjects.Image;
@@ -104,7 +102,6 @@ export class ToggleSwitch extends Phaser.GameObjects.Container {
         // Call the callback function with the current state
         if (!skipCallback) {
             this.onToggleCallback(newState);
-              SOUND_ACTIVE && SoundManager.instance.click.play()
         }
 
     }
