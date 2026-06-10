@@ -1,44 +1,26 @@
 <languages>
-    <language id="EN">
-        <Menu>Menü</Menu>
-        <RestartGame>Spiel neu starten</RestartGame>
-        <NewGameTurn1>Neues Spiel: 1 Karte</NewGameTurn1>
-        <NewGameTurn3>Neues Spiel: 3 Karten</NewGameTurn3>
+    <language id="DE">
         <NewGame>Neues Spiel starten</NewGame>
-        <HowToPlaySolitaire>Spielanleitung</HowToPlaySolitaire>
-        <Statistics>Statistiken</Statistics>
+
         <Stats3>Statistiken (3 Karten)</Stats3>
         <Stats1>Statistiken (1 Karte)</Stats1>
-        <AllGames>Alle Spiele</AllGames>
-        <Cancel>Abbrechen</Cancel>
         <GamesPlayed>Gespielte Spiele</GamesPlayed>
         <GamesWon>Gewonnene Spiele</GamesWon>
-        <GamesLost>Verlorene Spiele</GamesLost>
         <WinPercentage>Gewinnquote</WinPercentage>
-        <CurrentWinStreak>Aktuelle Siegesserie</CurrentWinStreak>
-        <LongestWinStreak>Längste Siegesserie</LongestWinStreak>
         <TopScore>Höchste Punktzahl</TopScore>
         <BestTime>Beste Zeit</BestTime>
-        <AvgTime>Durchschnittliche Zeit</AvgTime>
-        <GameSettings>Spieloptionen</GameSettings>
         <Settings>Spieloptionen</Settings>
-        <VisualSettings>Anzeige</VisualSettings>
         <Spielen>Spielen</Spielen>
         <Leistung>Leistung</Leistung>
         <SoundOnOff>Ton</SoundOnOff>
         <AutoFinish>Automatisch beenden</AutoFinish>
         <RightHanded>Rechtshänder-Modus</RightHanded>
-        <Background>Hintergrund</Background>
         <SaveExit>Schließen</SaveExit>
         <ResetStats>Statistiken zurücksetzen</ResetStats>
-        <Close>Schließen</Close>
-        <YouWon>Spiel gewonnen!</YouWon>
         <Score>Punkte: </Score>
         <TimePlayed>Zeit </TimePlayed>
         <TimeBonus>Zeitbonus </TimeBonus>
         <TotalScore>Gesamtpunkte </TotalScore>
-        <Time> | </Time>
-        <Moves> | Züge: </Moves>
         <Neustart>Neustart</Neustart>
         <ConfirmNewGameTitle>Neue Partie starten?</ConfirmNewGameTitle>
         <ConfirmNewGameBody1>Neue Partie mit 1 Karte spielen?</ConfirmNewGameBody1>

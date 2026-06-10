@@ -244,7 +244,7 @@ export default class HintManager
         // Cycle through hints
         if (this.hints.length == 0)
         {
-            SoundManager.instance.noHint.play();
+            SOUND_ACTIVE && SoundManager.instance.noHint.play();
             return;
 
         }
