@@ -8,6 +8,7 @@ import { Settings } from './scenes/Settings';
 import { Statistics } from './scenes/Statistics';
 import { WonScene } from './scenes/WonScene';
 import { NewGameConfirmScene } from './scenes/NewGameConfirmScene';
+import { VERSION } from './config/Config';
 
 declare global {
     interface Window {
@@ -46,5 +47,9 @@ const config: Types.Core.GameConfig = {
 
 window.__solitaireGame?.destroy(true);
 window.__solitaireGame = new Game(config);
+
+// Show the build version in the bottom-left corner (sourced from the bundle).
+const versionEl = document.getElementById('version-tag');
+if (versionEl) versionEl.textContent = VERSION;
 
 export default window.__solitaireGame;

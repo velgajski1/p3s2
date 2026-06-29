@@ -2,12 +2,12 @@ import Phaser, { GameObjects } from 'phaser';
 import { LanguageConfig } from '../config/Language';
 import { GameManager } from '../managers/GameManager';
 import { translate } from '../utils/Language';
-import { formatTime } from '../utils/Utils';
+import { formatTime, useTabletLandscapeLayout } from '../utils/Utils';
 import ToggleSwitch from '../ui/ToggleSwitch';
 import Registry from '../config/Registry';
 import ImageButton from '../ui/ImageButton';
 import ButtonWithColorBackground from '../ui/ButtonWithColorBackground';
-import { cycleNightMode, DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive } from '../config/Config';
+import { cycleNightMode, DRAG_ACTIVE, NIGHT_MODE_ACTIVE, STOCK_THREE_MODE_ACTIVE, toggleThreeModeActive, VERSION } from '../config/Config';
 import HintManager from '../managers/HintManager';
 import { getActiveTopbarOwnerId, topbarDebugLog } from '../utils/Debug';
 
@@ -263,6 +263,8 @@ export class UIScene extends Phaser.Scene {
         this.elementsContainer3.visible = this.elementsContainer2.visible
         this.elementsContainer3.setScale(this.elementsContainer2.scale)
 
+        this.updateVersionTag();
+
         const currentGameManager = this.registry.get('gameManager') as GameManager | undefined;
         if (currentGameManager) {
             this.gameManager = currentGameManager;
@@ -436,6 +438,22 @@ export class UIScene extends Phaser.Scene {
             this.elementsContainer.visible = false;
             this.elementsContainer2.visible = true;
             this.elementsContainer3.visible = this.elementsContainer2.visible
+
+            // Tablet landscape: pin the two side button columns hard to the screen edges at ~5% width,
+            // so the board can take ~82% of the width. Overrides the x/scale set just above.
+            if (useTabletLandscapeLayout(this)) {
+                const EDGE_MARGIN_FRAC = 0.02; // 2% screen-edge margin
+                const BUTTON_WIDTH_FRAC = 0.05; // ~5% column width
+                const ICON_PX = 54; // native side-icon width
+                const W = window.innerWidth;
+                const s = BUTTON_WIDTH_FRAC * W / ICON_PX;
+                this.elementsContainer2.setScale(s);
+                this.elementsContainer3.setScale(s); // update() also syncs ec3 <- ec2 each frame
+                // left column local icon x = 20  -> left icon edge at EDGE_MARGIN_FRAC*W
+                this.elementsContainer3.x = EDGE_MARGIN_FRAC * W - 20 * s;
+                // right cluster local icon right edge at -26 -> pinned to (1-EDGE_MARGIN_FRAC)*W
+                this.elementsContainer2.x = (1 - EDGE_MARGIN_FRAC) * W + 26 * s;
+            }
         } else {
             this.elementsContainer.visible = true;
             this.elementsContainer2.visible = false;
@@ -561,6 +579,16 @@ export class UIScene extends Phaser.Scene {
                     this.textContainer.y = this.scale.height * 0.86 
                 } 
             }
+
+            // Tablet landscape: align the side button-column tops with the top edge of the stock/foundation
+            // row (Y published by GameplayScene's board branch), overriding the height*0.17 set just above.
+            if (useTabletLandscapeLayout(this)) {
+                const y = this.registry.get('ipadStockTopY');
+                if (typeof y === 'number') {
+                    this.elementsContainer2.y = y;
+                    this.elementsContainer3.y = y;
+                }
+            }
         }
         else {
             this.textContainer.y = topUI*this.scale.height
@@ -582,7 +610,27 @@ export class UIScene extends Phaser.Scene {
     }
 
 
+    // Debug: render the device-detection signals next to the version in the bottom-left tag, so the
+    // exact gate values (post Preloader override) are visible on-device. Remove before release.
+    private updateVersionTag(): void {
+        const el = document.getElementById('version-tag');
+        if (!el) return;
+        const os = this.game.device.os;
+        const b = (v: boolean) => v ? '1' : '0';
+        const macUA = /Macintosh|Mac OS X/.test(navigator.userAgent);
+        const mobUA = /Mobile/i.test(navigator.userAgent);
+        const s = `${VERSION}  iOS:${b(os.iOS)} iPad:${b(os.iPad)} and:${b(os.android)} desk:${b(os.desktop)} `
+            + `tab:${b(this.isTablet())} land:${b(this.scale.isGameLandscape)} fs:${b(this.scale.isFullscreen)} `
+            + `tabLand:${b(useTabletLandscapeLayout(this))} | tp:${navigator.maxTouchPoints} `
+            + `plat:${navigator.platform} mac:${b(macUA)} mob:${b(mobUA)}`;
+        if (el.textContent !== s) el.textContent = s;
+    }
+
     private isTablet(): boolean {
+        // Any iPad is a tablet regardless of aspect ratio (new iPads are wider than 4:3 and Chrome's
+        // toolbar shrinks innerHeight past the 1.6 cutoff). device.os.iPad is set by Phaser (old iPads)
+        // or by our Preloader override (new iPads).
+        if (this.game.device.os.iPad) return true;
         // Tablets generally have an aspect ratio between 1 and 1.6
         const aspectRatio = window.innerWidth / window.innerHeight;
         // Screen diagonal size in inches (e.g., diagonal of a 10.1" tablet)

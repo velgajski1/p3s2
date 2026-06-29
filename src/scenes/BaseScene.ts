@@ -49,6 +49,10 @@ export default class BaseScene extends Phaser.Scene {
     }
 
     protected isTablet(): boolean {
+        // Any iPad is a tablet regardless of aspect ratio (new iPads are wider than 4:3 and Chrome's
+        // toolbar shrinks innerHeight past the 1.6 cutoff). device.os.iPad is set by Phaser (old iPads)
+        // or by our Preloader override (new iPads).
+        if (this.game.device.os.iPad) return true;
         // Tablets generally have an aspect ratio between 1 and 1.6
         const aspectRatio = window.innerWidth / window.innerHeight;
         // Screen diagonal size in inches (e.g., diagonal of a 10.1" tablet)

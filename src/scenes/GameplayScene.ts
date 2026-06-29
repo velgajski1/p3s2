@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import { GameManager } from '../managers/GameManager';
 import Registry from '../config/Registry';
-import { TABLEU_COORDS_DELTA } from '../config/Consts';
+import { TABLEU_COORDS_DELTA, STOCK_COORDS, getCardScale } from '../config/Consts';
 import BaseScene from './BaseScene';
 import { SoundManager } from '../managers/SoundManager';
+import { useTabletLandscapeLayout } from '../utils/Utils';
 
 export class GameplayScene extends BaseScene {
     private gameplayContainer!: Phaser.GameObjects.Container;
@@ -11,6 +12,7 @@ export class GameplayScene extends BaseScene {
     soundManager: SoundManager;
     private orientationRecoveryTimers: ReturnType<typeof setTimeout>[] = [];
     private orientationRecoveryHandler?: () => void;
+    private visibilityHandler?: () => void;
 
     constructor() {
         super('GameplayScene');
@@ -72,11 +74,20 @@ export class GameplayScene extends BaseScene {
                 );
             });
         };
+        // Returning to the app (tab switch, background -> foreground, bfcache restore) can leave iPad
+        // Chrome scrolled with the HTML top bar pushed off-screen and the game shifted up — run the same
+        // refresh/relayout path (which re-pins the scroll) when we become visible.
+        this.visibilityHandler = () => {
+            if (document.visibilityState === 'visible') this.orientationRecoveryHandler?.();
+        };
         window.addEventListener('orientationchange', this.orientationRecoveryHandler);
         window.addEventListener('resize', this.orientationRecoveryHandler);
         document.addEventListener('fullscreenchange', this.orientationRecoveryHandler);
         // Visual Viewport reports post-settle dimensions reliably on mobile browsers.
         window.visualViewport?.addEventListener('resize', this.orientationRecoveryHandler);
+        window.addEventListener('pageshow', this.orientationRecoveryHandler);
+        window.addEventListener('focus', this.orientationRecoveryHandler);
+        document.addEventListener('visibilitychange', this.visibilityHandler);
     }
 
     private teardownOrientationRecovery(): void {
@@ -85,7 +96,13 @@ export class GameplayScene extends BaseScene {
             window.removeEventListener('resize', this.orientationRecoveryHandler);
             document.removeEventListener('fullscreenchange', this.orientationRecoveryHandler);
             window.visualViewport?.removeEventListener('resize', this.orientationRecoveryHandler);
+            window.removeEventListener('pageshow', this.orientationRecoveryHandler);
+            window.removeEventListener('focus', this.orientationRecoveryHandler);
             this.orientationRecoveryHandler = undefined;
+        }
+        if (this.visibilityHandler) {
+            document.removeEventListener('visibilitychange', this.visibilityHandler);
+            this.visibilityHandler = undefined;
         }
         this.orientationRecoveryTimers.forEach(t => clearTimeout(t));
         this.orientationRecoveryTimers = [];
@@ -108,6 +125,10 @@ export class GameplayScene extends BaseScene {
     }
 
     private refreshScaleAndResize(): void {
+        // iPad Chrome can return from the background with the page scrolled down, pushing the absolute
+        // HTML top bar off-screen and shifting the game up. Re-pin to the top first. The game never
+        // scrolls itself, and embedded it runs in an iframe, so this can't fight host-page scrolling.
+        if (this.game.device.os.iOS) window.scrollTo(0, 0);
         this.scale.refresh();
         this.doResize(this.scale.gameSize as Phaser.Structs.Size);
     }
@@ -144,10 +165,8 @@ export class GameplayScene extends BaseScene {
         if (!this.game.device.os.desktop && !this.isTablet() && this.scale.isGameLandscape && !this.registry.get("isFullscreen")) {
             this.gameplayContainer.setPosition(width / 2, top*0.7);
         }
-        if (this.scale.isGameLandscape && this.game.device.os.iOS && this.isTablet()) {
-            this.gameplayContainer.setScale(scale*1.3);
-            this.gameplayContainer.setPosition(width / 2, 3*top);
-        }
+        // NOTE: the old iOS-tablet branch (scale*1.3, 3*top) is replaced by the useTabletLandscapeLayout
+        // branch below the hard-floor clamp, which also covers fullscreen Android tablets.
 
         // Hard floor: keep cards from extending into the 44px HTML top bar.
         // Desktop is intentionally placed 18px ABOVE the clamp (tighter against the bar).
@@ -157,6 +176,30 @@ export class GameplayScene extends BaseScene {
             this.gameplayContainer.y = minContainerY - 18;
         } else if (this.gameplayContainer.y < minContainerY) {
             this.gameplayContainer.y = minContainerY;
+        }
+
+        // Tablet landscape (iPad, or fullscreen Android tablet): scale the board so the 7-pile tableau
+        // fills ~82% of screen width (leaving room for the edge-pinned button columns), capped by height
+        // so cards never get absurd on short windows. Placed AFTER the hard-floor clamp so the clamp
+        // can't bump our anchored board down and break the side-button alignment. Desktop never enters.
+        if (useTabletLandscapeLayout(this)) {
+            const CARD_AREA_FRAC = 0.82;
+            const TABLEAU_LOCAL_W = 1095;  // 7 piles: 6*160 stride + ~135px card (180 frame * 0.75 landscape scale)
+            const CARD_FRAME_H = 253;
+            const sWidth = CARD_AREA_FRAC * width / TABLEAU_LOCAL_W;
+            const sHeight = 0.25 * height / (CARD_FRAME_H * getCardScale()); // single-card height <= ~25% of screen
+            const S = Math.min(sWidth, sHeight);
+            this.gameplayContainer.setScale(S);
+
+            // Klondike's stock/waste/foundation cards render at full getCardScale() (no STOCK_FOUNDATION_SCALE),
+            // so the top row is taller than Spider's. Anchoring at 2.2*top would push it under the 44px bar —
+            // instead seat the top-row's TOP a fixed gap below the bar and back-solve the container centre.
+            // This also makes the side-button alignment exact (the published Y == the row's on-screen top).
+            const stockTopLocal = STOCK_COORDS.y - (CARD_FRAME_H * getCardScale()) / 2; // top edge of stock/found row, local
+            const BAR_H = 44, GAP = 14;
+            const stockTopY = BAR_H + GAP;
+            this.gameplayContainer.setPosition(width / 2, stockTopY - stockTopLocal * S);
+            this.registry.set('ipadStockTopY', stockTopY);
         }
 
 
