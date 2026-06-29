@@ -1,4 +1,4 @@
-import { CHEAT_MODE_ACTIVE, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE, toggleCheatModeActive } from "../config/Config";
+import { CHEAT_MODE_ACTIVE, CHEATS_ENABLED, RIGHT_HANDED_MODE_IDX, setDragActive, SOUND_ACTIVE, toggleCheatModeActive } from "../config/Config";
 import { PileType, TABLEU_COORDS_INIT, TABLEU_COORDS_DELTA, FOUNDATION_COORDS_INIT, FOUNDATION_COORDS_DELTA, CARD_MOVE_BEFORE_DRAG_ACTIVE, TABLEU_STACK_TWEEN_DURATION, DISABLE_CLICK_DURATION_NORMAL, DISABLE_CLICK_DURATION_STOCK, CARD_MOVE_BEFORE_DRAG_AND_DROP } from "../config/Consts";
 import Card from "../elements/Card";
 import { UIScene } from "../scenes/UIScene";
@@ -988,8 +988,9 @@ class ControlManager
 
     handleTKey()
     {
+        if (!CHEATS_ENABLED) return; // cheats are dev-only; this whole handler is DCE'd in the prod release
         if (!this.enabled) return;
-        // toggleCheatModeActive(); // disabled — uncomment to re-enable T-key cheat toggle
+        toggleCheatModeActive();
     }
 
     handleUKey()

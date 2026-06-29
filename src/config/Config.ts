@@ -1,9 +1,10 @@
 const STORAGE_PREFIX = 'solkost_klondike_';
 const k = (key: string) => STORAGE_PREFIX + key;
 
-// Bump per release. Rendered in the bottom-left corner (from the bundle, so it reflects the
-// actually-loaded build — handy for confirming a fresh build vs a cached bundle.min.js).
-export const VERSION = 'v1.0.0';
+// Auto-incremented on every build by scripts/bump-version.cjs (the npm prebuild hook) into version.json,
+// then injected here via webpack DefinePlugin. Rendered bottom-left in dev builds to confirm a fresh build
+// loaded on-device (cut from the prod release).
+export const VERSION = __VERSION__;
 
 export var STOCK_THREE_MODE_ACTIVE: boolean = false;
 export var RIGHT_HANDED_MODE_ACTIVE: boolean;
@@ -14,6 +15,10 @@ export var NIGHT_MODE_ACTIVE : number = 0; // 0=light wood, 1=dark wood, 2=solid
 export const NIGHT_MODE_COUNT = 3;
 export var DRAG_ACTIVE : boolean = true;
 export var CHEAT_MODE_ACTIVE : boolean = false; // DEBUG: T-key toggle — any card on any other.
+
+// Whether the cheat system is available. Driven by the build flag: ON for dev/watch (gamestest),
+// automatically OFF + dead-code-eliminated in the prod release (build:prod). Gate cheat handlers on this.
+export const CHEATS_ENABLED: boolean = __DEV_BUILD__;
 
 export function toggleCheatModeActive(params?: boolean) {
     CHEAT_MODE_ACTIVE = params === undefined ? !CHEAT_MODE_ACTIVE : params;

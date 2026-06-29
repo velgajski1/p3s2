@@ -48,8 +48,11 @@ const config: Types.Core.GameConfig = {
 window.__solitaireGame?.destroy(true);
 window.__solitaireGame = new Game(config);
 
-// Show the build version in the bottom-left corner (sourced from the bundle).
-const versionEl = document.getElementById('version-tag');
-if (versionEl) versionEl.textContent = VERSION;
+// Show the build version in the bottom-left corner. Gated by a webpack DefinePlugin flag so the prod
+// release build (`npm run build:prod`) dead-code-eliminates it entirely — no css/html changes needed.
+if (__DEV_BUILD__) {
+    const versionEl = document.getElementById('version-tag');
+    if (versionEl) versionEl.textContent = VERSION;
+}
 
 export default window.__solitaireGame;
